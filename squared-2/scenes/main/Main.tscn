@@ -2,6 +2,142 @@
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Background" type="ColorRect" parent="." unique_id=333599262]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.019607844, 0.02745098, 0.06666667, 1)
+
+[node name="RootMargin" type="MarginContainer" parent="." unique_id=1265092952]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="MainVbox" type="VBoxContainer" parent="RootMargin" unique_id=445687191]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="TopBar" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=496216841]
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 24
+
+[node name="SquaresLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=728880357]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 18
+text = "Squares: 0"
+
+[node name="VerticesLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=799992694]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 18
+text = "Vertices: 0"
+
+[node name="PrestigeLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=1866388019]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 18
+text = "Prestiges: 0"
+
+[node name="Content" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=192197899]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 16
+
+[node name="GridPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=1174857511]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/GridPanel" unique_id=847906112]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/GridPanel/GridCenter" unique_id=638752931]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+
+[node name="SidePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+mouse_filter = 2
+
+[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/SidePanel" unique_id=1432494938]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin" unique_id=354830038]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=324483402]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 18
+text = "Selected Square"
+
+[node name="SelectSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=195294754]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "No square selected."
+
+[node name="UpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=2033131904]
+layout_mode = 2
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 18
+text = "Upgrades
+"
+
+[node name="UpgradesList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=1606221242]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=126762251]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_vertical = 8
+disabled = true
+text = "Prestige"
+
+[node name="StoryLabel" type="Label" parent="RootMargin/MainVbox" unique_id=151831416]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 8
+text = "There is a square."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
