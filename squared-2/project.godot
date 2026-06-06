@@ -15,11 +15,17 @@ run/main_scene="uid://jdev0mw5y4y1"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+EventBus="*uid://ol8d68orx64t"
+GameState="*uid://dndrl7bbxqkwo"
+
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [physics]
 

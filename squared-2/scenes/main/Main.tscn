@@ -1,5 +1,7 @@
 [gd_scene format=3 uid="uid://jdev0mw5y4y1"]
 
+[ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
+
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
 anchors_preset = 15
@@ -8,6 +10,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_u1xfj")
 
 [node name="Background" type="ColorRect" parent="." unique_id=333599262]
 layout_mode = 1
@@ -43,18 +46,21 @@ mouse_filter = 2
 theme_override_constants/separation = 24
 
 [node name="SquaresLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=728880357]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Squares: 0"
 
 [node name="VerticesLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=799992694]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Vertices: 0"
 
 [node name="PrestigeLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=1866388019]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
@@ -76,6 +82,7 @@ layout_mode = 2
 mouse_filter = 2
 
 [node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/GridPanel/GridCenter" unique_id=638752931]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/h_separation = 12
@@ -101,12 +108,14 @@ mouse_filter = 2
 theme_override_constants/separation = 12
 
 [node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=324483402]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Selected Square"
 
-[node name="SelectSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=195294754]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
@@ -127,6 +136,7 @@ mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=126762251]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_vertical = 8
@@ -134,6 +144,7 @@ disabled = true
 text = "Prestige"
 
 [node name="StoryLabel" type="Label" parent="RootMargin/MainVbox" unique_id=151831416]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_vertical = 8
