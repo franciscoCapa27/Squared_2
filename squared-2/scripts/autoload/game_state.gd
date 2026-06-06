@@ -40,7 +40,7 @@ func click_square(square_id: String) -> void:
 	EventBus.square_selected.emit(square_id)
 
 func can_prestige() -> bool:
-	return squares >= 100.0
+	return squares >= 10.0
 
 func calculate_vertices_gain() -> int:
 	return int(floor(sqrt(squares / 100.0)))
