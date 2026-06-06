@@ -59,6 +59,8 @@ func prestige() -> void:
 		_unlock_grid_size_2()
 		EventBus.story_message.emit("One became four. The void has corners now.")
 
+	_apply_random_trait_to_random_square()
+
 	EventBus.vertices_changed.emit(vertices)
 	EventBus.prestige_changed.emit(prestige_count)
 	EventBus.squares_changed.emit(squares)
@@ -82,3 +84,51 @@ func _unlock_grid_size_2() -> void:
 		square_data.created_at_prestige = prestige_count
 		square_data.created_at_grid_tier = 1
 		squares_by_id[square_id] = square_data
+		
+func _apply_random_trait_to_random_square() -> void:
+	if square_ids.is_empty():
+		return
+
+	var trait_definition := TraitDatabase.get_random_trait(grid_size)
+
+	if trait_definition == null:
+		return
+
+	var target_square_id: String = square_ids.pick_random() as String
+	var target_square := get_square(target_square_id)
+
+	if target_square == null:
+		return
+
+	var trait_instance := TraitInstance.new(
+		trait_definition,
+		prestige_count,
+		grid_size
+	)
+
+	target_square.add_trait(trait_instance)
+	target_square.display_name = _generate_square_name(target_square)
+
+	EventBus.story_message.emit(
+		"%s gained the %s Trait." % [
+			target_square.display_name,
+			trait_definition.display_name
+		]
+	)
+	
+func _generate_square_name(square_data: SquareData) -> String:
+	if square_data == null:
+		return "Unknown Square"
+
+	var trait_names := square_data.get_trait_names()
+
+	if trait_names.is_empty():
+		return "Square %s" % square_data.coordinate
+
+	if trait_names.size() == 1:
+		return "%s Square" % trait_names[0]
+
+	var latest_trait : String = trait_names.back() as String
+	var first_trait : String = trait_names.front() as String
+
+	return "%s Square of %s" % [latest_trait, first_trait]

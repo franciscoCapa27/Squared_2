@@ -51,7 +51,13 @@ static func _apply_trait_to_stat(
 		if effect.target_stat != target_stat:
 			continue
 
-		var effect_value := effect.value * trait_iter.effectiveness_multiplier
+		var effect_value := effect.value
+
+		if trait_iter.effectiveness_multiplier != 1.0:
+			if effect.operation == EffectComponent.Operation.MULTIPLY:
+				effect_value = lerp(1.0, effect.value, trait_iter.effectiveness_multiplier)
+			else:
+				effect_value = effect.value * trait_iter.effectiveness_multiplier
 
 		match effect.operation:
 			EffectComponent.Operation.ADD:

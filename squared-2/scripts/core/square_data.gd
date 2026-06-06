@@ -139,9 +139,29 @@ func _rebuild_visual_profile() -> void:
 
 	profile.dominant_tag = _get_most_common_tag(tag_counts, 0)
 	profile.secondary_tag = _get_most_common_tag(tag_counts, 1)
-
+	profile.base_color = _get_color_for_dominant_tag(profile.dominant_tag)
+	profile.accent_color = _get_color_for_dominant_tag(profile.secondary_tag)
 	visual_profile = profile
+	
+func _get_color_for_dominant_tag(tag: String) -> Color:
+	match tag:
+		"speed":
+			return Color(0.55, 0.75, 1.0, 1.0)
+		"value":
+			return Color(1.0, 0.75, 0.45, 1.0)
+		"heavy":
+			return Color(1.0, 0.65, 0.45, 1.0)
+		"passive":
+			return Color(0.75, 0.85, 1.0, 1.0)
+		"chance":
+			return Color(0.85, 0.65, 1.0, 1.0)
+		"corruption":
+			return Color(0.65, 1.0, 0.65, 1.0)
+		_:
+			if traits.size() > 0:
+				return Color(0.85, 0.85, 1.0, 1.0)
 
+			return Color.WHITE
 func _get_most_common_tag(tag_counts: Dictionary, index: int) -> String:
 	if tag_counts.is_empty():
 		return ""

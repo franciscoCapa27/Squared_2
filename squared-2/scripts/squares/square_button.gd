@@ -5,11 +5,13 @@ signal square_clicked(square_id: String)
 var square_id: String = ""
 var is_respawning: bool = false
 var respawn_timer: SceneTreeTimer = null
+var normal_modulate: Color = Color.WHITE
 
 func setup(id: String, display_text: String = "■") -> void:
 	square_id = id
 	text = display_text
 	tooltip_text = "Square %s" % square_id
+	_apply_square_visuals()
 	_reset_visual_state()
 
 func _ready() -> void:
@@ -29,11 +31,25 @@ func _on_pressed() -> void:
 
 	_start_respawn(respawn_time)
 
+func refresh_visuals() -> void:
+	_apply_square_visuals()
+	if not is_respawning:
+		_reset_visual_state()
+
+func _apply_square_visuals() -> void:
+	var square_data: SquareData = GameState.get_square(square_id)
+
+	if square_data == null:
+		normal_modulate = Color.WHITE
+		return
+
+	normal_modulate = square_data.visual_profile.base_color
+
 func _start_respawn(respawn_time: float) -> void:
 	is_respawning = true
 	disabled = true
-	modulate = Color(1, 1, 1, 0.25)
-	text = "."
+	modulate = Color(normal_modulate.r, normal_modulate.g, normal_modulate.b, 0.25)
+	text = "·"
 
 	respawn_timer = get_tree().create_timer(respawn_time)
 	await respawn_timer.timeout
@@ -48,4 +64,4 @@ func _finish_respawn() -> void:
 
 func _reset_visual_state() -> void:
 	text = "■"
-	modulate = Color(1, 1, 1, 1)
+	modulate = normal_modulate

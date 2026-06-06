@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 EventBus="*uid://ol8d68orx64t"
+TraitDatabase="*uid://lp5heyu6k0ul"
 GameState="*uid://dndrl7bbxqkwo"
 
 [display]
