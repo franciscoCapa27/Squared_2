@@ -1,27 +1,29 @@
 [gd_resource type="Resource" script_class="TraitDefinition" format=3 uid="uid://cs2kn1kcq6pa6"]
 
-[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_2bbb4"]
-[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_lfhmg"]
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_8xmlo"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_8kvdh"]
 
 [sub_resource type="Resource" id="Resource_2bbb4"]
-script = ExtResource("1_2bbb4")
+script = ExtResource("1_8xmlo")
 target_stat = "respawn_time"
 value = 0.75
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
 [sub_resource type="Resource" id="Resource_lfhmg"]
-script = ExtResource("1_2bbb4")
+script = ExtResource("1_8xmlo")
 target_stat = "square_value"
 value = 0.9
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
 [resource]
-script = ExtResource("2_lfhmg")
-id = "quick"
-display_name = "Quick"
+script = ExtResource("2_8kvdh")
+id = "common_quick"
+display_name = "Common Quick"
+family_id = "quick"
+family_display_name = "Quick"
 description = "-25% respawn time, but -10% Squares from this square."
-tags = Array[String](["speed"])
-effect_components = Array[ExtResource("1_2bbb4")]([SubResource("Resource_2bbb4"), SubResource("Resource_lfhmg")])
+tags = Array[String](["speed", "quick"])
+effect_components = Array[ExtResource("1_8xmlo")]([SubResource("Resource_2bbb4"), SubResource("Resource_lfhmg")])
 name_prefixes = Array[String](["Quick"])
 visual_base_color_weight = Color(1, 1, 0.38039216, 1)
 visual_accent_color_weight = Color(0.39607844, 1, 0.36862746, 1)

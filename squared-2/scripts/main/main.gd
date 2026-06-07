@@ -56,11 +56,7 @@ func _show_square_details(square_id: String) -> void:
 
 	selected_square_title.text = square_data.get_display_name()
 
-	var trait_names := square_data.get_trait_names()
-	var trait_text := "None"
-
-	if not trait_names.is_empty():
-		trait_text = ", ".join(trait_names)
+	var trait_text := square_data.get_trait_stack_display_text()
 
 	var manual_payout := SquareCalculator.calculate_manual_payout(square_data)
 	var respawn_time := SquareCalculator.calculate_respawn_time(square_data)

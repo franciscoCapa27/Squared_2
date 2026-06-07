@@ -12,7 +12,11 @@ enum Rarity {
 
 @export var id: String = ""
 @export var display_name: String = ""
+@export var family_id: String = ""
+@export var family_display_name: String = ""
+
 @export_multiline var description: String = ""
+
 
 @export var rarity: Rarity = Rarity.COMMON
 @export var tags: Array[String] = []
@@ -38,6 +42,15 @@ enum Rarity {
 
 func has_tag(tag: String) -> bool:
 	return tags.has(tag)
+
+func get_stack_display_name() -> String:
+	if display_name.strip_edges() != "":
+		return display_name
+
+	if family_display_name.strip_edges() != "":
+		return "%s %s" % [get_rarity_name(), family_display_name]
+
+	return "%s %s" % [get_rarity_name(), id]
 
 func get_rarity_name() -> String:
 	match rarity:

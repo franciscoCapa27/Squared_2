@@ -95,7 +95,7 @@ func _apply_random_trait_to_random_square() -> void:
 		return
 
 	var target_square_id: String = square_ids.pick_random() as String
-	var target_square := get_square(target_square_id)
+	var target_square : SquareData = get_square(target_square_id) as SquareData
 
 	if target_square == null:
 		return
@@ -107,7 +107,6 @@ func _apply_random_trait_to_random_square() -> void:
 	)
 
 	target_square.add_trait(trait_instance)
-	target_square.display_name = _generate_square_name(target_square)
 
 	EventBus.story_message.emit(
 		"%s gained the %s Trait." % [
@@ -115,20 +114,3 @@ func _apply_random_trait_to_random_square() -> void:
 			trait_definition.display_name
 		]
 	)
-	
-func _generate_square_name(square_data: SquareData) -> String:
-	if square_data == null:
-		return "Unknown Square"
-
-	var trait_names := square_data.get_trait_names()
-
-	if trait_names.is_empty():
-		return "Square %s" % square_data.coordinate
-
-	if trait_names.size() == 1:
-		return "%s Square" % trait_names[0]
-
-	var latest_trait : String = trait_names.back() as String
-	var first_trait : String = trait_names.front() as String
-
-	return "%s Square of %s" % [latest_trait, first_trait]

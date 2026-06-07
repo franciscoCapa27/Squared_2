@@ -60,11 +60,38 @@ func add_trait(trait_instance: TraitInstance) -> void:
 	if trait_instance == null:
 		return
 
+	trait_instance.stack_index = _get_next_stack_index_for_trait(trait_instance)
+
 	traits.append(trait_instance)
 	times_traited += 1
 	times_selected_for_prestige += 1
+
 	_rebuild_tags()
 	_rebuild_visual_profile()
+
+	display_name = generate_square_name()
+	
+func generate_square_name() -> String:
+	if traits.is_empty():
+		return "Square %s" % coordinate
+
+	var primary_trait := _get_primary_title_trait()
+
+	if primary_trait == null:
+		return "Square %s" % coordinate
+
+	var primary_text := _get_trait_title_text(primary_trait)
+	var suffix_trait := _get_suffix_title_trait(primary_trait)
+
+	if suffix_trait == null:
+		return "%s Square" % primary_text
+
+	var suffix_text := _get_trait_title_text(suffix_trait)
+
+	if suffix_text == "":
+		return "%s Square" % primary_text
+
+	return "%s Square of %s" % [primary_text, suffix_text]
 
 func has_traits() -> bool:
 	return traits.size() > 0
@@ -173,3 +200,210 @@ func _get_most_common_tag(tag_counts: Dictionary, index: int) -> String:
 		return ""
 
 	return sorted_tags[index]
+
+func _get_rarity_score(trait_iter: TraitInstance) -> int:
+	if trait_iter == null or trait_iter.definition == null:
+		return -1
+
+	return int(trait_iter.definition.rarity)
+
+func _to_roman(value: int) -> String:
+	match value:
+		1:
+			return "I"
+		2:
+			return "II"
+		3:
+			return "III"
+		4:
+			return "IV"
+		5:
+			return "V"
+		6:
+			return "VI"
+		7:
+			return "VII"
+		8:
+			return "VIII"
+		9:
+			return "IX"
+		10:
+			return "X"
+		_:
+			return str(value)
+			
+func _get_trait_stack_key(trait_iter: TraitInstance) -> String:
+	if trait_iter == null or trait_iter.definition == null:
+		return ""
+
+	return trait_iter.definition.id
+	
+func _get_next_stack_index_for_trait(trait_instance: TraitInstance) -> int:
+	var new_stack_key := _get_trait_stack_key(trait_instance)
+
+	if new_stack_key == "":
+		return 1
+
+	var count := 0
+
+	for existing_trait: TraitInstance in traits:
+		if _get_trait_stack_key(existing_trait) == new_stack_key:
+			count += 1
+
+	return count + 1
+
+func _get_trait_family_key(trait_iter: TraitInstance) -> String:
+	if trait_iter == null or trait_iter.definition == null:
+		return ""
+
+	if trait_iter.definition.family_id.strip_edges() != "":
+		return trait_iter.definition.family_id
+
+	return trait_iter.definition.id
+
+func get_trait_stack_counts() -> Dictionary:
+	var counts: Dictionary = {}
+
+	for trait_iter: TraitInstance in traits:
+		var stack_key: String = _get_trait_stack_key(trait_iter)
+
+		if stack_key == "":
+			continue
+
+		counts[stack_key] = int(counts.get(stack_key, 0)) + 1
+
+	return counts
+	
+func _get_first_trait_by_stack_key(stack_key: String) -> TraitInstance:
+	for trait_iter: TraitInstance in traits:
+		if _get_trait_stack_key(trait_iter) == stack_key:
+			return trait_iter
+
+	return null
+	
+func get_trait_stack_display_text() -> String:
+	var counts := get_trait_stack_counts()
+
+	if counts.is_empty():
+		return "None"
+
+	var stack_keys: Array = counts.keys()
+
+	stack_keys.sort_custom(
+		func(a, b):
+			var trait_a: TraitInstance = _get_first_trait_by_stack_key(a as String)
+			var trait_b: TraitInstance = _get_first_trait_by_stack_key(b as String)
+
+			var rarity_a := _get_rarity_score(trait_a)
+			var rarity_b := _get_rarity_score(trait_b)
+
+			if rarity_a != rarity_b:
+				return rarity_a > rarity_b
+
+			var count_a: int = counts[a]
+			var count_b: int = counts[b]
+
+			if count_a != count_b:
+				return count_a > count_b
+
+			return str(a) < str(b)
+	)
+
+	var parts: Array[String] = []
+
+	for stack_key_variant in stack_keys:
+		var stack_key := stack_key_variant as String
+		var trait_iter: TraitInstance = _get_first_trait_by_stack_key(stack_key)
+
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var count: int = counts[stack_key]
+		var display := trait_iter.definition.get_stack_display_name()
+
+		if count > 1:
+			display = "%s %s" % [display, _to_roman(count)]
+
+		parts.append(display)
+
+	return ", ".join(parts)
+	
+func _get_primary_title_trait() -> TraitInstance:
+	if traits.is_empty():
+		return null
+
+	var best_trait: TraitInstance = null
+	var best_score := -999999
+
+	for i in range(traits.size()):
+		var trait_iter: TraitInstance = traits[i]
+
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var stack_key := _get_trait_stack_key(trait_iter)
+		var stack_count: int = get_trait_stack_counts().get(stack_key, 1)
+
+		var rarity_score := _get_rarity_score(trait_iter)
+
+		# Rarity dominates. Stack count matters. Latest Trait breaks ties.
+		var score := rarity_score * 10000 + stack_count * 100 + i
+
+		if score > best_score:
+			best_score = score
+			best_trait = trait_iter
+
+	return best_trait
+	
+func _get_suffix_title_trait(primary_trait: TraitInstance) -> TraitInstance:
+	if primary_trait == null or primary_trait.definition == null:
+		return null
+
+	var primary_stack_key := _get_trait_stack_key(primary_trait)
+	var primary_family_key := _get_trait_family_key(primary_trait)
+
+	var best_trait: TraitInstance = null
+	var best_score := -999999
+
+	for i in range(traits.size()):
+		var trait_iter: TraitInstance = traits[i]
+
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var stack_key := _get_trait_stack_key(trait_iter)
+
+		if stack_key == primary_stack_key:
+			continue
+
+		var family_key := _get_trait_family_key(trait_iter)
+		var stack_count: int = get_trait_stack_counts().get(stack_key, 1)
+		var rarity_score := _get_rarity_score(trait_iter)
+
+		# Prefer different families for the suffix.
+		var different_family_bonus := 0
+		if family_key != primary_family_key:
+			different_family_bonus = 100000
+
+		var score := different_family_bonus + rarity_score * 10000 + stack_count * 100 + i
+
+		if score > best_score:
+			best_score = score
+			best_trait = trait_iter
+
+	return best_trait
+
+
+func _get_trait_title_text(trait_iter: TraitInstance) -> String:
+	if trait_iter == null or trait_iter.definition == null:
+		return ""
+
+	var stack_key := _get_trait_stack_key(trait_iter)
+	var count: int = get_trait_stack_counts().get(stack_key, 1)
+
+	var display := trait_iter.definition.get_stack_display_name()
+
+	if count > 1:
+		display = "%s %s" % [display, _to_roman(count)]
+
+	return display
