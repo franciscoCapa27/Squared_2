@@ -56,25 +56,27 @@ func _show_square_details(square_id: String) -> void:
 
 	selected_square_title.text = square_data.get_display_name()
 
-	var trait_text := square_data.get_trait_stack_display_text()
+	var trait_text: String = square_data.get_trait_stack_display_text()
+	var trait_effect_text: String = square_data.get_trait_effect_summary_text()
 
 	var manual_payout := SquareCalculator.calculate_manual_payout(square_data)
 	var respawn_time := SquareCalculator.calculate_respawn_time(square_data)
 
 	selected_square_details.text = (
-		"Coordinate: %s\n\n" % square_data.coordinate
-		+ "Traits: %s\n" % trait_text
-		+ "Current Manual Payout: %.2f Squares\n" % manual_payout
-		+ "Current Respawn Time: %.2fs\n\n" % respawn_time
-		+ "Lifetime Squares: %.2f\n" % square_data.lifetime_squares_generated
-		+ "Manual Clicks: %s\n" % square_data.lifetime_manual_clicks
-		+ "Base Value: %.2f\n" % square_data.base_value
-		+ "Base Respawn Time: %.2fs\n\n" % square_data.base_respawn_time
-		+ "Dominant Tag: %s\n" % square_data.visual_profile.dominant_tag
-		+ "Secondary Tag: %s\n" % square_data.visual_profile.secondary_tag
-		+ "Glow Level: %s\n" % square_data.visual_profile.glow_level
-		+ "Edge Complexity: %s\n" % square_data.visual_profile.edge_complexity
-	)
+	"Coordinate: %s\n\n" % square_data.coordinate
+	+ "Trait Stacks: %s\n\n" % trait_text
+	+ "Trait Rolls:\n%s\n\n" % trait_effect_text
+	+ "Current Manual Payout: %.2f Squares\n" % manual_payout
+	+ "Current Respawn Time: %.2fs\n\n" % respawn_time
+	+ "Lifetime Squares: %.2f\n" % square_data.lifetime_squares_generated
+	+ "Manual Clicks: %s\n" % square_data.lifetime_manual_clicks
+	+ "Base Value: %.2f\n" % square_data.base_value
+	+ "Base Respawn Time: %.2fs\n\n" % square_data.base_respawn_time
+	+ "Dominant Tag: %s\n" % square_data.visual_profile.dominant_tag
+	+ "Secondary Tag: %s\n" % square_data.visual_profile.secondary_tag
+	+ "Glow Level: %s\n" % square_data.visual_profile.glow_level
+	+ "Edge Complexity: %s\n" % square_data.visual_profile.edge_complexity
+)
 
 func _on_prestige_pressed() -> void:
 	GameState.prestige()

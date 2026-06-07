@@ -407,3 +407,27 @@ func _get_trait_title_text(trait_iter: TraitInstance) -> String:
 		display = "%s %s" % [display, _to_roman(count)]
 
 	return display
+
+func get_trait_effect_summary_text() -> String:
+	if traits.is_empty():
+		return "None"
+
+	var lines: Array[String] = []
+
+	for trait_iter: TraitInstance in traits:
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var title: String = trait_iter.definition.get_stack_display_name()
+
+		if trait_iter.stack_index > 1:
+			title = "%s #%s" % [title, trait_iter.stack_index]
+
+		lines.append(title)
+
+		var effect_lines: Array[String] = trait_iter.get_effect_summary_lines()
+
+		for effect_line: String in effect_lines:
+			lines.append("  - %s" % effect_line)
+
+	return "\n".join(lines)

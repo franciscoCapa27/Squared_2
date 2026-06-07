@@ -46,6 +46,12 @@ enum Scope {
 @export var target_stat: String = ""
 @export var value: float = 1.0
 
+@export var use_value_range: bool = false
+@export var value_min: float = 1.0
+@export var value_max: float = 1.0
+@export var roll_key: String = ""
+@export_range(0, 6) var roll_decimals: int = 3
+
 @export var chance: float = 1.0
 @export var cooldown_seconds: float = 0.0
 

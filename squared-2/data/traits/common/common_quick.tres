@@ -7,12 +7,20 @@
 script = ExtResource("1_8xmlo")
 target_stat = "respawn_time"
 value = 0.75
+use_value_range = true
+value_min = 0.75
+value_max = 0.9
+roll_key = "respawn_time_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
 [sub_resource type="Resource" id="Resource_lfhmg"]
 script = ExtResource("1_8xmlo")
 target_stat = "square_value"
 value = 0.9
+use_value_range = true
+value_min = 0.8
+value_max = 0.95
+roll_key = "square_value_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
 [resource]

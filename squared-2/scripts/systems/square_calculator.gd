@@ -51,7 +51,7 @@ static func _apply_trait_to_stat(
 		if effect.target_stat != target_stat:
 			continue
 
-		var effect_value := effect.value
+		var effect_value: float = trait_iter.get_effect_value(effect)
 
 		if trait_iter.effectiveness_multiplier != 1.0:
 			if effect.operation == EffectComponent.Operation.MULTIPLY:
