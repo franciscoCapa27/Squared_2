@@ -5,7 +5,8 @@ static func calculate_manual_payout(square_data: SquareData) -> float:
 	if square_data == null:
 		return 0.0
 
-	var value := square_data.base_value
+	var value: float = square_data.base_value
+	value *= GameState.get_permanent_stat_multiplier("square_base_value")
 	value *= square_data.base_manual_multiplier
 	value *= square_data.temporary_value_multiplier
 

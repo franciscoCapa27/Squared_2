@@ -9,6 +9,7 @@ var square_ids: Array[String] = ["A1"]
 var squares_by_id: Dictionary = {}
 
 var unlocked_vertex_upgrades: Dictionary = {}
+var permanent_stat_multipliers: Dictionary = {}
 
 func _ready() -> void:
 	_create_initial_grid()
@@ -221,8 +222,11 @@ func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) ->
 			push_warning("Unknown passive generator id: %s" % effect_iter.target_id)
 
 func _apply_global_stat_multiplier_effect(effect_iter: VertexUpgradeEffect) -> void:
-	# Placeholder for future permanent effects, e.g. all square base value x1.1.
-	push_warning("GLOBAL_STAT_MULTIPLIER effect not implemented yet: %s" % effect_iter.target_stat)
+	if effect_iter.target_stat.strip_edges() == "":
+		push_warning("GLOBAL_STAT_MULTIPLIER missing target_stat.")
+		return
+
+	multiply_permanent_stat(effect_iter.target_stat, effect_iter.value)
 
 func _apply_unlock_mechanic_effect(effect_iter: VertexUpgradeEffect) -> void:
 	# Placeholder for future mechanics.
@@ -239,3 +243,11 @@ func _apply_unlock_tab_effect(effect_iter: VertexUpgradeEffect) -> void:
 func _apply_script_hook_effect(effect_iter: VertexUpgradeEffect) -> void:
 	# Escape hatch for weird one-off effects.
 	push_warning("SCRIPT_HOOK effect not implemented yet: %s" % effect_iter.script_hook_id)
+
+func get_permanent_stat_multiplier(stat_id: String) -> float:
+	return float(permanent_stat_multipliers.get(stat_id, 1.0))
+
+
+func multiply_permanent_stat(stat_id: String, multiplier: float) -> void:
+	var current_multiplier: float = get_permanent_stat_multiplier(stat_id)
+	permanent_stat_multipliers[stat_id] = current_multiplier * multiplier

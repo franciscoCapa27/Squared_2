@@ -99,6 +99,7 @@ func _show_square_details(square_id: String) -> void:
 	+ "Lifetime Squares: %.2f\n" % square_data.lifetime_squares_generated
 	+ "Manual Clicks: %s\n" % square_data.lifetime_manual_clicks
 	+ "Base Value: %.2f\n" % square_data.base_value
+	+ "Permanent Base Value Multiplier: x%.2f\n" % GameState.get_permanent_stat_multiplier("square_base_value")
 	+ "Base Respawn Time: %.2fs\n\n" % square_data.base_respawn_time
 	+ "Dominant Tag: %s\n" % square_data.visual_profile.dominant_tag
 	+ "Secondary Tag: %s\n" % square_data.visual_profile.secondary_tag

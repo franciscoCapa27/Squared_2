@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="VertexUpgradeDefinition" format=3 uid="uid://c5navlqdelg6r"]
+
+[ext_resource type="Script" uid="uid://c7mm37v2yrr14" path="res://scripts/resources/vertex_upgrade_effect.gd" id="1_cktol"]
+[ext_resource type="Script" uid="uid://dowlqajtj0tyi" path="res://scripts/resources/vertex_upgrade_definition.gd" id="2_1qkm0"]
+
+[sub_resource type="Resource" id="Resource_cktol"]
+script = ExtResource("1_cktol")
+effect_type = 1
+target_stat = "square_base_value"
+value = 1.1
+metadata/_custom_type_script = "uid://c7mm37v2yrr14"
+
+[resource]
+script = ExtResource("2_1qkm0")
+id = "sharpened_origin"
+display_name = "Sharpened Origin"
+description = "Permanently increases all square base value by 10%."
+category = 3
+cost_vertices = 5
+sort_order = 20
+required_prestige_count = 1
+required_grid_size = 2
+required_upgrade_ids = Array[String](["unlock_first_generator"])
+hidden_until_requirements_met = true
+effects = Array[ExtResource("1_cktol")]([SubResource("Resource_cktol")])
+metadata/_custom_type_script = "uid://dowlqajtj0tyi"
