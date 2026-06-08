@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 EventBus="*uid://ol8d68orx64t"
 TraitDatabase="*uid://lp5heyu6k0ul"
+VertexUpgradeDatabase="*uid://bp2on18ku00cd"
 GameState="*uid://dndrl7bbxqkwo"
 PassiveSystem="*uid://b73x43eqyy5ay"
 

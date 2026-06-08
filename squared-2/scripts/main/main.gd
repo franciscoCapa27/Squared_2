@@ -20,9 +20,11 @@ extends Control
 @onready var grid_page: Control = %GridPage
 @onready var vertex_shop_page: Control = %VertexShopPage
 
-@onready var unlock_first_generator_button: Button = %UnlockFirstGeneratorButton
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
+@onready var vertex_upgrade_list: VBoxContainer = %VertexUpgradeList
 
+var vertex_upgrade_card_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeCard.tscn")
+var vertex_upgrade_cards: Dictionary = {}
 var square_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var selected_square_id: String = ""
 
@@ -37,7 +39,6 @@ func _ready() -> void:
 	grid_tab_button.pressed.connect(_on_grid_tab_pressed)
 	vertex_shop_tab_button.pressed.connect(_on_vertex_shop_tab_pressed)
 
-	unlock_first_generator_button.pressed.connect(_on_unlock_first_generator_pressed)
 	upgrade_first_generator_button.pressed.connect(_on_upgrade_first_generator_pressed)
 
 	PassiveSystem.passive_state_changed.connect(_refresh_passive_panel)
@@ -137,22 +138,37 @@ func _on_vertex_shop_tab_pressed() -> void:
 	_show_center_page("vertex_shop")
 
 func _refresh_vertex_shop() -> void:
-	var can_unlock_generator: bool = GameState.can_buy_vertex_upgrade("unlock_first_generator")
-	var has_generator: bool = GameState.has_vertex_upgrade("unlock_first_generator")
+	_rebuild_vertex_upgrade_list()
+	
+func _rebuild_vertex_upgrade_list() -> void:
+	for child in vertex_upgrade_list.get_children():
+		child.queue_free()
 
-	unlock_first_generator_button.disabled = not can_unlock_generator
+	vertex_upgrade_cards.clear()
 
-	if has_generator:
-		unlock_first_generator_button.text = "First Generator Unlocked"
-		vertex_shop_description.text = "The first generator is active. It extracts Squares automatically."
-	else:
-		unlock_first_generator_button.text = "Unlock First Generator — 1 Vertex"
-		vertex_shop_description.text = (
-			"Spend 1 Vertex to awaken the first passive generator.\n\n"
-			+ "It pulses every 2.5 seconds and extracts 25% of a random square's current manual payout.\n"
-			+ "Passive extraction does not trigger square respawn."
-		)
+	var visible_upgrades: Array[VertexUpgradeDefinition] = VertexUpgradeDatabase.get_visible_upgrades()
 
+	if visible_upgrades.is_empty():
+		vertex_shop_description.text = "No Vertex upgrades available yet."
+		return
+
+	vertex_shop_description.text = "Spend Vertices on permanent systems."
+
+	for upgrade: VertexUpgradeDefinition in visible_upgrades:
+		var card : VertexUpgradeCard = vertex_upgrade_card_scene.instantiate() as VertexUpgradeCard 
+		vertex_upgrade_list.add_child(card)
+
+		card.setup(upgrade)
+		card.buy_requested.connect(_on_vertex_upgrade_buy_requested)
+
+		vertex_upgrade_cards[upgrade.id] = card
+
+func _on_vertex_upgrade_buy_requested(upgrade_id: String) -> void:
+	var bought: bool = GameState.buy_vertex_upgrade(upgrade_id)
+
+	if bought:
+		_refresh_vertex_shop()
+		_refresh_passive_panel()
 func _on_unlock_first_generator_pressed() -> void:
 	var bought: bool = GameState.buy_vertex_upgrade("unlock_first_generator")
 

@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="VertexUpgradeDefinition" format=3 uid="uid://bx32nyixldacr"]
+
+[ext_resource type="Script" uid="uid://c7mm37v2yrr14" path="res://scripts/resources/vertex_upgrade_effect.gd" id="1_gc6w2"]
+[ext_resource type="Script" uid="uid://dowlqajtj0tyi" path="res://scripts/resources/vertex_upgrade_definition.gd" id="2_vjorj"]
+
+[sub_resource type="Resource" id="Resource_gc6w2"]
+script = ExtResource("1_gc6w2")
+effect_type = 0
+target_id = "first_generator"
+metadata/_custom_type_script = "uid://c7mm37v2yrr14"
+
+[resource]
+script = ExtResource("2_vjorj")
+id = "unlock_first_generator"
+display_name = "Unlock First Generator"
+description = "Permanently unlocks the First Generator. It starts each run at Level 0 and can be leveled with Squares."
+category = 0
+sort_order = 10
+required_prestige_count = 1
+required_grid_size = 2
+effects = Array[ExtResource("1_gc6w2")]([SubResource("Resource_gc6w2")])
+metadata/_custom_type_script = "uid://dowlqajtj0tyi"

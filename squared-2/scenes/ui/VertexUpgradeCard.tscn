@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://bsa5jis64acjt"]
+
+[ext_resource type="Script" uid="uid://njvx3xd0xq5o" path="res://scripts/ui/vertex_upgrade_card.gd" id="1_sa76i"]
+
+[node name="VertexUpgradeCard" type="PanelContainer" unique_id=632791654]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_sa76i")
+
+[node name="CardMargin" type="MarginContainer" parent="." unique_id=642337913]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="CardVBox" type="VBoxContainer" parent="CardMargin" unique_id=919150606]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="CardMargin/CardVBox" unique_id=1237092297]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CategoryCostLabel" type="Label" parent="CardMargin/CardVBox" unique_id=109116460]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="CardMargin/CardVBox" unique_id=1677686316]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+
+[node name="RequirementLabel" type="RichTextLabel" parent="CardMargin/CardVBox" unique_id=2142045244]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+
+[node name="BuyButton" type="Button" parent="CardMargin/CardVBox" unique_id=442475144]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2

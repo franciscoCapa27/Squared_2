@@ -133,23 +133,109 @@ func _apply_random_trait_to_random_square() -> void:
 func has_vertex_upgrade(upgrade_id: String) -> bool:
 	return bool(unlocked_vertex_upgrades.get(upgrade_id, false))
 
+func get_vertex_upgrade_purchase_count(upgrade_id: String) -> int:
+	var value: Variant = unlocked_vertex_upgrades.get(upgrade_id, 0)
+
+	if value is bool:
+		return 1 if bool(value) else 0
+
+	return int(value)
+
 func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
-	match upgrade_id:
-		"unlock_first_generator":
-			return vertices >= 1 and not has_vertex_upgrade(upgrade_id)
-		_:
+	var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
+
+	if upgrade == null:
+		return false
+
+	if vertices < upgrade.cost_vertices:
+		return false
+
+	if not upgrade.requirements_are_met(
+		prestige_count,
+		grid_size,
+		unlocked_vertex_upgrades
+	):
+		return false
+
+	var purchase_count: int = get_vertex_upgrade_purchase_count(upgrade_id)
+
+	if not upgrade.is_repeatable and purchase_count > 0:
+		return false
+
+	if upgrade.is_repeatable and upgrade.max_purchases > 0:
+		if purchase_count >= upgrade.max_purchases:
 			return false
+
+	return true
 
 func buy_vertex_upgrade(upgrade_id: String) -> bool:
 	if not can_buy_vertex_upgrade(upgrade_id):
 		return false
 
-	match upgrade_id:
-		"unlock_first_generator":
-			vertices -= 1
-			unlocked_vertex_upgrades[upgrade_id] = true
-			PassiveSystem.unlock_first_generator()
-			EventBus.vertices_changed.emit(vertices)
-			return true
+	var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
+
+	if upgrade == null:
+		return false
+
+	vertices -= upgrade.cost_vertices
+
+	_apply_vertex_upgrade_effects(upgrade)
+
+	var purchase_count: int = get_vertex_upgrade_purchase_count(upgrade_id)
+	unlocked_vertex_upgrades[upgrade_id] = purchase_count + 1
+
+	EventBus.vertices_changed.emit(vertices)
+	EventBus.story_message.emit("%s unlocked." % upgrade.display_name)
+
+	return true
+
+func _apply_vertex_upgrade_effects(upgrade: VertexUpgradeDefinition) -> void:
+	for effect_iter: VertexUpgradeEffect in upgrade.effects:
+		_apply_vertex_upgrade_effect(effect_iter)
+
+func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void:
+	if effect_iter == null:
+		return
+
+	match effect_iter.effect_type:
+		VertexUpgradeEffect.EffectType.UNLOCK_PASSIVE_GENERATOR:
+			_apply_unlock_passive_generator_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.GLOBAL_STAT_MULTIPLIER:
+			_apply_global_stat_multiplier_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.UNLOCK_MECHANIC:
+			_apply_unlock_mechanic_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.ADD_STARTING_SQUARES:
+			_apply_add_starting_squares_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.UNLOCK_TAB:
+			_apply_unlock_tab_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.SCRIPT_HOOK:
+			_apply_script_hook_effect(effect_iter)
 		_:
-			return false
+			push_warning("Unhandled vertex upgrade effect.")
+
+func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) -> void:
+	match effect_iter.target_id:
+		"first_generator":
+			PassiveSystem.unlock_first_generator()
+		_:
+			push_warning("Unknown passive generator id: %s" % effect_iter.target_id)
+
+func _apply_global_stat_multiplier_effect(effect_iter: VertexUpgradeEffect) -> void:
+	# Placeholder for future permanent effects, e.g. all square base value x1.1.
+	push_warning("GLOBAL_STAT_MULTIPLIER effect not implemented yet: %s" % effect_iter.target_stat)
+
+func _apply_unlock_mechanic_effect(effect_iter: VertexUpgradeEffect) -> void:
+	# Placeholder for future mechanics.
+	push_warning("UNLOCK_MECHANIC effect not implemented yet: %s" % effect_iter.mechanic_id)
+
+func _apply_add_starting_squares_effect(effect_iter: VertexUpgradeEffect) -> void:
+	# Placeholder. Later this should affect run initialization.
+	push_warning("ADD_STARTING_SQUARES effect not implemented yet.")
+
+func _apply_unlock_tab_effect(effect_iter: VertexUpgradeEffect) -> void:
+	# Placeholder. Later tabs can be unlocked dynamically.
+	push_warning("UNLOCK_TAB effect not implemented yet: %s" % effect_iter.target_id)
+
+func _apply_script_hook_effect(effect_iter: VertexUpgradeEffect) -> void:
+	# Escape hatch for weird one-off effects.
+	push_warning("SCRIPT_HOOK effect not implemented yet: %s" % effect_iter.script_hook_id)
