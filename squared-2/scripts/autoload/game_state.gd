@@ -8,6 +8,8 @@ var grid_size: int = 1
 var square_ids: Array[String] = ["A1"]
 var squares_by_id: Dictionary = {}
 
+var unlocked_vertex_upgrades: Dictionary = {}
+
 func _ready() -> void:
 	_create_initial_grid()
 
@@ -25,6 +27,17 @@ func get_square(square_id: String) -> SquareData:
 func add_squares(amount: float) -> void:
 	squares += amount
 	EventBus.squares_changed.emit(squares)
+
+func spend_squares(amount: float) -> bool:
+	if amount <= 0.0:
+		return true
+
+	if squares < amount:
+		return false
+
+	squares -= amount
+	EventBus.squares_changed.emit(squares)
+	return true
 
 func click_square(square_id: String) -> void:
 	var square_data := get_square(square_id)
@@ -54,6 +67,8 @@ func prestige() -> void:
 	vertices += gain
 	prestige_count += 1
 	squares = 0.0
+	
+	PassiveSystem.reset_run_state_on_prestige()
 
 	if prestige_count == 1:
 		_unlock_grid_size_2()
@@ -114,3 +129,27 @@ func _apply_random_trait_to_random_square() -> void:
 			trait_definition.display_name
 		]
 	)
+
+func has_vertex_upgrade(upgrade_id: String) -> bool:
+	return bool(unlocked_vertex_upgrades.get(upgrade_id, false))
+
+func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
+	match upgrade_id:
+		"unlock_first_generator":
+			return vertices >= 1 and not has_vertex_upgrade(upgrade_id)
+		_:
+			return false
+
+func buy_vertex_upgrade(upgrade_id: String) -> bool:
+	if not can_buy_vertex_upgrade(upgrade_id):
+		return false
+
+	match upgrade_id:
+		"unlock_first_generator":
+			vertices -= 1
+			unlocked_vertex_upgrades[upgrade_id] = true
+			PassiveSystem.unlock_first_generator()
+			EventBus.vertices_changed.emit(vertices)
+			return true
+		_:
+			return false

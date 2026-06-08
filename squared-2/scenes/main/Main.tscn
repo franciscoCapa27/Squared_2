@@ -66,27 +66,149 @@ size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Prestiges: 0"
 
+[node name="CenterTabs" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=1739420909]
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="GridTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=412881383]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Grid"
+
+[node name="VertexShopTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=672470492]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Vertices"
+
+[node name="OptionsTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=446283557]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+disabled = true
+text = "Options"
+
+[node name="AchievementsTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=985705785]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+disabled = true
+text = "Achievements"
+
 [node name="Content" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=192197899]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="GridPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=1174857511]
+[node name="PassivePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=812047721]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+
+[node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/PassivePanel" unique_id=245565415]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PassiveVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin" unique_id=494201095]
+layout_mode = 2
+
+[node name="PassiveTitle" type="Label" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622]
+layout_mode = 2
+text = "Passives"
+
+[node name="PassiveStatusLabel" type="RichTextLabel" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1792483798]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+size_flags_vertical = 0
+bbcode_enabled = true
+
+[node name="PassiveProgressBar" type="ProgressBar" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=282965421]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+
+[node name="UpgradeFirstGeneratorButton" type="Button" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1863856759]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+disabled = true
+text = "Buy Level 1 — 10 Squares"
+
+[node name="CenterPageRoot" type="Control" parent="RootMargin/MainVbox/Content" unique_id=1585931205]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-mouse_filter = 2
 
-[node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/GridPanel" unique_id=847906112]
+[node name="GridPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1054179572]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage" unique_id=847906112]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/GridPanel/GridCenter" unique_id=638752931]
+[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter" unique_id=638752931]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
+
+[node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1217666360]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage" unique_id=1648899683]
+layout_mode = 2
+
+[node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
+layout_mode = 2
+
+[node name="VertexShopTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
+layout_mode = 2
+text = "Vertex Shop"
+
+[node name="UnlockFirstGeneratorButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1770178629]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unlock First Generator — 1 Vertex"
+
+[node name="VertexShopDescription" type="RichTextLabel" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=734586641]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+bbcode_enabled = true
+text = "Spend Vertices on permanent systems."
+fit_content = true
 
 [node name="SidePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
 custom_minimum_size = Vector2(320, 0)
