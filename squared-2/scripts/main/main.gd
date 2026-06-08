@@ -13,18 +13,19 @@ extends Control
 @onready var options_tab_button: Button = %OptionsTabButton
 @onready var achievements_tab_button: Button = %AchievementsTabButton
 
-@onready var passive_status_label: RichTextLabel = %PassiveStatusLabel
-@onready var passive_progress_bar: ProgressBar = %PassiveProgressBar
-@onready var upgrade_first_generator_button: Button = %UpgradeFirstGeneratorButton
-
 @onready var grid_page: Control = %GridPage
 @onready var vertex_shop_page: Control = %VertexShopPage
 
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
 @onready var vertex_upgrade_list: VBoxContainer = %VertexUpgradeList
+@onready var passive_generator_list: VBoxContainer = %PassiveGeneratorList
+
+var passive_generator_card_scene: PackedScene = preload("res://scenes/ui/PassiveGeneratorCard.tscn")
+var passive_generator_cards: Dictionary = {}
 
 var vertex_upgrade_card_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeCard.tscn")
 var vertex_upgrade_cards: Dictionary = {}
+
 var square_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var selected_square_id: String = ""
 
@@ -38,8 +39,6 @@ func _ready() -> void:
 	prestige_button.pressed.connect(_on_prestige_pressed)
 	grid_tab_button.pressed.connect(_on_grid_tab_pressed)
 	vertex_shop_tab_button.pressed.connect(_on_vertex_shop_tab_pressed)
-
-	upgrade_first_generator_button.pressed.connect(_on_upgrade_first_generator_pressed)
 
 	PassiveSystem.passive_state_changed.connect(_refresh_passive_panel)
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
@@ -178,85 +177,59 @@ func _on_unlock_first_generator_pressed() -> void:
 		_refresh_passive_panel()
 		
 func _refresh_passive_panel() -> void:
-	var generator_data: PassiveGeneratorData = PassiveSystem.first_generator
+	var unlocked_generators: Array[PassiveGeneratorInstance] = PassiveSystem.get_unlocked_generator_instances()
 
-	if not generator_data.is_unlocked:
-		passive_status_label.visible = true
-		passive_status_label.text = (
-			"No passive systems unlocked.\n\n"
-			+ "Prestige and spend Vertices to awaken automation."
-		)
-		passive_progress_bar.value = 0.0
-		passive_progress_bar.visible = false
-		upgrade_first_generator_button.visible = false
+	if unlocked_generators.is_empty():
+		if passive_generator_cards.is_empty() and passive_generator_list.get_child_count() > 0:
+			return
+
+		_rebuild_passive_generator_list()
 		return
 
-	upgrade_first_generator_button.visible = true
-	upgrade_first_generator_button.disabled = not PassiveSystem.can_upgrade_first_generator()
-
-	if generator_data.level >= generator_data.max_level:
-		upgrade_first_generator_button.text = "Max Level"
-	else:
-		upgrade_first_generator_button.text = "Buy Level %s — %s Squares" % [
-			generator_data.level + 1,
-			generator_data.get_next_level_cost()
-		]
-
-	if not generator_data.is_active():
-		passive_progress_bar.value = 0.0
-		passive_progress_bar.visible = false
-
-		passive_status_label.text = (
-			"%s\n" % generator_data.display_name
-			+ "Unlocked, inactive this run.\n\n"
-			+ "Level: 0 / %s\n" % generator_data.max_level
-			+ "Buy Level 1 to start passive generation.\n\n"
-			+ "Level 1:\n"
-			+ "- Interval: %.2fs\n" % generator_data.base_interval_seconds
-			+ "- Extraction: %.0f%%\n\n" % (generator_data.base_extraction_rate * 100.0)
-			+ "Run levels reset on prestige."
-		)
+	if unlocked_generators.size() != passive_generator_cards.size():
+		_rebuild_passive_generator_list()
 		return
 
-	passive_progress_bar.visible = true
-	passive_progress_bar.value = generator_data.get_progress_ratio()
+	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
+		var card: PassiveGeneratorCard = passive_generator_cards.get(generator_instance.get_id())
 
-	var last_pulse_text: String = "None"
+		if card == null:
+			_rebuild_passive_generator_list()
+			return
 
-	if generator_data.last_target_square_id != "":
-		last_pulse_text = "+%.2f Squares from %s" % [
-			generator_data.last_payout,
-			generator_data.last_target_square_id
-		]
-
-	var upgrade_text: String = "Max level reached"
-
-	if generator_data.level < generator_data.max_level:
-		upgrade_text = "Next Level Cost: %s Squares" % generator_data.get_next_level_cost()
-
-	passive_status_label.text = (
-		"%s\n" % generator_data.display_name
-		+ "Level: %s / %s\n\n" % [
-			generator_data.level,
-			generator_data.max_level
-		]
-		+ "Interval: %.2fs\n" % generator_data.get_current_interval_seconds()
-		+ "Extraction: %.0f%%\n" % (generator_data.get_current_extraction_rate() * 100.0)
-		+ "Targeting: Random square\n\n"
-		+ "Last Pulse: %s\n" % last_pulse_text
-		+ "Lifetime Pulses This Run: %s\n" % generator_data.lifetime_pulses
-		+ "Squares This Run: %.2f\n\n" % generator_data.lifetime_squares_generated
-		+ upgrade_text
-	)
+		card.refresh()
 
 func _on_passive_pulsed(generator_id: String, square_id: String, payout: float) -> void:
 	_refresh_passive_panel()
 
 	if selected_square_id != "":
 		_show_square_details(selected_square_id)
+func _rebuild_passive_generator_list() -> void:
+	for child: Node in passive_generator_list.get_children():
+		child.queue_free()
 
-func _on_upgrade_first_generator_pressed() -> void:
-	var upgraded: bool = PassiveSystem.upgrade_first_generator()
+	passive_generator_cards.clear()
+
+	var unlocked_generators: Array[PassiveGeneratorInstance] = PassiveSystem.get_unlocked_generator_instances()
+
+	if unlocked_generators.is_empty():
+		var empty_label := Label.new()
+		empty_label.text = "No passive systems unlocked.\n\nPrestige and spend Vertices to awaken automation."
+		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		passive_generator_list.add_child(empty_label)
+		return
+
+	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
+		var card: PassiveGeneratorCard = passive_generator_card_scene.instantiate() as PassiveGeneratorCard
+		passive_generator_list.add_child(card)
+
+		card.setup(generator_instance.get_id())
+		card.upgrade_requested.connect(_on_passive_generator_upgrade_requested)
+
+		passive_generator_cards[generator_instance.get_id()] = card
+
+func _on_passive_generator_upgrade_requested(generator_id: String) -> void:
+	var upgraded: bool = PassiveSystem.upgrade_generator(generator_id)
 
 	if upgraded:
 		_refresh_passive_panel()

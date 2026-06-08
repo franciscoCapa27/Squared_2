@@ -133,25 +133,11 @@ layout_mode = 2
 layout_mode = 2
 text = "Passives"
 
-[node name="PassiveStatusLabel" type="RichTextLabel" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1792483798]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 180)
-layout_mode = 2
-size_flags_vertical = 0
-bbcode_enabled = true
-
-[node name="PassiveProgressBar" type="ProgressBar" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=282965421]
+[node name="PassiveGeneratorList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1387505987]
 unique_name_in_owner = true
 layout_mode = 2
-max_value = 1.0
-
-[node name="UpgradeFirstGeneratorButton" type="Button" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1863856759]
-unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-disabled = true
-text = "Buy Level 1 — 10 Squares"
+size_flags_vertical = 3
+theme_override_constants/separation = 12
 
 [node name="CenterPageRoot" type="Control" parent="RootMargin/MainVbox/Content" unique_id=1585931205]
 unique_name_in_owner = true

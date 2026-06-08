@@ -215,11 +215,11 @@ func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void:
 			push_warning("Unhandled vertex upgrade effect.")
 
 func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) -> void:
-	match effect_iter.target_id:
-		"first_generator":
-			PassiveSystem.unlock_first_generator()
-		_:
-			push_warning("Unknown passive generator id: %s" % effect_iter.target_id)
+	if effect_iter.target_id.strip_edges() == "":
+		push_warning("UNLOCK_PASSIVE_GENERATOR missing target_id.")
+		return
+
+	PassiveSystem.unlock_generator(effect_iter.target_id)
 
 func _apply_global_stat_multiplier_effect(effect_iter: VertexUpgradeEffect) -> void:
 	if effect_iter.target_stat.strip_edges() == "":

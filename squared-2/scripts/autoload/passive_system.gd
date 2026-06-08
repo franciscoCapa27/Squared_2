@@ -3,91 +3,159 @@ extends Node
 signal passive_state_changed()
 signal passive_pulsed(generator_id: String, square_id: String, payout: float)
 
-var first_generator: PassiveGeneratorData = PassiveGeneratorData.new()
+var generators_by_id: Dictionary = {}
+var generator_order: Array[String] = []
+
+func _ready() -> void:
+	_initialize_generators()
 
 func _process(delta: float) -> void:
-	if not first_generator.is_active():
-		return
+	for generator_id: String in generator_order:
+		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
 
-	first_generator.elapsed_seconds += delta
+		if generator_instance == null:
+			continue
 
-	var interval_seconds: float = first_generator.get_current_interval_seconds()
+		if not generator_instance.is_active():
+			continue
 
-	if first_generator.elapsed_seconds >= interval_seconds:
-		first_generator.elapsed_seconds -= interval_seconds
-		_pulse_generator(first_generator)
+		_tick_generator(generator_instance, delta)
 
 	passive_state_changed.emit()
 
-func unlock_first_generator() -> void:
-	if first_generator.is_unlocked:
+func _initialize_generators() -> void:
+	generators_by_id.clear()
+	generator_order.clear()
+
+	for generator_definition: PassiveGeneratorDefinition in PassiveGeneratorDatabase.get_all_generators():
+		var generator_instance := PassiveGeneratorInstance.new(generator_definition)
+
+		generators_by_id[generator_definition.id] = generator_instance
+		generator_order.append(generator_definition.id)
+
+	passive_state_changed.emit()
+
+func get_generator_instance(generator_id: String) -> PassiveGeneratorInstance:
+	return generators_by_id.get(generator_id)
+
+func get_all_generator_instances() -> Array[PassiveGeneratorInstance]:
+	var instances: Array[PassiveGeneratorInstance] = []
+
+	for generator_id: String in generator_order:
+		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+		if generator_instance != null:
+			instances.append(generator_instance)
+
+	return instances
+
+func get_unlocked_generator_instances() -> Array[PassiveGeneratorInstance]:
+	var instances: Array[PassiveGeneratorInstance] = []
+
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		if generator_instance.is_unlocked:
+			instances.append(generator_instance)
+
+	return instances
+
+func unlock_generator(generator_id: String) -> void:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+	if generator_instance == null:
+		push_warning("Unknown passive generator id: %s" % generator_id)
 		return
 
-	first_generator.unlock_permanently()
+	if generator_instance.is_unlocked:
+		return
 
-	EventBus.story_message.emit("The first generator is now available.")
+	generator_instance.unlock_permanently()
+
+	EventBus.story_message.emit("%s is now available." % generator_instance.get_display_name())
 	passive_state_changed.emit()
 
 func reset_run_state_on_prestige() -> void:
-	if first_generator.is_unlocked:
-		first_generator.reset_run_state()
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		if generator_instance.is_unlocked:
+			generator_instance.reset_run_state()
 
 	passive_state_changed.emit()
 
-func can_upgrade_first_generator() -> bool:
-	return first_generator.can_level_up(GameState.squares)
+func can_upgrade_generator(generator_id: String) -> bool:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
 
-func upgrade_first_generator() -> bool:
-	if not can_upgrade_first_generator():
+	if generator_instance == null:
 		return false
 
-	var cost: int = first_generator.get_next_level_cost()
+	return generator_instance.can_level_up(GameState.squares)
+
+func upgrade_generator(generator_id: String) -> bool:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+	if generator_instance == null:
+		return false
+
+	if not generator_instance.can_level_up(GameState.squares):
+		return false
+
+	var cost: int = generator_instance.get_next_level_cost()
 	var spent: bool = GameState.spend_squares(float(cost))
 
 	if not spent:
 		return false
 
-	var upgraded: bool = first_generator.level_up()
+	var upgraded: bool = generator_instance.level_up()
 
 	if upgraded:
-		if first_generator.level == 1:
-			EventBus.story_message.emit("The first generator awakens.")
+		if generator_instance.level == 1:
+			EventBus.story_message.emit("%s awakens." % generator_instance.get_display_name())
 		else:
 			EventBus.story_message.emit(
 				"%s reached Level %s." % [
-					first_generator.display_name,
-					first_generator.level
+					generator_instance.get_display_name(),
+					generator_instance.level
 				]
 			)
 
 	passive_state_changed.emit()
 	return upgraded
 
-func _pulse_generator(generator_data: PassiveGeneratorData) -> void:
-	var square_data: SquareData = _select_target_square(generator_data)
+func _tick_generator(generator_instance: PassiveGeneratorInstance, delta: float) -> void:
+	generator_instance.elapsed_seconds += delta
+
+	var interval_seconds: float = generator_instance.get_current_interval_seconds()
+
+	if generator_instance.elapsed_seconds >= interval_seconds:
+		generator_instance.elapsed_seconds -= interval_seconds
+		_pulse_generator(generator_instance)
+
+func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void:
+	var square_data: SquareData = _select_target_square(generator_instance)
 
 	if square_data == null:
 		return
 
 	var manual_payout: float = SquareCalculator.calculate_manual_payout(square_data)
-	var passive_payout: float = manual_payout * generator_data.get_current_extraction_rate()
+	var passive_payout: float = manual_payout * generator_instance.get_current_extraction_rate()
 
 	square_data.record_passive_click(passive_payout)
 	GameState.add_squares(passive_payout)
 
-	generator_data.record_pulse(square_data.id, passive_payout)
+	generator_instance.record_pulse(square_data.id, passive_payout)
 
-	passive_pulsed.emit(generator_data.id, square_data.id, passive_payout)
+	passive_pulsed.emit(generator_instance.get_id(), square_data.id, passive_payout)
 
-func _select_target_square(generator_data: PassiveGeneratorData) -> SquareData:
-	match generator_data.targeting_mode:
-		PassiveGeneratorData.TargetingMode.RANDOM_SQUARE:
+func _select_target_square(generator_instance: PassiveGeneratorInstance) -> SquareData:
+	if generator_instance == null or generator_instance.definition == null:
+		return null
+
+	match generator_instance.definition.targeting_mode:
+		PassiveGeneratorDefinition.TargetingMode.RANDOM_SQUARE:
 			return _select_random_square()
-		PassiveGeneratorData.TargetingMode.HIGHEST_PAYOUT:
+		PassiveGeneratorDefinition.TargetingMode.HIGHEST_PAYOUT:
 			return _select_highest_payout_square()
-		PassiveGeneratorData.TargetingMode.LOWEST_RESPAWN:
+		PassiveGeneratorDefinition.TargetingMode.LOWEST_RESPAWN:
 			return _select_lowest_respawn_square()
-		PassiveGeneratorData.TargetingMode.SELECTED_SQUARE:
+		PassiveGeneratorDefinition.TargetingMode.SELECTED_SQUARE:
 			return _select_random_square()
 		_:
 			return _select_random_square()

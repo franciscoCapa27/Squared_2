@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PassiveGeneratorDefinition" format=3 uid="uid://cee210xeygtux"]
+
+[ext_resource type="Script" uid="uid://dvyamllgu87kt" path="res://scripts/resources/passive_generator_definition.gd" id="1_qxj05"]
+
+[resource]
+script = ExtResource("1_qxj05")
+id = "value_harvester"
+display_name = "Value Harvester"
+description = "A focused passive generator that always targets the square with the highest current manual payout."
+sort_order = 20
+base_interval_seconds = 4.0
+minimum_interval_seconds = 0.75
+base_extraction_rate = 0.5
+extraction_per_level = 0.015
+maximum_extraction_rate = 3.0
+level_cost_multiplier = 1.22
+targeting_mode = 1
+metadata/_custom_type_script = "uid://dvyamllgu87kt"
