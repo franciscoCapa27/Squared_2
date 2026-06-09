@@ -1,7 +1,9 @@
 [gd_scene format=3 uid="uid://jdev0mw5y4y1"]
 
 [ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
+[ext_resource type="Script" uid="uid://blvtlqs2ve4y7" path="res://scripts/ui/passive_panel.gd" id="2_gyg6b"]
 [ext_resource type="Script" uid="uid://bg5n4yaoqsv0k" path="res://scripts/ui/options_page.gd" id="2_nha0i"]
+[ext_resource type="Script" uid="uid://dtcxo6g4t8ui" path="res://scripts/ui/vertex_shop_page.gd" id="3_dc040"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -119,6 +121,7 @@ custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 mouse_filter = 2
+script = ExtResource("2_gyg6b")
 
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/PassivePanel" unique_id=245565415]
 layout_mode = 2
@@ -173,6 +176,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_dc040")
 
 [node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage" unique_id=1648899683]
 layout_mode = 2

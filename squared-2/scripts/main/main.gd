@@ -14,19 +14,10 @@ extends Control
 @onready var achievements_tab_button: Button = %AchievementsTabButton
 
 @onready var grid_page: Control = %GridPage
-@onready var vertex_shop_page: Control = %VertexShopPage
-
-@onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
-@onready var vertex_upgrade_list: VBoxContainer = %VertexUpgradeList
-@onready var passive_generator_list: VBoxContainer = %PassiveGeneratorList
 
 @onready var options_page: OptionsPage = %OptionsPage
-
-var passive_generator_card_scene: PackedScene = preload("res://scenes/ui/PassiveGeneratorCard.tscn")
-var passive_generator_cards: Dictionary = {}
-
-var vertex_upgrade_card_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeCard.tscn")
-var vertex_upgrade_cards: Dictionary = {}
+@onready var passive_panel: PassivePanel = %PassivePanel
+@onready var vertex_shop_page: VertexShopPage = %VertexShopPage
 
 var square_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var selected_square_id: String = ""
@@ -41,8 +32,8 @@ func _ready() -> void:
 	prestige_button.pressed.connect(_on_prestige_pressed)
 	grid_tab_button.pressed.connect(_on_grid_tab_pressed)
 	vertex_shop_tab_button.pressed.connect(_on_vertex_shop_tab_pressed)
-
-	PassiveSystem.passive_state_changed.connect(_refresh_passive_panel)
+	vertex_shop_page.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
+	passive_panel.passive_generator_upgraded.connect(_on_passive_generator_upgraded)
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
 	
 	options_tab_button.pressed.connect(_on_options_tab_pressed)
@@ -160,37 +151,8 @@ func _on_vertex_shop_tab_pressed() -> void:
 	_show_center_page("vertex_shop")
 
 func _refresh_vertex_shop() -> void:
-	_rebuild_vertex_upgrade_list()
+	vertex_shop_page.refresh()
 	
-func _rebuild_vertex_upgrade_list() -> void:
-	for child in vertex_upgrade_list.get_children():
-		child.queue_free()
-
-	vertex_upgrade_cards.clear()
-
-	var visible_upgrades: Array[VertexUpgradeDefinition] = VertexUpgradeDatabase.get_visible_upgrades()
-
-	if visible_upgrades.is_empty():
-		vertex_shop_description.text = "No Vertex upgrades available yet."
-		return
-
-	vertex_shop_description.text = "Spend Vertices on permanent systems."
-
-	for upgrade: VertexUpgradeDefinition in visible_upgrades:
-		var card : VertexUpgradeCard = vertex_upgrade_card_scene.instantiate() as VertexUpgradeCard 
-		vertex_upgrade_list.add_child(card)
-
-		card.setup(upgrade)
-		card.buy_requested.connect(_on_vertex_upgrade_buy_requested)
-
-		vertex_upgrade_cards[upgrade.id] = card
-
-func _on_vertex_upgrade_buy_requested(upgrade_id: String) -> void:
-	var bought: bool = GameState.buy_vertex_upgrade(upgrade_id)
-
-	if bought:
-		_refresh_vertex_shop()
-		_refresh_passive_panel()
 func _on_unlock_first_generator_pressed() -> void:
 	var bought: bool = GameState.buy_vertex_upgrade("unlock_first_generator")
 
@@ -199,64 +161,12 @@ func _on_unlock_first_generator_pressed() -> void:
 		_refresh_passive_panel()
 		
 func _refresh_passive_panel() -> void:
-	var unlocked_generators: Array[PassiveGeneratorInstance] = PassiveSystem.get_unlocked_generator_instances()
-
-	if unlocked_generators.is_empty():
-		if passive_generator_cards.is_empty() and passive_generator_list.get_child_count() > 0:
-			return
-
-		_rebuild_passive_generator_list()
-		return
-
-	if unlocked_generators.size() != passive_generator_cards.size():
-		_rebuild_passive_generator_list()
-		return
-
-	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
-		var card: PassiveGeneratorCard = passive_generator_cards.get(generator_instance.get_id())
-
-		if card == null:
-			_rebuild_passive_generator_list()
-			return
-
-		card.refresh()
+	passive_panel.refresh()
 
 func _on_passive_pulsed(generator_id: String, square_id: String, payout: float) -> void:
 	_refresh_passive_panel()
 
-	if selected_square_id != "":
-		_show_square_details(selected_square_id)
-func _rebuild_passive_generator_list() -> void:
-	for child: Node in passive_generator_list.get_children():
-		child.queue_free()
-
-	passive_generator_cards.clear()
-
-	var unlocked_generators: Array[PassiveGeneratorInstance] = PassiveSystem.get_unlocked_generator_instances()
-
-	if unlocked_generators.is_empty():
-		var empty_label := Label.new()
-		empty_label.text = "No passive systems unlocked.\n\nPrestige and spend Vertices to awaken automation."
-		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		passive_generator_list.add_child(empty_label)
-		return
-
-	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
-		var card: PassiveGeneratorCard = passive_generator_card_scene.instantiate() as PassiveGeneratorCard
-		passive_generator_list.add_child(card)
-
-		card.setup(generator_instance.get_id())
-		card.upgrade_requested.connect(_on_passive_generator_upgrade_requested)
-
-		passive_generator_cards[generator_instance.get_id()] = card
-
-func _on_passive_generator_upgrade_requested(generator_id: String) -> void:
-	var upgraded: bool = PassiveSystem.upgrade_generator(generator_id)
-
-	if upgraded:
-		_refresh_passive_panel()
-
-	if selected_square_id != "":
+	if selected_square_id == square_id:
 		_show_square_details(selected_square_id)
 		
 func _on_save_loaded() -> void:
@@ -264,7 +174,6 @@ func _on_save_loaded() -> void:
 	
 func _on_options_save_imported() -> void:
 	_refresh_all_ui()
-
 
 func _on_options_hard_reset_completed() -> void:
 	selected_square_id = ""
@@ -276,6 +185,20 @@ func _refresh_all_ui() -> void:
 	_refresh_vertex_shop()
 	_refresh_passive_panel()
 	options_page.refresh()
+
+	if selected_square_id != "":
+		_show_square_details(selected_square_id)
+
+func _on_vertex_upgrade_purchased(upgrade_id: String) -> void:
+	_refresh_vertex_shop()
+	_refresh_passive_panel()
+
+	if selected_square_id != "":
+		_show_square_details(selected_square_id)
+
+
+func _on_passive_generator_upgraded(generator_id: String) -> void:
+	_refresh_passive_panel()
 
 	if selected_square_id != "":
 		_show_square_details(selected_square_id)
