@@ -142,3 +142,45 @@ func record_pulse(target_square_id: String, payout: float) -> void:
 	last_payout = payout
 	lifetime_squares_generated += payout
 	lifetime_pulses += 1
+
+
+func to_save_dict() -> Dictionary:
+	var definition_id: String = ""
+
+	if definition != null:
+		definition_id = definition.id
+
+	return {
+		"definition_id": definition_id,
+		"is_unlocked": is_unlocked,
+		"level": level,
+		"self_prestige_level": self_prestige_level,
+		"can_self_prestige": can_self_prestige,
+		"elapsed_seconds": elapsed_seconds,
+		"last_target_square_id": last_target_square_id,
+		"last_payout": last_payout,
+		"lifetime_squares_generated": lifetime_squares_generated,
+		"lifetime_pulses": lifetime_pulses
+	}
+
+func apply_save_dict(data: Dictionary) -> void:
+	is_unlocked = bool(data.get("is_unlocked", false))
+	level = int(data.get("level", 0))
+	self_prestige_level = int(data.get("self_prestige_level", 0))
+	can_self_prestige = bool(data.get("can_self_prestige", false))
+	elapsed_seconds = float(data.get("elapsed_seconds", 0.0))
+	last_target_square_id = str(data.get("last_target_square_id", ""))
+	last_payout = float(data.get("last_payout", 0.0))
+	lifetime_squares_generated = float(data.get("lifetime_squares_generated", 0.0))
+	lifetime_pulses = int(data.get("lifetime_pulses", 0))
+
+func reset_to_new_game() -> void:
+	is_unlocked = false
+	level = 0
+	self_prestige_level = 0
+	can_self_prestige = false
+	elapsed_seconds = 0.0
+	last_target_square_id = ""
+	last_payout = 0.0
+	lifetime_squares_generated = 0.0
+	lifetime_pulses = 0

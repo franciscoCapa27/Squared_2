@@ -431,3 +431,122 @@ func get_trait_effect_summary_text() -> String:
 			lines.append("  - %s" % effect_line)
 
 	return "\n".join(lines)
+
+
+func to_save_dict() -> Dictionary:
+	var trait_save_data: Array[Dictionary] = []
+
+	for trait_iter: TraitInstance in traits:
+		trait_save_data.append(trait_iter.to_save_dict())
+
+	return {
+		"id": id,
+		"coordinate": coordinate,
+		"display_name": display_name,
+		"grid_x": grid_x,
+		"grid_y": grid_y,
+		"created_at_prestige": created_at_prestige,
+		"created_at_grid_tier": created_at_grid_tier,
+		"traits": trait_save_data,
+		"permanent_tags": permanent_tags,
+		"temporary_tags": temporary_tags,
+		"status_effects": status_effects,
+		"base_value": base_value,
+		"base_respawn_time": base_respawn_time,
+		"base_manual_multiplier": base_manual_multiplier,
+		"base_passive_multiplier": base_passive_multiplier,
+		"base_crit_chance": base_crit_chance,
+		"base_crit_multiplier": base_crit_multiplier,
+		"current_cooldown": current_cooldown,
+		"current_charge": current_charge,
+		"temporary_value_multiplier": temporary_value_multiplier,
+		"temporary_speed_multiplier": temporary_speed_multiplier,
+		"run_squares_generated": run_squares_generated,
+		"run_manual_clicks": run_manual_clicks,
+		"run_passive_clicks": run_passive_clicks,
+		"lifetime_squares_generated": lifetime_squares_generated,
+		"lifetime_manual_clicks": lifetime_manual_clicks,
+		"lifetime_passive_clicks": lifetime_passive_clicks,
+		"times_traited": times_traited,
+		"times_selected_for_prestige": times_selected_for_prestige,
+		"highest_single_payout": highest_single_payout,
+		"can_receive_traits": can_receive_traits,
+		"is_locked_from_random_trait": is_locked_from_random_trait,
+		"is_favored_for_trait": is_favored_for_trait,
+		"can_be_swapped": can_be_swapped,
+		"is_anchored": is_anchored,
+		"is_corrupted": is_corrupted
+	}
+
+static func from_save_dict(data: Dictionary) -> SquareData:
+	var square_data := SquareData.new(
+		str(data.get("id", "")),
+		int(data.get("grid_x", 0)),
+		int(data.get("grid_y", 0))
+	)
+
+	square_data.coordinate = str(data.get("coordinate", square_data.id))
+	square_data.display_name = str(data.get("display_name", "Square %s" % square_data.coordinate))
+	square_data.created_at_prestige = int(data.get("created_at_prestige", 0))
+	square_data.created_at_grid_tier = int(data.get("created_at_grid_tier", 0))
+
+	square_data.traits.clear()
+
+	var trait_save_data: Array = data.get("traits", [])
+
+	for trait_data_variant: Variant in trait_save_data:
+		if not trait_data_variant is Dictionary:
+			continue
+
+		var trait_instance: TraitInstance = TraitInstance.from_save_dict(trait_data_variant as Dictionary)
+		square_data.traits.append(trait_instance)
+
+	square_data.permanent_tags = _string_array_from_variant(data.get("permanent_tags", []))
+	square_data.temporary_tags = _string_array_from_variant(data.get("temporary_tags", []))
+	square_data.status_effects = _string_array_from_variant(data.get("status_effects", []))
+
+	square_data.base_value = float(data.get("base_value", 1.0))
+	square_data.base_respawn_time = float(data.get("base_respawn_time", 1.0))
+	square_data.base_manual_multiplier = float(data.get("base_manual_multiplier", 1.0))
+	square_data.base_passive_multiplier = float(data.get("base_passive_multiplier", 0.2))
+	square_data.base_crit_chance = float(data.get("base_crit_chance", 0.0))
+	square_data.base_crit_multiplier = float(data.get("base_crit_multiplier", 2.0))
+
+	square_data.current_cooldown = float(data.get("current_cooldown", 0.0))
+	square_data.current_charge = float(data.get("current_charge", 0.0))
+	square_data.temporary_value_multiplier = float(data.get("temporary_value_multiplier", 1.0))
+	square_data.temporary_speed_multiplier = float(data.get("temporary_speed_multiplier", 1.0))
+
+	square_data.run_squares_generated = float(data.get("run_squares_generated", 0.0))
+	square_data.run_manual_clicks = int(data.get("run_manual_clicks", 0))
+	square_data.run_passive_clicks = int(data.get("run_passive_clicks", 0))
+
+	square_data.lifetime_squares_generated = float(data.get("lifetime_squares_generated", 0.0))
+	square_data.lifetime_manual_clicks = int(data.get("lifetime_manual_clicks", 0))
+	square_data.lifetime_passive_clicks = int(data.get("lifetime_passive_clicks", 0))
+	square_data.times_traited = int(data.get("times_traited", 0))
+	square_data.times_selected_for_prestige = int(data.get("times_selected_for_prestige", 0))
+	square_data.highest_single_payout = float(data.get("highest_single_payout", 0.0))
+
+	square_data.can_receive_traits = bool(data.get("can_receive_traits", true))
+	square_data.is_locked_from_random_trait = bool(data.get("is_locked_from_random_trait", false))
+	square_data.is_favored_for_trait = bool(data.get("is_favored_for_trait", false))
+	square_data.can_be_swapped = bool(data.get("can_be_swapped", false))
+	square_data.is_anchored = bool(data.get("is_anchored", false))
+	square_data.is_corrupted = bool(data.get("is_corrupted", false))
+
+	square_data._rebuild_tags()
+	square_data._rebuild_visual_profile()
+
+	return square_data
+
+static func _string_array_from_variant(value: Variant) -> Array[String]:
+	var result: Array[String] = []
+
+	if not value is Array:
+		return result
+
+	for item: Variant in value:
+		result.append(str(item))
+
+	return result

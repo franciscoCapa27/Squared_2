@@ -152,3 +152,44 @@ func _format_operation(operation: EffectComponent.Operation) -> String:
 			return "="
 		_:
 			return "?"
+
+func to_save_dict() -> Dictionary:
+	var definition_id: String = ""
+
+	if definition != null:
+		definition_id = definition.id
+
+	return {
+		"instance_id": instance_id,
+		"definition_id": definition_id,
+		"rolled_values": rolled_values,
+		"source": source,
+		"acquired_at_prestige": acquired_at_prestige,
+		"acquired_at_grid_tier": acquired_at_grid_tier,
+		"stack_index": stack_index,
+		"is_absorbed_copy": is_absorbed_copy,
+		"copied_from_square_id": copied_from_square_id,
+		"copied_from_trait_instance_id": copied_from_trait_instance_id,
+		"effectiveness_multiplier": effectiveness_multiplier
+	}
+
+static func from_save_dict(data: Dictionary) -> TraitInstance:
+	var definition_id: String = str(data.get("definition_id", ""))
+	var trait_definition: TraitDefinition = TraitDatabase.get_trait(definition_id)
+
+	var trait_instance := TraitInstance.new(
+		trait_definition,
+		int(data.get("acquired_at_prestige", 0)),
+		int(data.get("acquired_at_grid_tier", 0))
+	)
+
+	trait_instance.instance_id = str(data.get("instance_id", trait_instance.instance_id))
+	trait_instance.rolled_values = data.get("rolled_values", {})
+	trait_instance.source = str(data.get("source", "prestige"))
+	trait_instance.stack_index = int(data.get("stack_index", 1))
+	trait_instance.is_absorbed_copy = bool(data.get("is_absorbed_copy", false))
+	trait_instance.copied_from_square_id = str(data.get("copied_from_square_id", ""))
+	trait_instance.copied_from_trait_instance_id = str(data.get("copied_from_trait_instance_id", ""))
+	trait_instance.effectiveness_multiplier = float(data.get("effectiveness_multiplier", 1.0))
+
+	return trait_instance

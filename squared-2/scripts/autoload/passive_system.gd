@@ -202,3 +202,47 @@ func _select_lowest_respawn_square() -> SquareData:
 			best_square = square_data
 
 	return best_square
+
+
+func to_save_dict() -> Dictionary:
+	var generator_save_data: Dictionary = {}
+
+	for generator_id: String in generator_order:
+		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+		if generator_instance == null:
+			continue
+
+		generator_save_data[generator_id] = generator_instance.to_save_dict()
+
+	return {
+		"generators": generator_save_data
+	}
+
+func from_save_dict(data: Dictionary) -> void:
+	_initialize_generators()
+
+	var generator_save_data: Dictionary = data.get("generators", {})
+
+	for generator_id: String in generator_save_data.keys():
+		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+		if generator_instance == null:
+			continue
+
+		var instance_data_variant: Variant = generator_save_data.get(generator_id)
+
+		if not instance_data_variant is Dictionary:
+			continue
+
+		generator_instance.apply_save_dict(instance_data_variant as Dictionary)
+
+	passive_state_changed.emit()
+
+func reset_to_new_game() -> void:
+	_initialize_generators()
+
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		generator_instance.reset_to_new_game()
+
+	passive_state_changed.emit()

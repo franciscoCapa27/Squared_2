@@ -81,6 +81,7 @@ func prestige() -> void:
 	EventBus.prestige_changed.emit(prestige_count)
 	EventBus.squares_changed.emit(squares)
 	EventBus.grid_changed.emit()
+	SaveSystem.save_game()
 
 func _unlock_grid_size_2() -> void:
 	grid_size = 2
@@ -251,3 +252,80 @@ func get_permanent_stat_multiplier(stat_id: String) -> float:
 func multiply_permanent_stat(stat_id: String, multiplier: float) -> void:
 	var current_multiplier: float = get_permanent_stat_multiplier(stat_id)
 	permanent_stat_multipliers[stat_id] = current_multiplier * multiplier
+
+
+func to_save_dict() -> Dictionary:
+	var square_save_data: Dictionary = {}
+
+	for square_id: String in square_ids:
+		var square_data: SquareData = get_square(square_id)
+
+		if square_data == null:
+			continue
+
+		square_save_data[square_id] = square_data.to_save_dict()
+
+	return {
+		"squares": squares,
+		"vertices": vertices,
+		"prestige_count": prestige_count,
+		"grid_size": grid_size,
+		"square_ids": square_ids,
+		"squares_by_id": square_save_data,
+		"unlocked_vertex_upgrades": unlocked_vertex_upgrades,
+		"permanent_stat_multipliers": permanent_stat_multipliers
+	}
+
+func from_save_dict(data: Dictionary) -> void:
+	squares = float(data.get("squares", 0.0))
+	vertices = int(data.get("vertices", 0))
+	prestige_count = int(data.get("prestige_count", 0))
+	grid_size = int(data.get("grid_size", 1))
+
+	square_ids = _string_array_from_variant(data.get("square_ids", ["A1"]))
+
+	squares_by_id.clear()
+
+	var square_save_data: Dictionary = data.get("squares_by_id", {})
+
+	for square_id: String in square_ids:
+		var square_data_variant: Variant = square_save_data.get(square_id)
+
+		if square_data_variant is Dictionary:
+			var square_data: SquareData = SquareData.from_save_dict(square_data_variant as Dictionary)
+			squares_by_id[square_id] = square_data
+		else:
+			squares_by_id[square_id] = SquareData.new(square_id, 0, 0)
+
+	unlocked_vertex_upgrades = data.get("unlocked_vertex_upgrades", {})
+	permanent_stat_multipliers = data.get("permanent_stat_multipliers", {})
+
+func reset_to_new_game() -> void:
+	squares = 0.0
+	vertices = 0
+	prestige_count = 0
+	grid_size = 1
+	square_ids = ["A1"]
+	squares_by_id.clear()
+	unlocked_vertex_upgrades.clear()
+	permanent_stat_multipliers.clear()
+
+	var square_data := SquareData.new("A1", 0, 0)
+	squares_by_id["A1"] = square_data
+
+	EventBus.squares_changed.emit(squares)
+	EventBus.vertices_changed.emit(vertices)
+	EventBus.prestige_changed.emit(prestige_count)
+	EventBus.grid_changed.emit()
+	EventBus.story_message.emit("There is a square.")
+
+func _string_array_from_variant(value: Variant) -> Array[String]:
+	var result: Array[String] = []
+
+	if not value is Array:
+		return result
+
+	for item: Variant in value:
+		result.append(str(item))
+
+	return result

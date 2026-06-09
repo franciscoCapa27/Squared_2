@@ -197,6 +197,62 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
+[node name="OptionsPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=996618759]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OptionsMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage" unique_id=2003489546]
+layout_mode = 2
+
+[node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
+layout_mode = 2
+
+[node name="OptionsTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
+layout_mode = 2
+text = "Options"
+
+[node name="SaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Game"
+
+[node name="ExportSaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=352066836]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Export Save"
+
+[node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+placeholder_text = "Exported save string appears here."
+
+[node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+placeholder_text = "Paste save string here."
+
+[node name="ImportSaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=782817519]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Import Save"
+
+[node name="HardResetButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HARD RESET"
+
+[node name="OptionsStatusLabel" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1495484838]
+unique_name_in_owner = true
+layout_mode = 2
+text = " "
+
 [node name="SidePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2

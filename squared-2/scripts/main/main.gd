@@ -20,6 +20,15 @@ extends Control
 @onready var vertex_upgrade_list: VBoxContainer = %VertexUpgradeList
 @onready var passive_generator_list: VBoxContainer = %PassiveGeneratorList
 
+@onready var options_page: Control = %OptionsPage
+@onready var save_button: Button = %SaveButton
+@onready var export_save_button: Button = %ExportSaveButton
+@onready var export_save_text: TextEdit = %ExportSaveText
+@onready var import_save_text: TextEdit = %ImportSaveText
+@onready var import_save_button: Button = %ImportSaveButton
+@onready var hard_reset_button: Button = %HardResetButton
+@onready var options_status_label: Label = %OptionsStatusLabel
+
 var passive_generator_card_scene: PackedScene = preload("res://scenes/ui/PassiveGeneratorCard.tscn")
 var passive_generator_cards: Dictionary = {}
 
@@ -42,6 +51,17 @@ func _ready() -> void:
 
 	PassiveSystem.passive_state_changed.connect(_refresh_passive_panel)
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
+	
+	options_tab_button.pressed.connect(_on_options_tab_pressed)
+
+	save_button.pressed.connect(_on_save_button_pressed)
+	export_save_button.pressed.connect(_on_export_save_button_pressed)
+	import_save_button.pressed.connect(_on_import_save_button_pressed)
+	hard_reset_button.pressed.connect(_on_hard_reset_button_pressed)
+
+	SaveSystem.save_saved.connect(_on_save_saved)
+	SaveSystem.save_loaded.connect(_on_save_loaded)
+	SaveSystem.save_failed.connect(_on_save_failed)
 
 	_rebuild_grid()
 	_refresh_labels()
@@ -49,6 +69,13 @@ func _ready() -> void:
 	_refresh_vertex_shop()
 	_refresh_passive_panel()
 	_on_story_message("There is a square.")
+	var loaded: bool = SaveSystem.load_game()
+
+	if not loaded:
+		_refresh_labels()
+		_rebuild_grid()
+		_refresh_vertex_shop()
+		_refresh_passive_panel()
 
 func _refresh_labels() -> void:
 	_on_squares_changed(GameState.squares)
@@ -127,9 +154,14 @@ func _on_story_message(message: String) -> void:
 func _show_center_page(page_id: String) -> void:
 	grid_page.visible = page_id == "grid"
 	vertex_shop_page.visible = page_id == "vertex_shop"
+	options_page.visible = page_id == "options"
 
 	grid_tab_button.disabled = page_id == "grid"
 	vertex_shop_tab_button.disabled = page_id == "vertex_shop"
+	options_tab_button.disabled = page_id == "options"
+	
+func _on_options_tab_pressed() -> void:
+	_show_center_page("options")
 
 func _on_grid_tab_pressed() -> void:
 	_show_center_page("grid")
@@ -233,6 +265,47 @@ func _on_passive_generator_upgrade_requested(generator_id: String) -> void:
 
 	if upgraded:
 		_refresh_passive_panel()
+
+	if selected_square_id != "":
+		_show_square_details(selected_square_id)
+func _on_save_button_pressed() -> void:
+	var saved: bool = SaveSystem.save_game()
+
+	if saved:
+		options_status_label.text = "Game saved."
+
+func _on_export_save_button_pressed() -> void:
+	export_save_text.text = SaveSystem.export_save_string()
+	options_status_label.text = "Save exported."
+
+func _on_import_save_button_pressed() -> void:
+	var imported: bool = SaveSystem.import_save_string(import_save_text.text)
+
+	if imported:
+		options_status_label.text = "Save imported."
+		_refresh_all_ui()
+	else:
+		options_status_label.text = "Import failed."
+
+func _on_hard_reset_button_pressed() -> void:
+	SaveSystem.hard_reset()
+	_refresh_all_ui()
+	options_status_label.text = "Hard reset complete."
+
+func _on_save_saved() -> void:
+	options_status_label.text = "Game saved."
+
+func _on_save_loaded() -> void:
+	_refresh_all_ui()
+
+func _on_save_failed(message: String) -> void:
+	options_status_label.text = message
+	
+func _refresh_all_ui() -> void:
+	_refresh_labels()
+	_rebuild_grid()
+	_refresh_vertex_shop()
+	_refresh_passive_panel()
 
 	if selected_square_id != "":
 		_show_square_details(selected_square_id)
