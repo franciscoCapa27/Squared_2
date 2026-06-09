@@ -2,10 +2,36 @@ extends Node
 
 const SAVE_VERSION := 1
 const SAVE_PATH := "user://savegame.json"
+const MIN_AUTOSAVE_INTERVAL_SECONDS := 5.0
+const DEFAULT_AUTOSAVE_INTERVAL_SECONDS := 60.0
 
 signal save_loaded()
 signal save_saved()
 signal save_failed(message: String)
+signal save_settings_changed()
+
+
+var autosave_enabled: bool = true
+var autosave_interval_seconds: float = DEFAULT_AUTOSAVE_INTERVAL_SECONDS
+var autosave_elapsed_seconds: float = 0.0
+var is_applying_save_data: bool = false
+
+
+func _process(delta: float) -> void:
+	if not autosave_enabled:
+		return
+
+	if autosave_interval_seconds <= 0.0:
+		return
+
+	if is_applying_save_data:
+		return
+
+	autosave_elapsed_seconds += delta
+
+	if autosave_elapsed_seconds >= autosave_interval_seconds:
+		autosave_elapsed_seconds = 0.0
+		save_game()
 
 func save_game() -> bool:
 	var save_data: Dictionary = _build_save_data()
@@ -57,8 +83,15 @@ func hard_reset() -> void:
 	if FileAccess.file_exists(SAVE_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
 
+	var preserved_autosave_enabled: bool = autosave_enabled
+	var preserved_autosave_interval_seconds: float = autosave_interval_seconds
+
 	GameState.reset_to_new_game()
 	PassiveSystem.reset_to_new_game()
+
+	autosave_enabled = preserved_autosave_enabled
+	autosave_interval_seconds = preserved_autosave_interval_seconds
+	autosave_elapsed_seconds = 0.0
 
 	save_game()
 
@@ -111,15 +144,28 @@ func import_save_string(import_text: String) -> bool:
 func _build_save_data() -> Dictionary:
 	return {
 		"version": SAVE_VERSION,
+		"settings": {
+			"autosave_enabled": autosave_enabled,
+			"autosave_interval_seconds": autosave_interval_seconds
+		},
 		"game_state": GameState.to_save_dict(),
 		"passive_system": PassiveSystem.to_save_dict()
 	}
 
 func _apply_save_data(save_data: Dictionary) -> void:
+	is_applying_save_data = true
+
 	var version: int = int(save_data.get("version", 0))
 
 	if version > SAVE_VERSION:
 		push_warning("Save version is newer than current game version.")
+
+	var settings_variant: Variant = save_data.get("settings", {})
+
+	if settings_variant is Dictionary:
+		_apply_settings_save_data(settings_variant as Dictionary)
+	else:
+		_apply_settings_save_data({})
 
 	var game_state_data: Dictionary = save_data.get("game_state", {})
 	var passive_system_data: Dictionary = save_data.get("passive_system", {})
@@ -133,3 +179,45 @@ func _apply_save_data(save_data: Dictionary) -> void:
 	EventBus.grid_changed.emit()
 	EventBus.story_message.emit("Save loaded.")
 	PassiveSystem.passive_state_changed.emit()
+
+	print(
+		"Loaded autosave settings: enabled=%s interval=%s" % [
+			autosave_enabled,
+			autosave_interval_seconds
+		]
+	)
+
+	is_applying_save_data = false
+
+func _apply_settings_save_data(settings_data: Dictionary) -> void:
+	autosave_enabled = bool(settings_data.get("autosave_enabled", autosave_enabled))
+
+	autosave_interval_seconds = float(settings_data.get(
+		"autosave_interval_seconds",
+		autosave_interval_seconds
+	))
+
+	autosave_interval_seconds = max(
+		MIN_AUTOSAVE_INTERVAL_SECONDS,
+		autosave_interval_seconds
+	)
+
+	autosave_elapsed_seconds = 0.0
+	save_settings_changed.emit()
+	
+
+func set_autosave_enabled(value: bool) -> void:
+	autosave_enabled = value
+	autosave_elapsed_seconds = 0.0
+	save_settings_changed.emit()
+	save_game()
+
+
+func set_autosave_interval_seconds(value: float) -> void:
+	autosave_interval_seconds = max(MIN_AUTOSAVE_INTERVAL_SECONDS, value)
+	autosave_elapsed_seconds = 0.0
+	save_settings_changed.emit()
+	save_game()
+
+func get_autosave_interval_seconds() -> float:
+	return autosave_interval_seconds

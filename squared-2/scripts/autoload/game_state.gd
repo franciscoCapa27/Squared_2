@@ -106,7 +106,7 @@ func _apply_random_trait_to_random_square() -> void:
 	if square_ids.is_empty():
 		return
 
-	var trait_definition := TraitDatabase.get_random_trait(grid_size)
+	var trait_definition : TraitDefinition = TraitDatabase.get_random_trait(grid_size) as TraitDefinition
 
 	if trait_definition == null:
 		return

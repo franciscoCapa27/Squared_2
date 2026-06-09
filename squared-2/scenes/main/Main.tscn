@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://jdev0mw5y4y1"]
 
 [ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
+[ext_resource type="Script" uid="uid://bg5n4yaoqsv0k" path="res://scripts/ui/options_page.gd" id="2_nha0i"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -205,6 +206,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("2_nha0i")
 
 [node name="OptionsMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage" unique_id=2003489546]
 layout_mode = 2
@@ -215,6 +217,30 @@ layout_mode = 2
 [node name="OptionsTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
 layout_mode = 2
 text = "Options"
+
+[node name="AutosaveTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
+layout_mode = 2
+text = "Autosave"
+
+[node name="AutosaveEnabledCheckBox" type="CheckBox" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=983546635]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enable Autosave"
+
+[node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
+layout_mode = 2
+
+[node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
+layout_mode = 2
+text = "Interval seconds:"
+
+[node name="AutosaveIntervalSpinBox" type="SpinBox" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=993040792]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 5.0
+max_value = 3600.0
+step = 5.0
+value = 60.0
 
 [node name="SaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
 unique_name_in_owner = true
