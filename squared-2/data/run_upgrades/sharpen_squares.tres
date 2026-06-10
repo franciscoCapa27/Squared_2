@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RunUpgradeDefinition" format=3 uid="uid://bn43ciq0dxpbg"]
+
+[ext_resource type="Script" uid="uid://chdrsvo1guraf" path="res://scripts/resources/run_upgrade_effect.gd" id="1_joo08"]
+[ext_resource type="Script" uid="uid://mxwbqrrs5rto" path="res://scripts/resources/run_upgrade_definition.gd" id="2_cswee"]
+[ext_resource type="Script" uid="uid://cvbvabkxna6aw" path="res://scripts/resources/run_upgrade_unlock_condition.gd" id="3_5hwx5"]
+
+[sub_resource type="Resource" id="Resource_joo08"]
+script = ExtResource("1_joo08")
+target_stat = "run_square_base_value"
+value = 1.05
+metadata/_custom_type_script = "uid://chdrsvo1guraf"
+
+[resource]
+script = ExtResource("2_cswee")
+id = "sharpen_squares"
+display_name = "Sharpen Squares"
+description = "Increases base square value for this run."
+category = 1
+sort_order = 10
+base_cost = 5.0
+cost_multiplier = 1.35
+max_level = 25
+effects_per_level = Array[ExtResource("1_joo08")]([SubResource("Resource_joo08")])
+metadata/_custom_type_script = "uid://mxwbqrrs5rto"

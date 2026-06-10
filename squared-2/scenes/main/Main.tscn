@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dtcxo6g4t8ui" path="res://scripts/ui/vertex_shop_page.gd" id="3_dc040"]
 [ext_resource type="Script" uid="uid://8mmn8xlnp7rn" path="res://scripts/ui/achievements_page.gd" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
+[ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -185,6 +186,19 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
+[node name="PrestigeSpacer" type="Control" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=697564281]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=126762251]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(220, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+disabled = true
+text = "Prestige"
+
 [node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
 layout_mode = 1
@@ -338,7 +352,11 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SquareDetailsPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
+[node name="RightPanel" type="VBoxContainer" parent="RootMargin/MainVbox/Content" unique_id=772359619]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SquareDetailsPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content/RightPanel" unique_id=872099950]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
@@ -346,7 +364,7 @@ size_flags_horizontal = 8
 mouse_filter = 2
 script = ExtResource("6_sjxhf")
 
-[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel" unique_id=1432494938]
+[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel" unique_id=1432494938]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -354,19 +372,19 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin" unique_id=354830038]
+[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin" unique_id=354830038]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
+[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Selected Square"
 
-[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
@@ -374,26 +392,35 @@ size_flags_vertical = 3
 bbcode_enabled = true
 text = "No square selected."
 
-[node name="UpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=2033131904]
+[node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content/RightPanel" unique_id=682771557]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("8_ko0rf")
+
+[node name="RunUpgradesMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel" unique_id=61473642]
+layout_mode = 2
+
+[node name="RunUpgradesVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin" unique_id=70099436]
+layout_mode = 2
+
+[node name="RunUpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Upgrades
 "
 
-[node name="UpgradesList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=1606221242]
+[node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="RunUpgradeList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradeScroll" unique_id=1606221242]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 8
-
-[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=126762251]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-size_flags_vertical = 8
-disabled = true
-text = "Prestige"
 
 [node name="StoryLabel" type="Label" parent="RootMargin/MainVbox" unique_id=151831416]
 unique_name_in_owner = true

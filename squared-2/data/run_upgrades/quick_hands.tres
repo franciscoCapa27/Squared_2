@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="RunUpgradeDefinition" format=3 uid="uid://b7acyjrvjc15c"]
+
+[ext_resource type="Script" uid="uid://chdrsvo1guraf" path="res://scripts/resources/run_upgrade_effect.gd" id="1_jbq16"]
+[ext_resource type="Script" uid="uid://mxwbqrrs5rto" path="res://scripts/resources/run_upgrade_definition.gd" id="2_aafcd"]
+[ext_resource type="Script" uid="uid://cvbvabkxna6aw" path="res://scripts/resources/run_upgrade_unlock_condition.gd" id="3_tnnxq"]
+
+[sub_resource type="Resource" id="Resource_jbq16"]
+script = ExtResource("1_jbq16")
+target_stat = "run_manual_click_value"
+value = 1.08
+metadata/_custom_type_script = "uid://chdrsvo1guraf"
+
+[sub_resource type="Resource" id="Resource_aafcd"]
+script = ExtResource("3_tnnxq")
+condition_type = 1
+threshold = 10.0
+metadata/_custom_type_script = "uid://cvbvabkxna6aw"
+
+[resource]
+script = ExtResource("2_aafcd")
+id = "quick_hands"
+display_name = "Quick Hands"
+description = "Increases manual click value for this run."
+category = 1
+sort_order = 20
+base_cost = 15.0
+cost_multiplier = 1.4
+max_level = 20
+unlock_conditions = Array[ExtResource("3_tnnxq")]([SubResource("Resource_aafcd")])
+effects_per_level = Array[ExtResource("1_jbq16")]([SubResource("Resource_jbq16")])
+metadata/_custom_type_script = "uid://mxwbqrrs5rto"

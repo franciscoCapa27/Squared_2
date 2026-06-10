@@ -19,6 +19,8 @@ extends Control
 @onready var passive_panel: PassivePanel = %PassivePanel
 @onready var square_details_panel: SquareDetailsPanel = %SquareDetailsPanel
 
+@onready var run_upgrades_panel: RunUpgradesPanel = %RunUpgradesPanel
+
 
 func _ready() -> void:
 	_connect_global_signals()
@@ -92,6 +94,7 @@ func _refresh_all_ui() -> void:
 	options_page.refresh()
 	achievements_page.refresh()
 	square_details_panel.refresh()
+	run_upgrades_panel.refresh()
 
 
 func _refresh_labels() -> void:
@@ -199,6 +202,7 @@ func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
 func _on_passive_generator_upgraded(_generator_id: String) -> void:
 	_refresh_passive_panel()
 	square_details_panel.refresh()
+	run_upgrades_panel.refresh()
 
 
 func _on_options_save_imported() -> void:
@@ -222,6 +226,7 @@ func _on_achievements_changed() -> void:
 	achievements_page.refresh()
 	square_details_panel.refresh()
 	grid_page.refresh_buttons()
+	run_upgrades_panel.refresh()
 
 
 func _on_save_loaded() -> void:
