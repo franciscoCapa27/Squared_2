@@ -62,13 +62,13 @@ func _connect_ui_signals() -> void:
 
 func _connect_page_signals() -> void:
 	grid_page.square_selected.connect(_on_grid_square_selected)
+	grid_page.grid_upgrade_requested.connect(_on_grid_upgrade_requested)
 
 	vertex_shop_page.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
 	passive_panel.passive_generator_upgraded.connect(_on_passive_generator_upgraded)
 
 	options_page.save_imported.connect(_on_options_save_imported)
 	options_page.hard_reset_completed.connect(_on_options_hard_reset_completed)
-
 
 func _initialize_new_game_ui() -> void:
 	_refresh_labels()
@@ -177,7 +177,14 @@ func _on_prestige_pressed() -> void:
 func _on_grid_square_selected(square_id: String) -> void:
 	square_details_panel.show_square(square_id)
 
+func _on_grid_upgrade_requested() -> void:
+	var upgraded: bool = GameState.upgrade_grid()
 
+	if not upgraded:
+		return
+
+	square_details_panel.clear()
+	_refresh_labels()
 # ------------------------------------------------------------------------------
 # Page Events
 # ------------------------------------------------------------------------------

@@ -161,14 +161,22 @@ script = ExtResource("3_1rhdn")
 
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage" unique_id=847906112]
 layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter" unique_id=638752931]
+[node name="GridVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter" unique_id=355446560]
+layout_mode = 2
+
+[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=638752931]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
+
+[node name="UpgradeGridButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=225480493]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true

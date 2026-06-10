@@ -11,7 +11,7 @@ func _ready() -> void:
 	EventBus.vertices_changed.connect(_on_any_progress_value_changed)
 	EventBus.prestige_changed.connect(_on_any_progress_value_changed)
 	EventBus.grid_changed.connect(_on_any_progress_changed)
-
+	EventBus.grid_upgraded.connect(_on_grid_upgraded)
 	EventBus.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
 	EventBus.passive_generator_unlocked.connect(_on_passive_generator_unlocked)
 	EventBus.passive_generator_upgraded.connect(_on_passive_generator_upgraded)
@@ -306,4 +306,6 @@ func _on_passive_generator_unlocked(_generator_id: String) -> void:
 
 
 func _on_passive_generator_upgraded(_generator_id: String) -> void:
+	check_all_achievements()
+func _on_grid_upgraded(_new_grid_size: int) -> void:
 	check_all_achievements()
