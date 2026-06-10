@@ -72,6 +72,7 @@ func unlock_generator(generator_id: String) -> void:
 
 	EventBus.story_message.emit("%s is now available." % generator_instance.get_display_name())
 	passive_state_changed.emit()
+	AchievementSystem.check_all_achievements()
 
 func reset_run_state_on_prestige() -> void:
 	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
@@ -104,7 +105,7 @@ func upgrade_generator(generator_id: String) -> bool:
 		return false
 
 	var upgraded: bool = generator_instance.level_up()
-
+	AchievementSystem.check_all_achievements()
 	if upgraded:
 		if generator_instance.level == 1:
 			EventBus.story_message.emit("%s awakens." % generator_instance.get_display_name())

@@ -21,8 +21,10 @@ EventBus="*uid://ol8d68orx64t"
 TraitDatabase="*uid://lp5heyu6k0ul"
 VertexUpgradeDatabase="*uid://bp2on18ku00cd"
 PassiveGeneratorDatabase="*uid://di5mvt7ott4ux"
+AchievementDatabase="*uid://cp4klb5boqu4h"
 GameState="*uid://dndrl7bbxqkwo"
 PassiveSystem="*uid://b73x43eqyy5ay"
+AchievementSystem="*uid://dw6p8dx3cbe0"
 SaveSystem="*uid://djojbn7814ltt"
 
 [display]

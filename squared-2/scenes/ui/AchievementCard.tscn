@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://t38xiypotkvg"]
+
+[ext_resource type="Script" uid="uid://bigo6frp2odjt" path="res://scripts/ui/achievement_card.gd" id="1_njh44"]
+
+[node name="AchievementCard" type="PanelContainer" unique_id=1027072481]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_njh44")
+
+[node name="CardMargin" type="MarginContainer" parent="." unique_id=891319885]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="CardVBox" type="VBoxContainer" parent="CardMargin" unique_id=2049570334]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="CardMargin/CardVBox" unique_id=445010852]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CategoryStatusLabel" type="Label" parent="CardMargin/CardVBox" unique_id=1871638231]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="RichTextLabel" parent="CardMargin/CardVBox" unique_id=1166481542]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+
+[node name="ProgressBar" type="ProgressBar" parent="CardMargin/CardVBox" unique_id=2123186092]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+
+[node name="ProgressLabel" type="Label" parent="CardMargin/CardVBox" unique_id=1857747193]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RewardLabel" type="RichTextLabel" parent="CardMargin/CardVBox" unique_id=1294121337]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AchievementDefinition" format=3 uid="uid://c6teu0s45vee6"]
+
+[ext_resource type="Script" uid="uid://d3xcfqld3vjh7" path="res://scripts/resources/achievement_reward.gd" id="1_c14kf"]
+[ext_resource type="Script" uid="uid://wwnb5h1f6hlb" path="res://scripts/resources/achievement_definition.gd" id="2_d0vut"]
+
+[sub_resource type="Resource" id="Resource_c14kf"]
+script = ExtResource("1_c14kf")
+target_stat = "square_base_value"
+value = 1.001
+metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
+
+[resource]
+script = ExtResource("2_d0vut")
+id = "first_click"
+display_name = "First Click"
+description = "Generate Squares manually for the first time."
+category = 1
+sort_order = 10
+rewards = Array[ExtResource("1_c14kf")]([SubResource("Resource_c14kf")])
+metadata/_custom_type_script = "uid://wwnb5h1f6hlb"

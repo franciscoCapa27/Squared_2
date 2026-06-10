@@ -68,7 +68,7 @@ func _build_square_details_text(square_data: SquareData) -> String:
 		+ "Current Manual Payout: %.2f Squares\n" % manual_payout
 		+ "Current Respawn Time: %.2fs\n\n" % respawn_time
 		+ "Base Value: %.2f\n" % square_data.base_value
-		+ "Permanent Base Value Multiplier: x%.2f\n" % permanent_base_value_multiplier
+		+ "Permanent Base Value Multiplier: x%.3f\n" % permanent_base_value_multiplier
 		+ "Base Respawn Time: %.2fs\n\n" % square_data.base_respawn_time
 		+ "Run Squares Generated: %.2f\n" % square_data.run_squares_generated
 		+ "Run Manual Clicks: %s\n" % square_data.run_manual_clicks

@@ -9,7 +9,7 @@ extends Control
 @onready var vertex_shop_tab_button: Button = %VertexShopTabButton
 @onready var options_tab_button: Button = %OptionsTabButton
 @onready var achievements_tab_button: Button = %AchievementsTabButton
-
+@onready var achievements_page: AchievementsPage = %AchievementsPage
 @onready var grid_page: Control = %GridPage
 
 @onready var options_page: OptionsPage = %OptionsPage
@@ -33,7 +33,8 @@ func _ready() -> void:
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
 	
 	options_tab_button.pressed.connect(_on_options_tab_pressed)
-
+	achievements_tab_button.pressed.connect(_on_achievements_tab_pressed)
+	AchievementSystem.achievements_changed.connect(_on_achievements_changed)
 	options_page.save_imported.connect(_on_options_save_imported)
 	options_page.hard_reset_completed.connect(_on_options_hard_reset_completed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
@@ -77,14 +78,24 @@ func _on_prestige_changed(value: int) -> void:
 func _on_story_message(message: String) -> void:
 	story_label.text = message
 	
+func _on_achievements_tab_pressed() -> void:
+	_show_center_page("achievements")
+	achievements_page.refresh()
+func _on_achievements_changed() -> void:
+	achievements_page.refresh()
+	square_details_panel.refresh()
+	grid_page.refresh_buttons()
+	
 func _show_center_page(page_id: String) -> void:
 	grid_page.visible = page_id == "grid"
 	vertex_shop_page.visible = page_id == "vertex_shop"
 	options_page.visible = page_id == "options"
+	achievements_page.visible = page_id == "achievements"
 
 	grid_tab_button.disabled = page_id == "grid"
 	vertex_shop_tab_button.disabled = page_id == "vertex_shop"
 	options_tab_button.disabled = page_id == "options"
+	achievements_tab_button.disabled = page_id == "achievements"
 	
 func _on_options_tab_pressed() -> void:
 	_show_center_page("options")
@@ -128,6 +139,7 @@ func _refresh_all_ui() -> void:
 	_refresh_vertex_shop()
 	_refresh_passive_panel()
 	options_page.refresh()
+	achievements_page.refresh()
 	square_details_panel.refresh()
 
 func _on_vertex_upgrade_purchased(upgrade_id: String) -> void:
