@@ -82,11 +82,10 @@ func get_progress_text(achievement: AchievementDefinition) -> String:
 
 	var current_value: float = _get_condition_current_value(achievement)
 
-	return "%.0f / %.0f" % [
-		current_value,
-		achievement.threshold
+	return "%s / %s" % [
+		NumberFormatter.amount(current_value),
+		NumberFormatter.amount(achievement.threshold)
 	]
-
 
 func to_save_dict() -> Dictionary:
 	return {

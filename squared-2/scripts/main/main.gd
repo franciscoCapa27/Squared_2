@@ -148,13 +148,13 @@ func _on_achievements_tab_pressed() -> void:
 # ------------------------------------------------------------------------------
 
 func _on_squares_changed(value: float) -> void:
-	squares_label.text = "Squares: %s" % int(value)
+	squares_label.text = "Squares: %s" % NumberFormatter.amount(value)
 	prestige_button.disabled = not GameState.can_prestige()
 	_refresh_passive_panel()
 
 
 func _on_vertices_changed(value: int) -> void:
-	vertices_label.text = "Vertices: %s" % value
+	vertices_label.text = "Vertices: %s" % NumberFormatter.integer_amount(value)
 	_refresh_vertex_shop()
 
 

@@ -29,7 +29,7 @@ func refresh() -> void:
 	title_label.text = upgrade_definition.display_name
 	category_cost_label.text = "%s • Cost: %s Vertices" % [
 		upgrade_definition.get_category_name(),
-		upgrade_definition.cost_vertices
+		NumberFormatter.integer_amount(upgrade_definition.cost_vertices)
 	]
 	description_label.text = upgrade_definition.description
 
@@ -52,7 +52,7 @@ func _get_requirement_text() -> String:
 	var lines: Array[String] = []
 
 	if upgrade_definition.required_prestige_count > 0:
-		lines.append("Requires Prestiges: %s" % upgrade_definition.required_prestige_count)
+		lines.append("Requires Prestiges: %s" % NumberFormatter.integer_amount(upgrade_definition.required_prestige_count))
 
 	if upgrade_definition.required_grid_size > 1:
 		lines.append("Requires Grid Size: %sx%s" % [

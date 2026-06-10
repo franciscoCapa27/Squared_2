@@ -65,19 +65,22 @@ func _build_square_details_text(square_data: SquareData) -> String:
 		]
 		+ "Traits:\n%s\n\n" % trait_stack_text
 		+ "Trait Effects:\n%s\n\n" % trait_effect_text
-		+ "Current Manual Payout: %.2f Squares\n" % manual_payout
-		+ "Current Respawn Time: %.2fs\n\n" % respawn_time
-		+ "Base Value: %.2f\n" % square_data.base_value
-		+ "Permanent Base Value Multiplier: x%.3f\n" % permanent_base_value_multiplier
-		+ "Base Respawn Time: %.2fs\n\n" % square_data.base_respawn_time
-		+ "Run Squares Generated: %.2f\n" % square_data.run_squares_generated
-		+ "Run Manual Clicks: %s\n" % square_data.run_manual_clicks
-		+ "Run Passive Clicks: %s\n\n" % square_data.run_passive_clicks
-		+ "Lifetime Squares Generated: %.2f\n" % square_data.lifetime_squares_generated
-		+ "Lifetime Manual Clicks: %s\n" % square_data.lifetime_manual_clicks
-		+ "Lifetime Passive Clicks: %s\n" % square_data.lifetime_passive_clicks
-		+ "Times Traited: %s\n" % square_data.times_traited
-		+ "Highest Single Payout: %.2f\n\n" % square_data.highest_single_payout
+		+ "Current Manual Payout: %s Squares\n" % NumberFormatter.amount(manual_payout)
+		+ "Current Respawn Time: %s\n\n" % NumberFormatter.seconds(respawn_time)
+		+ "Base Value: %s\n" % NumberFormatter.amount(square_data.base_value)
+		+ "Permanent Base Value Multiplier: %s (%s)\n" % [
+			NumberFormatter.multiplier(permanent_base_value_multiplier),
+			NumberFormatter.precise_percent_from_multiplier(permanent_base_value_multiplier)
+		]
+		+ "Base Respawn Time: %s\n\n" % NumberFormatter.seconds(square_data.base_respawn_time)
+		+ "Run Squares Generated: %s\n" % NumberFormatter.amount(square_data.run_squares_generated)
+		+ "Run Manual Clicks: %s\n" % NumberFormatter.integer_amount(square_data.run_manual_clicks)
+		+ "Run Passive Clicks: %s\n\n" % NumberFormatter.integer_amount(square_data.run_passive_clicks)
+		+ "Lifetime Squares Generated: %s\n" % NumberFormatter.amount(square_data.lifetime_squares_generated)
+		+ "Lifetime Manual Clicks: %s\n" % NumberFormatter.integer_amount(square_data.lifetime_manual_clicks)
+		+ "Lifetime Passive Clicks: %s\n" % NumberFormatter.integer_amount(square_data.lifetime_passive_clicks)
+		+ "Times Traited: %s\n" % NumberFormatter.integer_amount(square_data.times_traited)
+		+ "Highest Single Payout: %s\n\n" % NumberFormatter.amount(square_data.highest_single_payout)
 		+ "Permanent Tags: %s\n" % _format_string_array(square_data.permanent_tags)
 		+ "Temporary Tags: %s" % _format_string_array(square_data.temporary_tags)
 	)

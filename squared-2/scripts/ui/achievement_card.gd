@@ -50,6 +50,35 @@ func _get_reward_text() -> String:
 		if reward == null:
 			continue
 
-		lines.append("Reward: %s" % reward.get_debug_text())
+		lines.append("Reward: %s" % _format_reward(reward))
 
 	return "\n".join(lines)
+
+
+func _format_reward(reward: AchievementReward) -> String:
+	match reward.reward_type:
+		AchievementReward.RewardType.GLOBAL_STAT_MULTIPLIER:
+			return "%s %s" % [
+				_format_stat_name(reward.target_stat),
+				NumberFormatter.precise_percent_from_multiplier(reward.value)
+			]
+		AchievementReward.RewardType.UNLOCK_MECHANIC:
+			return "Unlock mechanic: %s" % reward.mechanic_id
+		AchievementReward.RewardType.ADD_STARTING_SQUARES:
+			return "+%s starting Squares" % NumberFormatter.amount(reward.value)
+		AchievementReward.RewardType.SCRIPT_HOOK:
+			return "Special effect"
+		_:
+			return "Unknown reward"
+
+
+func _format_stat_name(stat_id: String) -> String:
+	match stat_id:
+		GameIds.STAT_SQUARE_BASE_VALUE:
+			return "Square base value"
+		GameIds.STAT_SQUARE_RESPAWN_TIME:
+			return "Square respawn time"
+		GameIds.STAT_VERTEX_GAIN:
+			return "Vertex gain"
+		_:
+			return stat_id

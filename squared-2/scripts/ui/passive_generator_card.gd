@@ -43,12 +43,12 @@ func refresh() -> void:
 	else:
 		upgrade_button.text = "Buy Level %s — %s Squares" % [
 			generator_instance.level + 1,
-			generator_instance.get_next_level_cost()
+			NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
 		]
 
-	upgrade_button.tooltip_text = "Squares: %.2f / Cost: %s" % [
-		GameState.squares,
-		generator_instance.get_next_level_cost()
+	upgrade_button.tooltip_text = "Squares: %s / Cost: %s" % [
+		NumberFormatter.amount(GameState.squares),
+		NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
 	]
 
 	if not generator_instance.is_active():
@@ -58,8 +58,8 @@ func refresh() -> void:
 			+ "Level: 0 / %s\n" % generator_instance.get_max_level()
 			+ "Buy Level 1 to start passive generation.\n\n"
 			+ "Level 1:\n"
-			+ "- Interval: %.2fs\n" % generator_instance.definition.base_interval_seconds
-			+ "- Extraction: %.0f%%\n\n" % (generator_instance.definition.base_extraction_rate * 100.0)
+			+ "- Interval: %s\n" % NumberFormatter.seconds(generator_instance.definition.base_interval_seconds)
+			+ "- Extraction: %s\n\n" % NumberFormatter.percent(generator_instance.definition.base_extraction_rate)
 			+ "Run levels reset on prestige."
 		)
 		return
@@ -70,27 +70,27 @@ func refresh() -> void:
 	var last_pulse_text: String = "None"
 
 	if generator_instance.last_target_square_id != "":
-		last_pulse_text = "+%.2f Squares from %s" % [
-			generator_instance.last_payout,
+		last_pulse_text = "+%s Squares from %s" % [
+			NumberFormatter.amount(generator_instance.last_payout),
 			generator_instance.last_target_square_id
 		]
 
 	var next_level_text: String = "Max level reached"
 
 	if generator_instance.level < generator_instance.get_max_level():
-		next_level_text = "Next Level Cost: %s Squares" % generator_instance.get_next_level_cost()
-
+		next_level_text = "Next Level Cost: %s Squares" % NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
+	
 	status_label.text = (
 		"Level: %s / %s\n\n" % [
 			generator_instance.level,
 			generator_instance.get_max_level()
 		]
-		+ "Interval: %.2fs\n" % generator_instance.get_current_interval_seconds()
-		+ "Extraction: %.0f%%\n" % (generator_instance.get_current_extraction_rate() * 100.0)
+		+ "- Interval: %s\n" % NumberFormatter.seconds(generator_instance.definition.base_interval_seconds)
+		+ "- Extraction: %s\n\n" % NumberFormatter.percent(generator_instance.definition.base_extraction_rate)
 		+ "Targeting: %s\n\n" % _get_targeting_text(generator_instance)
 		+ "Last Pulse: %s\n" % last_pulse_text
-		+ "Lifetime Pulses This Run: %s\n" % generator_instance.lifetime_pulses
-		+ "Squares This Run: %.2f\n\n" % generator_instance.lifetime_squares_generated
+		+ "Lifetime Pulses This Run: %s\n" % NumberFormatter.integer_amount(generator_instance.lifetime_pulses)
+		+ "Squares This Run: %s\n\n" % NumberFormatter.amount(generator_instance.lifetime_squares_generated)
 		+ next_level_text
 	)
 

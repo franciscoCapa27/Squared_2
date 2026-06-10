@@ -110,12 +110,10 @@ func get_effect_summary_lines() -> Array[String]:
 		var line := ""
 
 		if effect_iter.operation == EffectComponent.Operation.MULTIPLY:
-			var percent_change: float = (effect_value - 1.0) * 100.0
-
-			if percent_change >= 0.0:
-				line = "+%.1f%% %s" % [percent_change, _format_target_stat(effect_iter.target_stat)]
-			else:
-				line = "%.1f%% %s" % [percent_change, _format_target_stat(effect_iter.target_stat)]
+			line = "%s %s" % [
+				NumberFormatter.precise_percent_from_multiplier(effect_value),
+				_format_target_stat(effect_iter.target_stat)
+			]
 		else:
 			line = "%s %s %s" % [
 				_format_operation(effect_iter.operation),
