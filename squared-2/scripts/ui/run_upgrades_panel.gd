@@ -8,6 +8,9 @@ var run_upgrade_cards: Dictionary = {}
 
 
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	_apply_theme()
+	
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.prestige_changed.connect(_on_prestige_changed)
 	EventBus.grid_changed.connect(_on_grid_changed)
@@ -18,6 +21,12 @@ func _ready() -> void:
 
 	refresh()
 
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 func refresh() -> void:
 	_rebuild_if_needed()

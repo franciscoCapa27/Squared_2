@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
 [ext_resource type="Script" uid="uid://blvtlqs2ve4y7" path="res://scripts/ui/passive_panel.gd" id="2_gyg6b"]
 [ext_resource type="Script" uid="uid://bg5n4yaoqsv0k" path="res://scripts/ui/options_page.gd" id="2_nha0i"]
+[ext_resource type="Script" uid="uid://3kgpybmgkguk" path="res://scripts/ui/theme/themed_background.gd" id="2_ostsq"]
 [ext_resource type="Script" uid="uid://bxj37wgxednl7" path="res://scripts/ui/grid_page.gd" id="3_1rhdn"]
 [ext_resource type="Script" uid="uid://dtcxo6g4t8ui" path="res://scripts/ui/vertex_shop_page.gd" id="3_dc040"]
 [ext_resource type="Script" uid="uid://8mmn8xlnp7rn" path="res://scripts/ui/achievements_page.gd" id="6_ko0rf"]
@@ -19,7 +20,8 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_u1xfj")
 
-[node name="Background" type="ColorRect" parent="." unique_id=333599262]
+[node name="BackgroundPanel" type="Panel" parent="." unique_id=1452120984]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,7 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.019607844, 0.02745098, 0.06666667, 1)
+script = ExtResource("2_ostsq")
 
 [node name="RootMargin" type="MarginContainer" parent="." unique_id=1265092952]
 layout_mode = 1

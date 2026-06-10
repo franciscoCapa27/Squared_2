@@ -6,6 +6,9 @@ class_name SquareDetailsPanel
 
 var selected_square_id: String = ""
 
+func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	_apply_theme()
 
 func show_square(square_id: String) -> void:
 	selected_square_id = square_id
@@ -91,3 +94,20 @@ func _format_string_array(values: Array[String]) -> String:
 		return "None"
 
 	return ", ".join(values)
+	
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+
+	selected_square_title.add_theme_color_override(
+		"font_color",
+		ThemeSystem.get_color("text_primary")
+	)
+
+	selected_square_details.add_theme_color_override(
+		"default_color",
+		ThemeSystem.get_color("text_secondary")
+	)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
