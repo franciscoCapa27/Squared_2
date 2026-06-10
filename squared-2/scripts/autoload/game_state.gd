@@ -188,7 +188,7 @@ func buy_vertex_upgrade(upgrade_id: String) -> bool:
 
 	EventBus.vertices_changed.emit(vertices)
 	EventBus.story_message.emit("%s unlocked." % upgrade.display_name)
-	AchievementSystem.check_all_achievements()
+	EventBus.vertex_upgrade_purchased.emit(upgrade.id)
 	return true
 
 func _apply_vertex_upgrade_effects(upgrade: VertexUpgradeDefinition) -> void:

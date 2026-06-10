@@ -7,10 +7,14 @@ var unlocked_achievements: Dictionary = {}
 
 
 func _ready() -> void:
-	EventBus.squares_changed.connect(_on_progress_signal)
-	EventBus.vertices_changed.connect(_on_progress_signal)
-	EventBus.prestige_changed.connect(_on_progress_signal)
-	EventBus.grid_changed.connect(_on_progress_signal)
+	EventBus.squares_changed.connect(_on_any_progress_value_changed)
+	EventBus.vertices_changed.connect(_on_any_progress_value_changed)
+	EventBus.prestige_changed.connect(_on_any_progress_value_changed)
+	EventBus.grid_changed.connect(_on_any_progress_changed)
+
+	EventBus.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
+	EventBus.passive_generator_unlocked.connect(_on_passive_generator_unlocked)
+	EventBus.passive_generator_upgraded.connect(_on_passive_generator_upgraded)
 
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
 
@@ -277,4 +281,23 @@ func _on_progress_signal(_value: Variant = null) -> void:
 
 
 func _on_passive_pulsed(_generator_id: String, _square_id: String, _payout: float) -> void:
+	check_all_achievements()
+
+func _on_any_progress_changed() -> void:
+	check_all_achievements()
+
+
+func _on_any_progress_value_changed(_value: Variant) -> void:
+	check_all_achievements()
+
+
+func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
+	check_all_achievements()
+
+
+func _on_passive_generator_unlocked(_generator_id: String) -> void:
+	check_all_achievements()
+
+
+func _on_passive_generator_upgraded(_generator_id: String) -> void:
 	check_all_achievements()
