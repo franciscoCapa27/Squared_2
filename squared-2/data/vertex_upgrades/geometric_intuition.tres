@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="VertexUpgradeDefinition" format=3 uid="uid://4c63nv2fju7f"]
+
+[ext_resource type="Script" uid="uid://c7mm37v2yrr14" path="res://scripts/resources/vertex_upgrade_effect.gd" id="1_7f1f2"]
+[ext_resource type="Script" uid="uid://dowlqajtj0tyi" path="res://scripts/resources/vertex_upgrade_definition.gd" id="2_oywik"]
+
+[sub_resource type="Resource" id="Resource_7f1f2"]
+script = ExtResource("1_7f1f2")
+effect_type = 2
+target_stat = "trait_luck"
+value = 10.0
+metadata/_custom_type_script = "uid://c7mm37v2yrr14"
+
+[resource]
+script = ExtResource("2_oywik")
+id = "geometric_intuition"
+display_name = "Geometric Intuition"
+description = "Improves the odds of rolling higher-rarity Traits."
+category = 2
+cost_vertices = 2
+sort_order = 40
+required_prestige_count = 1
+required_grid_size = 2
+required_upgrade_ids = Array[String](["unlock_first_generator"])
+hidden_until_requirements_met = true
+effects = Array[ExtResource("1_7f1f2")]([SubResource("Resource_7f1f2")])
+metadata/_custom_type_script = "uid://dowlqajtj0tyi"

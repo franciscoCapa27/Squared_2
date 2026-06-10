@@ -23,6 +23,7 @@ enum Rarity {
 
 @export var weight: float = 1.0
 @export var min_grid_tier: int = 1
+@export var max_grid_tier: int = -1
 @export var max_stack_count: int = -1
 @export var can_duplicate: bool = true
 

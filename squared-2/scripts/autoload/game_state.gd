@@ -16,7 +16,7 @@ var squares_by_id: Dictionary = {}
 
 var unlocked_vertex_upgrades: Dictionary = {}
 var permanent_stat_multipliers: Dictionary = {}
-
+var permanent_stat_additions: Dictionary = {}
 
 func _ready() -> void:
 	_create_initial_grid()
@@ -92,11 +92,14 @@ func prestige() -> void:
 
 	PassiveSystem.reset_run_state_on_prestige()
 
+	var trait_roll_grid_size: int = grid_size
+
 	if prestige_count == 1:
+		trait_roll_grid_size = 1
 		_unlock_grid_size_2()
 		EventBus.story_message.emit("One became four. The void has corners now.")
 
-	_apply_random_trait_to_random_square()
+	_apply_random_trait_to_random_square(trait_roll_grid_size)
 	_emit_core_state_changed()
 	EventBus.grid_changed.emit()
 
@@ -142,11 +145,11 @@ func _unlock_grid_size_2() -> void:
 # Traits
 # ------------------------------------------------------------------------------
 
-func _apply_random_trait_to_random_square() -> void:
+func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> void:
 	if square_ids.is_empty():
 		return
 
-	var trait_definition: TraitDefinition = TraitDatabase.get_random_trait(grid_size)
+	var trait_definition: TraitDefinition = TraitDatabase.get_random_trait(trait_roll_grid_size)
 
 	if trait_definition == null:
 		return
@@ -160,7 +163,7 @@ func _apply_random_trait_to_random_square() -> void:
 	var trait_instance: TraitInstance = TraitInstance.new(
 		trait_definition,
 		prestige_count,
-		grid_size
+		trait_roll_grid_size
 	)
 
 	target_square.add_trait(trait_instance)
@@ -171,7 +174,6 @@ func _apply_random_trait_to_random_square() -> void:
 			trait_definition.display_name
 		]
 	)
-
 
 # ------------------------------------------------------------------------------
 # Vertex Upgrades
@@ -219,13 +221,34 @@ func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
 
 
 func buy_vertex_upgrade(upgrade_id: String) -> bool:
+	print("Trying to buy vertex upgrade: %s" % upgrade_id)
+
 	if not can_buy_vertex_upgrade(upgrade_id):
+		print("Cannot buy vertex upgrade: %s" % upgrade_id)
 		return false
 
 	var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
 
 	if upgrade == null:
+		print("Upgrade resource not found: %s" % upgrade_id)
 		return false
+
+	print("Buying upgrade: %s" % upgrade.display_name)
+	print("Effect count: %s" % upgrade.effects.size())
+
+	for effect_iter: VertexUpgradeEffect in upgrade.effects:
+		if effect_iter == null:
+			print("Effect is null.")
+			continue
+
+		print(
+			"Effect type: %s | target_stat: %s | target_id: %s | value: %s" % [
+				effect_iter.effect_type,
+				effect_iter.target_stat,
+				effect_iter.target_id,
+				effect_iter.value
+			]
+		)
 
 	vertices -= upgrade.cost_vertices
 
@@ -258,6 +281,8 @@ func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void:
 			_apply_unlock_passive_generator_effect(effect_iter)
 		VertexUpgradeEffect.EffectType.GLOBAL_STAT_MULTIPLIER:
 			_apply_global_stat_multiplier_effect(effect_iter)
+		VertexUpgradeEffect.EffectType.ADD_PERMANENT_STAT:
+			_apply_add_permanent_stat_effect(effect_iter)
 		VertexUpgradeEffect.EffectType.UNLOCK_MECHANIC:
 			_apply_unlock_mechanic_effect(effect_iter)
 		VertexUpgradeEffect.EffectType.ADD_STARTING_SQUARES:
@@ -269,7 +294,20 @@ func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void:
 		_:
 			push_warning("Unhandled vertex upgrade effect.")
 
+func _apply_add_permanent_stat_effect(effect_iter: VertexUpgradeEffect) -> void:
+	if effect_iter.target_stat.strip_edges() == "":
+		push_warning("ADD_PERMANENT_STAT missing target_stat.")
+		return
 
+	add_permanent_stat(effect_iter.target_stat, effect_iter.value)
+
+	print(
+		"Permanent stat added: %s %s. Current value: %s" % [
+			effect_iter.target_stat,
+			NumberFormatter.signed_amount(effect_iter.value),
+			NumberFormatter.amount(get_permanent_stat_addition(effect_iter.target_stat))
+		]
+	)
 func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) -> void:
 	if effect_iter.target_id.strip_edges() == "":
 		push_warning("UNLOCK_PASSIVE_GENERATOR missing target_id.")
@@ -305,7 +343,6 @@ func _apply_script_hook_effect(effect_iter: VertexUpgradeEffect) -> void:
 # ------------------------------------------------------------------------------
 # Permanent Stats
 # ------------------------------------------------------------------------------
-
 func get_permanent_stat_multiplier(stat_id: String) -> float:
 	return float(permanent_stat_multipliers.get(stat_id, 1.0))
 
@@ -315,6 +352,13 @@ func multiply_permanent_stat(stat_id: String, multiplier: float) -> void:
 	permanent_stat_multipliers[stat_id] = current_multiplier * multiplier
 
 
+func get_permanent_stat_addition(stat_id: String) -> float:
+	return float(permanent_stat_additions.get(stat_id, 0.0))
+
+
+func add_permanent_stat(stat_id: String, amount: float) -> void:
+	var current_amount: float = get_permanent_stat_addition(stat_id)
+	permanent_stat_additions[stat_id] = current_amount + amount
 # ------------------------------------------------------------------------------
 # Save / Load
 # ------------------------------------------------------------------------------
@@ -338,7 +382,8 @@ func to_save_dict() -> Dictionary:
 		"square_ids": square_ids,
 		"squares_by_id": square_save_data,
 		"unlocked_vertex_upgrades": unlocked_vertex_upgrades,
-		"permanent_stat_multipliers": permanent_stat_multipliers
+		"permanent_stat_multipliers": permanent_stat_multipliers,
+		"permanent_stat_additions": permanent_stat_additions
 	}
 
 
@@ -353,7 +398,7 @@ func from_save_dict(data: Dictionary) -> void:
 	_load_squares_from_save_data(data)
 	unlocked_vertex_upgrades = _dictionary_from_variant(data.get("unlocked_vertex_upgrades", {}))
 	permanent_stat_multipliers = _dictionary_from_variant(data.get("permanent_stat_multipliers", {}))
-
+	permanent_stat_additions = _dictionary_from_variant(data.get("permanent_stat_additions", {}))
 
 func _load_squares_from_save_data(data: Dictionary) -> void:
 	squares_by_id.clear()
@@ -376,6 +421,7 @@ func reset_to_new_game() -> void:
 	prestige_count = 0
 	unlocked_vertex_upgrades.clear()
 	permanent_stat_multipliers.clear()
+	permanent_stat_additions.clear()
 
 	_create_initial_grid()
 	_emit_full_state_changed()

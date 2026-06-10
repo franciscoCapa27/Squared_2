@@ -5,6 +5,7 @@ class_name GameIds
 const STAT_SQUARE_BASE_VALUE := "square_base_value"
 const STAT_SQUARE_RESPAWN_TIME := "square_respawn_time"
 const STAT_VERTEX_GAIN := "vertex_gain"
+const STAT_TRAIT_LUCK := "trait_luck"
 
 # Passive generator IDs.
 const PASSIVE_FIRST_GENERATOR := "first_generator"

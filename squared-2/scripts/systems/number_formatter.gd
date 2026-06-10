@@ -108,3 +108,9 @@ static func _format_scaled_amount(value: float, divisor: float, suffix: String) 
 		return "%.1f%s" % [scaled_value, suffix]
 
 	return "%.2f%s" % [scaled_value, suffix]
+
+static func signed_amount(value: float) -> String:
+	if value >= 0.0:
+		return "+%s" % amount(value)
+
+	return "-%s" % amount(abs(value))

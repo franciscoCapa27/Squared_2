@@ -163,6 +163,8 @@ func _apply_reward(reward: AchievementReward) -> void:
 	match reward.reward_type:
 		AchievementReward.RewardType.GLOBAL_STAT_MULTIPLIER:
 			_apply_global_stat_multiplier_reward(reward)
+		AchievementReward.RewardType.ADD_PERMANENT_STAT:
+			_apply_add_permanent_stat_reward(reward)
 		AchievementReward.RewardType.UNLOCK_MECHANIC:
 			push_warning("Achievement UNLOCK_MECHANIC reward not implemented: %s" % reward.mechanic_id)
 		AchievementReward.RewardType.ADD_STARTING_SQUARES:
@@ -172,7 +174,12 @@ func _apply_reward(reward: AchievementReward) -> void:
 		_:
 			push_warning("Unhandled achievement reward.")
 
+func _apply_add_permanent_stat_reward(reward: AchievementReward) -> void:
+	if reward.target_stat.strip_edges() == "":
+		push_warning("Achievement ADD_PERMANENT_STAT reward missing target_stat.")
+		return
 
+	GameState.add_permanent_stat(reward.target_stat, reward.value)
 func _apply_global_stat_multiplier_reward(reward: AchievementReward) -> void:
 	if reward.target_stat.strip_edges() == "":
 		push_warning("Achievement GLOBAL_STAT_MULTIPLIER missing target_stat.")

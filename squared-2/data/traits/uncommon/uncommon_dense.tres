@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3 uid="uid://dex1477q0orq0"]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_pshup"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_mqs0s"]
+
+[sub_resource type="Resource" id="Resource_mm6yg"]
+script = ExtResource("1_pshup")
+target_stat = "respawn_time"
+value = 1.15
+use_value_range = true
+value_min = 1.05
+value_max = 1.15
+roll_key = "respawn_time_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[sub_resource type="Resource" id="Resource_2amxg"]
+script = ExtResource("1_pshup")
+target_stat = "square_value"
+value = 1.8
+use_value_range = true
+value_min = 1.3
+value_max = 1.8
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_mqs0s")
+id = "uncommon_dense"
+display_name = "Uncommon Dense"
+family_id = "dense"
+family_display_name = "Dense"
+description = "+50% Squares from this square, but +15% respawn time."
+rarity = 1
+tags = Array[String](["value", "heavy", "dense"])
+min_grid_tier = 2
+effect_components = Array[ExtResource("1_pshup")]([SubResource("Resource_mm6yg"), SubResource("Resource_2amxg")])
+name_prefixes = Array[String](["Dense"])
+visual_base_color_weight = Color(1, 0.72156864, 1, 1)
+visual_accent_color_weight = Color(0.7647059, 1, 1, 1)
+visual_glow_weight = 1
+visual_edge_complexity_weight = 1
+script_hook_id = "\"\""
+metadata/_custom_type_script = "uid://crmybp42r8q3a"

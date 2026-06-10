@@ -62,6 +62,11 @@ func _format_reward(reward: AchievementReward) -> String:
 				_format_stat_name(reward.target_stat),
 				NumberFormatter.precise_percent_from_multiplier(reward.value)
 			]
+		AchievementReward.RewardType.ADD_PERMANENT_STAT:
+			return "%s +%s" % [
+				_format_stat_name(reward.target_stat),
+				NumberFormatter.amount(reward.value)
+			]
 		AchievementReward.RewardType.UNLOCK_MECHANIC:
 			return "Unlock mechanic: %s" % reward.mechanic_id
 		AchievementReward.RewardType.ADD_STARTING_SQUARES:
@@ -80,5 +85,7 @@ func _format_stat_name(stat_id: String) -> String:
 			return "Square respawn time"
 		GameIds.STAT_VERTEX_GAIN:
 			return "Vertex gain"
+		GameIds.STAT_TRAIT_LUCK:
+			return "Trait luck"
 		_:
 			return stat_id
