@@ -11,10 +11,25 @@ signal buy_requested(upgrade_id: String)
 
 var upgrade_definition: VertexUpgradeDefinition
 
-
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	buy_button.pressed.connect(_on_buy_button_pressed)
 
+	_apply_theme()
+
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+
+	ThemeTextHelper.apply_primary_label(title_label)
+	ThemeTextHelper.apply_muted_label(category_cost_label)
+	ThemeTextHelper.apply_secondary_rich_text(description_label)
+	ThemeTextHelper.apply_secondary_rich_text(requirement_label)
+
+	ThemeButtonHelper.apply_button_theme(buy_button)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 func setup(upgrade: VertexUpgradeDefinition) -> void:
 	upgrade_definition = upgrade

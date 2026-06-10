@@ -13,8 +13,24 @@ var upgrade_definition: RunUpgradeDefinition
 
 
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	buy_button.pressed.connect(_on_buy_button_pressed)
 
+	_apply_theme()
+
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+
+	ThemeTextHelper.apply_primary_label(title_label)
+	ThemeTextHelper.apply_muted_label(category_level_label)
+	ThemeTextHelper.apply_secondary_rich_text(description_label)
+	ThemeTextHelper.apply_secondary_rich_text(detail_label)
+
+	ThemeButtonHelper.apply_button_theme(buy_button)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 func setup(upgrade: RunUpgradeDefinition) -> void:
 	upgrade_definition = upgrade

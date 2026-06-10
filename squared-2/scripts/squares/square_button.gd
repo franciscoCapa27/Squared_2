@@ -16,7 +16,25 @@ func setup(id: String, display_text: String = "■") -> void:
 	_reset_visual_state()
 
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	pressed.connect(_on_pressed)
+	
+	_apply_theme()
+
+func _apply_theme() -> void:
+	add_theme_stylebox_override("normal", ThemeSystem.make_card_style())
+	add_theme_stylebox_override("hover", ThemeSystem.make_selected_card_style())
+	add_theme_stylebox_override("pressed", ThemeSystem.make_selected_card_style())
+	add_theme_stylebox_override("disabled", ThemeSystem.make_card_style())
+
+	add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+	add_theme_color_override("font_hover_color", ThemeSystem.get_color("text_primary"))
+	add_theme_color_override("font_pressed_color", ThemeSystem.get_color("text_primary"))
+	add_theme_color_override("font_disabled_color", ThemeSystem.get_color("text_muted"))
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 func _on_pressed() -> void:
 	if is_respawning:

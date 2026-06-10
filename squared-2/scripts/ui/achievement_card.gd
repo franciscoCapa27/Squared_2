@@ -10,6 +10,36 @@ class_name AchievementCard
 
 var achievement_definition: AchievementDefinition
 
+func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	_apply_theme()
+	
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+
+	ThemeTextHelper.apply_primary_label(title_label)
+	ThemeTextHelper.apply_muted_label(category_status_label)
+	ThemeTextHelper.apply_secondary_rich_text(description_label)
+	ThemeTextHelper.apply_muted_label(progress_label)
+	ThemeTextHelper.apply_secondary_rich_text(reward_label)
+
+	progress_bar.add_theme_stylebox_override("background", ThemeSystem.make_style_box(
+		ThemeSystem.get_color("surface_soft"),
+		ThemeSystem.get_color("border_soft"),
+		8,
+		1
+	))
+
+	progress_bar.add_theme_stylebox_override("fill", ThemeSystem.make_style_box(
+		ThemeSystem.get_color("accent_primary"),
+		ThemeSystem.get_color("accent_primary"),
+		8,
+		0
+	))
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 func setup(achievement: AchievementDefinition) -> void:
 	achievement_definition = achievement

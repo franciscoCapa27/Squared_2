@@ -14,12 +14,18 @@ var square_buttons_by_id: Dictionary = {}
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
 	EventBus.squares_changed.connect(_on_squares_changed)
-
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	upgrade_grid_button.pressed.connect(_on_upgrade_grid_button_pressed)
 
 	rebuild()
+	_apply_theme()
+
+func _apply_theme() -> void:
+	ThemeButtonHelper.apply_button_theme(upgrade_grid_button)
 
 
+func _on_theme_changed() -> void:
+	_apply_theme()
 func rebuild() -> void:
 	for child: Node in grid_root.get_children():
 		child.queue_free()

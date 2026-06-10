@@ -11,8 +11,21 @@ signal upgrade_requested(generator_id: String)
 var generator_id: String = ""
 
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	upgrade_button.pressed.connect(_on_upgrade_button_pressed)
+	
+	_apply_theme()
+	
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
+	ThemeTextHelper.apply_primary_label(title_label)
+	ThemeTextHelper.apply_secondary_rich_text(status_label)
+	ThemeButtonHelper.apply_button_theme(upgrade_button)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 func setup(p_generator_id: String) -> void:
 	generator_id = p_generator_id
 	refresh()

@@ -26,6 +26,7 @@ func _ready() -> void:
 	_connect_global_signals()
 	_connect_ui_signals()
 	_connect_page_signals()
+	_apply_theme()
 
 	_show_center_page("grid")
 	_on_story_message("There is a square.")
@@ -41,7 +42,21 @@ func _ready() -> void:
 # ------------------------------------------------------------------------------
 # Setup
 # ------------------------------------------------------------------------------
+func _apply_theme() -> void:
+	ThemeButtonHelper.apply_button_theme(prestige_button)
+	ThemeButtonHelper.apply_button_theme(grid_tab_button)
+	ThemeButtonHelper.apply_button_theme(vertex_shop_tab_button)
+	ThemeButtonHelper.apply_button_theme(options_tab_button)
+	ThemeButtonHelper.apply_button_theme(achievements_tab_button)
 
+	ThemeTextHelper.apply_primary_label(squares_label)
+	ThemeTextHelper.apply_primary_label(vertices_label)
+	ThemeTextHelper.apply_muted_label(prestige_label)
+	ThemeTextHelper.apply_secondary_label(story_label)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 func _connect_global_signals() -> void:
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.vertices_changed.connect(_on_vertices_changed)
@@ -51,6 +66,8 @@ func _connect_global_signals() -> void:
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
 	AchievementSystem.achievements_changed.connect(_on_achievements_changed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+
 
 
 func _connect_ui_signals() -> void:
