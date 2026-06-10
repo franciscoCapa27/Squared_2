@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
 [ext_resource type="Script" uid="uid://blvtlqs2ve4y7" path="res://scripts/ui/passive_panel.gd" id="2_gyg6b"]
 [ext_resource type="Script" uid="uid://bg5n4yaoqsv0k" path="res://scripts/ui/options_page.gd" id="2_nha0i"]
+[ext_resource type="Script" uid="uid://bxj37wgxednl7" path="res://scripts/ui/grid_page.gd" id="3_1rhdn"]
 [ext_resource type="Script" uid="uid://dtcxo6g4t8ui" path="res://scripts/ui/vertex_shop_page.gd" id="3_dc040"]
+[ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -156,6 +158,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_1rhdn")
 
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage" unique_id=847906112]
 layout_mode = 2
@@ -283,13 +286,15 @@ unique_name_in_owner = true
 layout_mode = 2
 text = " "
 
-[node name="SidePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
+[node name="SquareDetailsPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=872099950]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 mouse_filter = 2
+script = ExtResource("6_sjxhf")
 
-[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/SidePanel" unique_id=1432494938]
+[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel" unique_id=1432494938]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -297,19 +302,19 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin" unique_id=354830038]
+[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin" unique_id=354830038]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=324483402]
+[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Selected Square"
 
-[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
@@ -317,20 +322,20 @@ size_flags_vertical = 3
 bbcode_enabled = true
 text = "No square selected."
 
-[node name="UpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=2033131904]
+[node name="UpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=2033131904]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Upgrades
 "
 
-[node name="UpgradesList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=1606221242]
+[node name="UpgradesList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=1606221242]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 theme_override_constants/separation = 8
 
-[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/SidePanel/SideMargin/SideVbox" unique_id=126762251]
+[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/SquareDetailsPanel/SideMargin/SideVbox" unique_id=126762251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2

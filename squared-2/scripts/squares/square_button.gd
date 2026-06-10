@@ -1,4 +1,5 @@
 extends Button
+class_name SquareButton
 
 signal square_clicked(square_id: String)
 
@@ -65,3 +66,8 @@ func _finish_respawn() -> void:
 func _reset_visual_state() -> void:
 	text = "■"
 	modulate = normal_modulate
+
+func set_square_data(p_square_data: SquareData) -> void:
+	var square_data := GameState.get_square(square_id)
+	square_data = p_square_data
+	_apply_square_visuals()
