@@ -3,8 +3,8 @@ class_name SquareDetailsPanel
 
 @onready var selected_square_title: Label = %SelectedSquareTitle
 @onready var selected_square_details: RichTextLabel = %SelectedSquareDetails
-@onready var side_margin: MarginContainer = %SideMargin
-@onready var side_v_box: VBoxContainer = %SideVBox
+@onready var side_margin: MarginContainer = %RunUpgradesMargin
+@onready var side_v_box: VBoxContainer = %RunUpgradesVBox
 
 
 var selected_square_id: String = ""
