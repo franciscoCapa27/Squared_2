@@ -6,9 +6,11 @@
 script = ExtResource("1_adej7")
 background = Color(0.019607844, 0.03137255, 0.07058824, 1)
 background_subtle = Color(0.03137255, 0.050980393, 0.101960786, 1)
-surface_soft = Color(0.06666667, 0.101960786, 0.19215687, 0.8)
-surface_strong = Color(0.09019608, 0.12941177, 0.2509804, 0.8666667)
+surface = Color(0.050980393, 0.078431375, 0.14901961, 0.6666667)
+surface_soft = Color(0.06666667, 0.101960786, 0.19215687, 0.6666667)
+surface_strong = Color(0.09019608, 0.12941177, 0.2509804, 0.8)
 border = Color(0.17254902, 0.22745098, 0.37254903, 0.6)
-border_soft = Color(0.11764706, 0.16078432, 0.27450982, 0.4)
+border_soft = Color(0.11764706, 0.16078432, 0.27450982, 0.33333334)
 border_strong = Color(0.54509807, 0.4862745, 1, 0.6666667)
+prestige_gap = 36
 metadata/_custom_type_script = "uid://cvatw78wn0lcx"

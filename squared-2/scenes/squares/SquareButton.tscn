@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bqbtgkrt27fb4" path="res://scripts/squares/square_button.gd" id="1_3cowg"]
 
 [node name="SquareButton" type="Button" unique_id=1322109516]
-custom_minimum_size = Vector2(96, 96)
+custom_minimum_size = Vector2(112, 112)
 offset_right = 8.0
 offset_bottom = 8.0
 tooltip_text = "Square

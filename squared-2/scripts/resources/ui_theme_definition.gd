@@ -43,3 +43,12 @@ class_name UIThemeDefinition
 @export_range(0.0, 1.0, 0.01) var disabled_opacity: float = 0.45
 @export_range(0.0, 1.0, 0.01) var hover_brightness: float = 1.15
 @export_range(0.0, 1.0, 0.01) var pressed_brightness: float = 0.85
+
+@export_group("Spacing")
+@export_range(0, 64, 1) var screen_margin: int = 24
+@export_range(0, 64, 1) var panel_gap: int = 16
+@export_range(0, 64, 1) var section_gap: int = 18
+@export_range(0, 64, 1) var card_gap: int = 10
+@export_range(0, 64, 1) var inner_margin: int = 16
+@export_range(0, 64, 1) var grid_gap: int = 14
+@export_range(0, 128, 1) var prestige_gap: int = 32

@@ -3,13 +3,36 @@ class_name SquareDetailsPanel
 
 @onready var selected_square_title: Label = %SelectedSquareTitle
 @onready var selected_square_details: RichTextLabel = %SelectedSquareDetails
+@onready var side_margin: MarginContainer = %SideMargin
+@onready var side_v_box: VBoxContainer = %SideVBox
+
 
 var selected_square_id: String = ""
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	_apply_theme()
+	
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
+	ThemeLayoutHelper.apply_margin(side_margin, "inner_margin")
+	ThemeLayoutHelper.apply_box_separation(side_v_box, "section_gap")
+
+	selected_square_title.add_theme_color_override(
+		"font_color",
+		ThemeSystem.get_color("text_primary")
+	)
+
+	selected_square_details.add_theme_color_override(
+		"default_color",
+		ThemeSystem.get_color("text_secondary")
+	)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
+	
 func show_square(square_id: String) -> void:
 	selected_square_id = square_id
 	refresh()
@@ -55,39 +78,15 @@ func _build_square_details_text(square_data: SquareData) -> String:
 	var trait_effect_text: String = square_data.get_trait_effect_summary_text()
 
 	if trait_effect_text == "":
-		trait_effect_text = "No Trait effects."
-
-	var permanent_base_value_multiplier: float = GameState.get_permanent_stat_multiplier(GameIds.STAT_SQUARE_BASE_VALUE)
+		trait_effect_text = "No active trait effects."
 
 	return (
-		"ID: %s\n" % square_data.id
-		+ "Coordinate: %s\n" % square_data.coordinate
-		+ "Grid Position: %s, %s\n\n" % [
-			square_data.grid_x,
-			square_data.grid_y
-		]
-		+ "Traits:\n%s\n\n" % trait_stack_text
-		+ "Trait Effects:\n%s\n\n" % trait_effect_text
-		+ "Current Manual Payout: %s Squares\n" % NumberFormatter.amount(manual_payout)
-		+ "Current Respawn Time: %s\n\n" % NumberFormatter.seconds(respawn_time)
-		+ "Base Value: %s\n" % NumberFormatter.amount(square_data.base_value)
-		+ "Permanent Base Value Multiplier: %s (%s)\n" % [
-			NumberFormatter.multiplier(permanent_base_value_multiplier),
-			NumberFormatter.precise_percent_from_multiplier(permanent_base_value_multiplier)
-		]
-		+ "Base Respawn Time: %s\n\n" % NumberFormatter.seconds(square_data.base_respawn_time)
-		+ "Run Squares Generated: %s\n" % NumberFormatter.amount(square_data.run_squares_generated)
-		+ "Run Manual Clicks: %s\n" % NumberFormatter.integer_amount(square_data.run_manual_clicks)
-		+ "Run Passive Clicks: %s\n\n" % NumberFormatter.integer_amount(square_data.run_passive_clicks)
-		+ "Lifetime Squares Generated: %s\n" % NumberFormatter.amount(square_data.lifetime_squares_generated)
-		+ "Lifetime Manual Clicks: %s\n" % NumberFormatter.integer_amount(square_data.lifetime_manual_clicks)
-		+ "Lifetime Passive Clicks: %s\n" % NumberFormatter.integer_amount(square_data.lifetime_passive_clicks)
-		+ "Times Traited: %s\n" % NumberFormatter.integer_amount(square_data.times_traited)
-		+ "Highest Single Payout: %s\n\n" % NumberFormatter.amount(square_data.highest_single_payout)
-		+ "Permanent Tags: %s\n" % _format_string_array(square_data.permanent_tags)
-		+ "Temporary Tags: %s" % _format_string_array(square_data.temporary_tags)
+		"Base Value                                      %s\n" % NumberFormatter.amount(square_data.base_value)
+		+ "Manual Value                                  %s\n" % NumberFormatter.amount(manual_payout)
+		+ "Respawn Time                                  %s\n\n" % NumberFormatter.seconds(respawn_time)
+		+ "Traits\n%s\n\n" % trait_stack_text
+		+ "Main Effects\n%s" % trait_effect_text
 	)
-
 
 func _format_string_array(values: Array[String]) -> String:
 	if values.is_empty():
@@ -95,19 +94,3 @@ func _format_string_array(values: Array[String]) -> String:
 
 	return ", ".join(values)
 	
-func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-
-	selected_square_title.add_theme_color_override(
-		"font_color",
-		ThemeSystem.get_color("text_primary")
-	)
-
-	selected_square_details.add_theme_color_override(
-		"default_color",
-		ThemeSystem.get_color("text_secondary")
-	)
-
-
-func _on_theme_changed() -> void:
-	_apply_theme()

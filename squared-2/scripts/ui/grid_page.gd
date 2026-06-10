@@ -6,6 +6,7 @@ signal grid_upgrade_requested()
 
 @onready var grid_root: GridContainer = %GridRoot
 @onready var upgrade_grid_button: Button = %UpgradeGridButton
+@onready var grid_v_box: VBoxContainer = %GridVBox
 
 var square_button_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var square_buttons_by_id: Dictionary = {}
@@ -22,6 +23,8 @@ func _ready() -> void:
 
 func _apply_theme() -> void:
 	ThemeButtonHelper.apply_button_theme(upgrade_grid_button)
+	ThemeLayoutHelper.apply_grid_separation(grid_root)
+	ThemeLayoutHelper.apply_box_separation(grid_v_box, "section_gap")
 
 
 func _on_theme_changed() -> void:

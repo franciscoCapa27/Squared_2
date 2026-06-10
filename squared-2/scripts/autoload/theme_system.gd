@@ -188,7 +188,6 @@ func make_button_disabled_style() -> StyleBoxFlat:
 		active_theme.button_border_width
 	)
 
-
 func make_style_box(
 	background_color: Color,
 	border_color: Color,
@@ -210,9 +209,34 @@ func make_style_box(
 	style_box.border_width_right = border_width
 	style_box.border_width_bottom = border_width
 
-	style_box.content_margin_left = 12
-	style_box.content_margin_top = 12
-	style_box.content_margin_right = 12
-	style_box.content_margin_bottom = 12
+	var inner_margin: int = get_spacing("inner_margin")
+
+	style_box.content_margin_left = inner_margin
+	style_box.content_margin_top = inner_margin
+	style_box.content_margin_right = inner_margin
+	style_box.content_margin_bottom = inner_margin
 
 	return style_box
+
+func get_spacing(spacing_id: String) -> int:
+	if active_theme == null:
+		return 0
+
+	match spacing_id:
+		"screen_margin":
+			return active_theme.screen_margin
+		"panel_gap":
+			return active_theme.panel_gap
+		"section_gap":
+			return active_theme.section_gap
+		"card_gap":
+			return active_theme.card_gap
+		"inner_margin":
+			return active_theme.inner_margin
+		"grid_gap":
+			return active_theme.grid_gap
+		"prestige_gap":
+			return active_theme.prestige_gap
+		_:
+			push_warning("Unknown theme spacing id: %s" % spacing_id)
+			return 0

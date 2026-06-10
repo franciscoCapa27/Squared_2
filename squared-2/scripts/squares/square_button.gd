@@ -27,7 +27,7 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("pressed", ThemeSystem.make_selected_card_style())
 	add_theme_stylebox_override("disabled", ThemeSystem.make_card_style())
 
-	add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+	add_theme_color_override("font_color", ThemeSystem.get_color("text_secondary"))
 	add_theme_color_override("font_hover_color", ThemeSystem.get_color("text_primary"))
 	add_theme_color_override("font_pressed_color", ThemeSystem.get_color("text_primary"))
 	add_theme_color_override("font_disabled_color", ThemeSystem.get_color("text_muted"))

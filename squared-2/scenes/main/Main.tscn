@@ -168,6 +168,7 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="GridVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter" unique_id=355446560]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
@@ -367,6 +368,7 @@ mouse_filter = 2
 script = ExtResource("6_sjxhf")
 
 [node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel" unique_id=1432494938]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -375,6 +377,7 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
 [node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin" unique_id=354830038]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
@@ -401,9 +404,11 @@ size_flags_vertical = 3
 script = ExtResource("8_ko0rf")
 
 [node name="RunUpgradesMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel" unique_id=61473642]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RunUpgradesVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin" unique_id=70099436]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RunUpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904]

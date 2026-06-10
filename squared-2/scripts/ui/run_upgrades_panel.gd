@@ -6,6 +6,9 @@ class_name RunUpgradesPanel
 var run_upgrade_card_scene: PackedScene = preload("res://scenes/ui/RunUpgradeCard.tscn")
 var run_upgrade_cards: Dictionary = {}
 
+@onready var run_upgrades_margin: MarginContainer = %RunUpgradesMargin
+@onready var run_upgrades_v_box: VBoxContainer = %RunUpgradesVBox
+
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
@@ -23,6 +26,9 @@ func _ready() -> void:
 
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+
+	ThemeLayoutHelper.apply_margin(run_upgrades_margin, "inner_margin")
+	ThemeLayoutHelper.apply_box_separation(run_upgrades_v_box, "card_gap")
 
 
 func _on_theme_changed() -> void:
