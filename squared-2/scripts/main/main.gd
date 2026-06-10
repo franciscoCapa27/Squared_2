@@ -111,7 +111,7 @@ func _refresh_vertex_shop() -> void:
 	vertex_shop_page.refresh()
 	
 func _on_unlock_first_generator_pressed() -> void:
-	var bought: bool = GameState.buy_vertex_upgrade("unlock_first_generator")
+	var bought: bool = GameState.buy_vertex_upgrade(GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR)
 
 	if bought:
 		_refresh_vertex_shop()

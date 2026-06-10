@@ -54,7 +54,7 @@ func _build_square_details_text(square_data: SquareData) -> String:
 	if trait_effect_text == "":
 		trait_effect_text = "No Trait effects."
 
-	var permanent_base_value_multiplier: float = GameState.get_permanent_stat_multiplier("square_base_value")
+	var permanent_base_value_multiplier: float = GameState.get_permanent_stat_multiplier(GameIds.STAT_SQUARE_BASE_VALUE)
 
 	return (
 		"ID: %s\n" % square_data.id
