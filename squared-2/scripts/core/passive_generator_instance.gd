@@ -62,27 +62,29 @@ func get_max_level() -> int:
 
 func get_current_interval_seconds() -> float:
 	if definition == null:
-		return 1.0
+		return 999.0
 
-	if level <= 0:
-		return definition.base_interval_seconds
-
-	var scaled_interval: float = definition.base_interval_seconds * pow(
+	var interval: float = definition.base_interval_seconds * pow(
 		definition.interval_level_multiplier,
-		level - 1
+		float(max(0, level - 1))
 	)
 
-	return max(definition.minimum_interval_seconds, scaled_interval)
+	interval *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_INTERVAL)
+	interval += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_INTERVAL)
+
+	return max(definition.minimum_interval_seconds, interval)
 
 func get_current_extraction_rate() -> float:
 	if definition == null:
 		return 0.0
 
-	if level <= 0:
-		return 0.0
+	var extraction_rate: float = definition.base_extraction_rate
+	extraction_rate += definition.extraction_per_level * float(max(0, level - 1))
 
-	var scaled_extraction: float = definition.base_extraction_rate + float(level - 1) * definition.extraction_per_level
-	return min(definition.maximum_extraction_rate, scaled_extraction)
+	extraction_rate *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_EXTRACTION)
+	extraction_rate += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_EXTRACTION)
+
+	return min(definition.maximum_extraction_rate, extraction_rate)
 
 func get_next_level_cost() -> int:
 	if definition == null:

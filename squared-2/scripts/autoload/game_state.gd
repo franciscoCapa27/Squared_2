@@ -98,6 +98,8 @@ func prestige() -> void:
 	squares = 0.0
 
 	PassiveSystem.reset_run_state_on_prestige()
+	RunUpgradeSystem.reset_run_state_on_prestige()
+
 	_apply_random_trait_to_random_square(grid_size)
 
 	_emit_core_state_changed()
@@ -455,6 +457,7 @@ func add_permanent_stat(stat_id: String, amount: float) -> void:
 				NumberFormatter.amount(new_amount)
 			]
 		)
+		
 # ------------------------------------------------------------------------------
 # Save / Load
 # ------------------------------------------------------------------------------
@@ -479,7 +482,7 @@ func to_save_dict() -> Dictionary:
 		"squares_by_id": square_save_data,
 		"unlocked_vertex_upgrades": unlocked_vertex_upgrades,
 		"permanent_stat_multipliers": permanent_stat_multipliers,
-		"permanent_stat_additions": permanent_stat_additions
+		"permanent_stat_additions": permanent_stat_additions,
 	}
 
 

@@ -131,20 +131,23 @@ func _tick_generator(generator_instance: PassiveGeneratorInstance, delta: float)
 		_pulse_generator(generator_instance)
 
 func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void:
-	var square_data: SquareData = _select_target_square(generator_instance)
+	var target_square: SquareData = _select_target_square(generator_instance)
 
-	if square_data == null:
+	if target_square == null:
 		return
 
-	var manual_payout: float = SquareCalculator.calculate_manual_payout(square_data)
-	var passive_payout: float = manual_payout * generator_instance.get_current_extraction_rate()
+	var payout: float = SquareCalculator.calculate_manual_payout(target_square)
+	payout *= generator_instance.get_current_extraction_rate()
+	payout *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
+	payout += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
+	payout = max(0.0, payout)
 
-	square_data.record_passive_click(passive_payout)
-	GameState.add_squares(passive_payout)
+	target_square.record_passive_click(payout)
+	GameState.add_squares(payout)
+	generator_instance.record_pulse(target_square.id, payout)
 
-	generator_instance.record_pulse(square_data.id, passive_payout)
-
-	passive_pulsed.emit(generator_instance.get_id(), square_data.id, passive_payout)
+	passive_pulsed.emit(generator_instance.get_id(), target_square.id, payout)
+	passive_state_changed.emit()
 
 func _select_target_square(generator_instance: PassiveGeneratorInstance) -> SquareData:
 	if generator_instance == null or generator_instance.definition == null:

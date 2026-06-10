@@ -89,6 +89,7 @@ func hard_reset() -> void:
 	GameState.reset_to_new_game()
 	PassiveSystem.reset_to_new_game()
 	AchievementSystem.reset_to_new_game()
+	RunUpgradeSystem.reset_to_new_game()
 
 	autosave_enabled = preserved_autosave_enabled
 	autosave_interval_seconds = preserved_autosave_interval_seconds
@@ -151,7 +152,8 @@ func _build_save_data() -> Dictionary:
 		},
 		"game_state": GameState.to_save_dict(),
 		"passive_system": PassiveSystem.to_save_dict(),
-		"achievement_system": AchievementSystem.to_save_dict()
+		"achievement_system": AchievementSystem.to_save_dict(),
+		"run_upgrade_system": RunUpgradeSystem.to_save_dict()
 	}
 
 func _apply_save_data(save_data: Dictionary) -> void:
@@ -172,10 +174,12 @@ func _apply_save_data(save_data: Dictionary) -> void:
 	var game_state_data: Dictionary = save_data.get("game_state", {})
 	var passive_system_data: Dictionary = save_data.get("passive_system", {})
 	var achievement_system_data: Dictionary = save_data.get("achievement_system", {})
-
+	var run_upgrade_system_data: Dictionary = save_data.get("run_upgrade_system", {})
+	
 	GameState.from_save_dict(game_state_data)
 	PassiveSystem.from_save_dict(passive_system_data)
 	AchievementSystem.from_save_dict(achievement_system_data)
+	RunUpgradeSystem.from_save_dict(run_upgrade_system_data)
 
 	EventBus.squares_changed.emit(GameState.squares)
 	EventBus.vertices_changed.emit(GameState.vertices)

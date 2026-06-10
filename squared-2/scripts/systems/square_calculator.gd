@@ -6,16 +6,19 @@ static func calculate_manual_payout(square_data: SquareData) -> float:
 		return 0.0
 
 	var value: float = square_data.base_value
+
 	value *= GameState.get_permanent_stat_multiplier(GameIds.STAT_SQUARE_BASE_VALUE)
+	value *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_SQUARE_BASE_VALUE)
+	value *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_MANUAL_CLICK_VALUE)
+
+	value += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_SQUARE_BASE_VALUE)
+	value += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_MANUAL_CLICK_VALUE)
+
 	value *= square_data.base_manual_multiplier
 	value *= square_data.temporary_value_multiplier
 
-	for trait_iter in square_data.traits:
-		value = _apply_trait_to_stat(
-			value,
-			trait_iter,
-			"square_value"
-		)
+	for trait_iter: TraitInstance in square_data.traits:
+		value = _apply_trait_to_stat(value, trait_iter, "square_value")
 
 	return max(0.0, value)
 
@@ -23,15 +26,13 @@ static func calculate_respawn_time(square_data: SquareData) -> float:
 	if square_data == null:
 		return 1.0
 
-	var respawn_time := square_data.base_respawn_time
-	respawn_time *= square_data.temporary_speed_multiplier
+	var respawn_time: float = square_data.base_respawn_time
 
-	for trait_iter in square_data.traits:
-		respawn_time = _apply_trait_to_stat(
-			respawn_time,
-			trait_iter,
-			"respawn_time"
-		)
+	respawn_time *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_SQUARE_RESPAWN_TIME)
+	respawn_time += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_SQUARE_RESPAWN_TIME)
+
+	for trait_iter: TraitInstance in square_data.traits:
+		respawn_time = _apply_trait_to_stat(respawn_time, trait_iter, "respawn_time")
 
 	return max(0.05, respawn_time)
 
