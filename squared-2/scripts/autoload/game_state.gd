@@ -1,5 +1,8 @@
 extends Node
 
+const DEBUG_VERTEX_UPGRADES := false
+const DEBUG_PERMANENT_STATS := false
+
 const INITIAL_GRID_SIZE := 1
 const INITIAL_SQUARE_ID := "A1"
 
@@ -256,34 +259,40 @@ func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
 
 
 func buy_vertex_upgrade(upgrade_id: String) -> bool:
-	print("Trying to buy vertex upgrade: %s" % upgrade_id)
+	if DEBUG_VERTEX_UPGRADES:
+		print("Trying to buy vertex upgrade: %s" % upgrade_id)
 
 	if not can_buy_vertex_upgrade(upgrade_id):
-		print("Cannot buy vertex upgrade: %s" % upgrade_id)
+		if DEBUG_VERTEX_UPGRADES:
+			print("Cannot buy vertex upgrade: %s" % upgrade_id)
+
 		return false
 
 	var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
 
 	if upgrade == null:
-		print("Upgrade resource not found: %s" % upgrade_id)
+		if DEBUG_VERTEX_UPGRADES:
+			print("Upgrade resource not found: %s" % upgrade_id)
+
 		return false
 
-	print("Buying upgrade: %s" % upgrade.display_name)
-	print("Effect count: %s" % upgrade.effects.size())
+	if DEBUG_VERTEX_UPGRADES:
+		print("Buying upgrade: %s" % upgrade.display_name)
+		print("Effect count: %s" % upgrade.effects.size())
 
-	for effect_iter: VertexUpgradeEffect in upgrade.effects:
-		if effect_iter == null:
-			print("Effect is null.")
-			continue
+		for effect_iter: VertexUpgradeEffect in upgrade.effects:
+			if effect_iter == null:
+				print("Effect is null.")
+				continue
 
-		print(
-			"Effect type: %s | target_stat: %s | target_id: %s | value: %s" % [
-				effect_iter.effect_type,
-				effect_iter.target_stat,
-				effect_iter.target_id,
-				effect_iter.value
-			]
-		)
+			print(
+				"Effect type: %s | target_stat: %s | target_id: %s | value: %s" % [
+					effect_iter.effect_type,
+					effect_iter.target_stat,
+					effect_iter.target_id,
+					effect_iter.value
+				]
+			)
 
 	vertices -= upgrade.cost_vertices
 
@@ -303,7 +312,19 @@ func _record_vertex_upgrade_purchase(upgrade_id: String) -> void:
 
 
 func _apply_vertex_upgrade_effects(upgrade: VertexUpgradeDefinition) -> void:
+	if DEBUG_VERTEX_UPGRADES:
+		print("Applying effects for upgrade: %s" % upgrade.id)
+
 	for effect_iter: VertexUpgradeEffect in upgrade.effects:
+		if effect_iter == null:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Skipped null vertex upgrade effect.")
+
+			continue
+
+		if DEBUG_VERTEX_UPGRADES:
+			print("Applying effect type: %s" % effect_iter.effect_type)
+
 		_apply_vertex_upgrade_effect(effect_iter)
 
 
@@ -313,36 +334,55 @@ func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void:
 
 	match effect_iter.effect_type:
 		VertexUpgradeEffect.EffectType.UNLOCK_PASSIVE_GENERATOR:
-			_apply_unlock_passive_generator_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.GLOBAL_STAT_MULTIPLIER:
-			_apply_global_stat_multiplier_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.ADD_PERMANENT_STAT:
-			_apply_add_permanent_stat_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.UNLOCK_MECHANIC:
-			_apply_unlock_mechanic_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.ADD_STARTING_SQUARES:
-			_apply_add_starting_squares_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.UNLOCK_TAB:
-			_apply_unlock_tab_effect(effect_iter)
-		VertexUpgradeEffect.EffectType.SCRIPT_HOOK:
-			_apply_script_hook_effect(effect_iter)
-		_:
-			push_warning("Unhandled vertex upgrade effect.")
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: UNLOCK_PASSIVE_GENERATOR")
 
+			_apply_unlock_passive_generator_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.GLOBAL_STAT_MULTIPLIER:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: GLOBAL_STAT_MULTIPLIER")
+
+			_apply_global_stat_multiplier_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.ADD_PERMANENT_STAT:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: ADD_PERMANENT_STAT")
+
+			_apply_add_permanent_stat_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.UNLOCK_MECHANIC:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: UNLOCK_MECHANIC")
+
+			_apply_unlock_mechanic_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.ADD_STARTING_SQUARES:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: ADD_STARTING_SQUARES")
+
+			_apply_add_starting_squares_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.UNLOCK_TAB:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: UNLOCK_TAB")
+
+			_apply_unlock_tab_effect(effect_iter)
+
+		VertexUpgradeEffect.EffectType.SCRIPT_HOOK:
+			if DEBUG_VERTEX_UPGRADES:
+				print("Matched effect: SCRIPT_HOOK")
+
+			_apply_script_hook_effect(effect_iter)
+
+		_:
+			push_warning("Unhandled vertex upgrade effect: %s" % effect_iter.effect_type)
 func _apply_add_permanent_stat_effect(effect_iter: VertexUpgradeEffect) -> void:
 	if effect_iter.target_stat.strip_edges() == "":
 		push_warning("ADD_PERMANENT_STAT missing target_stat.")
 		return
 
 	add_permanent_stat(effect_iter.target_stat, effect_iter.value)
-
-	print(
-		"Permanent stat added: %s %s. Current value: %s" % [
-			effect_iter.target_stat,
-			NumberFormatter.signed_amount(effect_iter.value),
-			NumberFormatter.amount(get_permanent_stat_addition(effect_iter.target_stat))
-		]
-	)
 func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) -> void:
 	if effect_iter.target_id.strip_edges() == "":
 		push_warning("UNLOCK_PASSIVE_GENERATOR missing target_id.")
@@ -383,17 +423,38 @@ func get_permanent_stat_multiplier(stat_id: String) -> float:
 
 
 func multiply_permanent_stat(stat_id: String, multiplier: float) -> void:
-	var current_multiplier: float = get_permanent_stat_multiplier(stat_id)
-	permanent_stat_multipliers[stat_id] = current_multiplier * multiplier
+	var previous_multiplier: float = get_permanent_stat_multiplier(stat_id)
+	var new_multiplier: float = previous_multiplier * multiplier
 
+	permanent_stat_multipliers[stat_id] = new_multiplier
+
+	if DEBUG_PERMANENT_STATS:
+		print(
+			"Permanent stat multiplied: %s %s -> %s" % [
+				stat_id,
+				NumberFormatter.multiplier(previous_multiplier),
+				NumberFormatter.multiplier(new_multiplier)
+			]
+		)
 
 func get_permanent_stat_addition(stat_id: String) -> float:
 	return float(permanent_stat_additions.get(stat_id, 0.0))
 
 
 func add_permanent_stat(stat_id: String, amount: float) -> void:
-	var current_amount: float = get_permanent_stat_addition(stat_id)
-	permanent_stat_additions[stat_id] = current_amount + amount
+	var previous_amount: float = get_permanent_stat_addition(stat_id)
+	var new_amount: float = previous_amount + amount
+
+	permanent_stat_additions[stat_id] = new_amount
+
+	if DEBUG_PERMANENT_STATS:
+		print(
+			"Permanent stat added: %s %s -> %s" % [
+				stat_id,
+				NumberFormatter.amount(previous_amount),
+				NumberFormatter.amount(new_amount)
+			]
+		)
 # ------------------------------------------------------------------------------
 # Save / Load
 # ------------------------------------------------------------------------------
