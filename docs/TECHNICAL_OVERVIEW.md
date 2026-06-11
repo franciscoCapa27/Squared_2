@@ -1,116 +1,140 @@
-# Squared² — Technical Overview
-
-Last updated: 2026-06-09
+# Squared² — Technical Documentation
 
 ## 1. Project Summary
 
-**Squared²** is a 2D incremental / prestige game built in **Godot 4.6**.
+**Squared²** is a Godot 4.6 incremental / prestige game built around a grid of Squares.
 
-The core fantasy is that the player starts with a single square in empty space. Clicking the square generates **Squares**, the base currency. After reaching a threshold, the player can **prestige**, resetting run-based progress in exchange for **Vertices**, the meta currency. Prestiging also expands the grid and gives a random square a persistent **Trait**, slowly turning the board into a unique, history-bearing system.
+The player:
 
-The project direction is:
+1. Clicks Squares to gain `Squares`.
+2. Spends `Squares` on:
 
-* fast early prestige loops;
-* permanent square identity;
-* random Trait assignment;
-* data-driven systems;
-* scalable passive generation;
-* permanent Vertex upgrades;
-* exportable save files;
-* UI built from reusable components rather than hardcoded one-off logic.
+   * Grid expansion.
+   * Run upgrades.
+   * Passive generator levels.
+3. Prestiges to:
 
-The current focus is technical foundation and gameplay systems. Visual polish is intentionally secondary.
+   * Reset run progress.
+   * Gain `Vertices`.
+   * Roll one random Trait onto an existing Square.
+4. Spends `Vertices` on permanent upgrades.
+5. Unlocks additional mechanics through Vertex upgrades, achievements, grid expansion, and run progression.
+
+The game architecture is intentionally resource-driven. Most content is defined through `.tres` resources, while systems operate on those definitions.
 
 ---
 
-## 2. Project Structure
+## 2. Design Layers
 
-Current high-level structure:
+### 2.1 Run Layer
+
+The run layer resets on prestige.
+
+Includes:
+
+* Current `Squares`.
+* Passive generator levels.
+* Run upgrade levels.
+* Run stat multipliers.
+* Run stat additions.
+* Current passive generator pulse timers.
+* Current run generated Squares / click counts on Squares.
+
+Owned by:
 
 ```text
-res://
-  data/
-    passive_generators/
-      first_generator.tres
-      value_harvester.tres
+GameState
+PassiveSystem
+RunUpgradeSystem
+SquareData
+PassiveGeneratorInstance
+```
 
-    traits/
-      common/
-        common_dense.tres
-        common_quick.tres
+---
 
-    vertex_upgrades/
-      unlock_first_generator.tres
-      unlock_value_harvester.tres
-      sharpened_origin.tres
+### 2.2 Permanent Layer
 
-  scenes/
-    main/
-      Main.tscn
+The permanent layer persists through prestige.
 
-    squares/
-      SquareButton.tscn
+Includes:
 
-    ui/
-      PassiveGeneratorCard.tscn
-      VertexUpgradeCard.tscn
+* `Vertices`.
+* Prestige count.
+* Grid size.
+* Existing Squares.
+* Traits applied to Squares.
+* Vertex upgrade purchases.
+* Permanent stat multipliers.
+* Permanent stat additions.
+* Achievement unlocks.
+* Permanently unlocked passive generators.
 
-  scripts/
-    autoload/
-      event_bus.gd
-      game_state.gd
-      passive_generator_database.gd
-      passive_system.gd
-      save_system.gd
-      trait_database.gd
-      vertex_upgrade_database.gd
+Owned by:
 
-    core/
-      passive_generator_instance.gd
-      square_data.gd
-      trait_instance.gd
+```text
+GameState
+PassiveSystem
+AchievementSystem
+SquareData
+TraitInstance
+```
 
-    main/
-      main.gd
+---
 
-    resources/
-      effect_component.gd
-      passive_generator_definition.gd
-      trait_definition.gd
-      vertex_upgrade_definition.gd
-      vertex_upgrade_effect.gd
-      visual_profile.gd
+### 2.3 Content Definition Layer
 
-    squares/
-      square_button.gd
+Definitions are `.tres` resources.
 
-    systems/
-      square_calculator.gd
+Includes:
 
-    ui/
-      passive_generator_card.gd
-      vertex_upgrade_card.gd
+* Trait definitions.
+* Vertex upgrade definitions.
+* Passive generator definitions.
+* Achievement definitions.
+* Run upgrade definitions.
+* Theme definitions.
+
+Owned by database autoloads:
+
+```text
+TraitDatabase
+VertexUpgradeDatabase
+PassiveGeneratorDatabase
+AchievementDatabase
+RunUpgradeDatabase
+ThemeSystem
 ```
 
 ---
 
 ## 3. Autoloads
 
-The project uses several autoload singletons.
-
 Recommended autoload order:
 
 ```text
 EventBus
+ThemeSystem
 TraitDatabase
 VertexUpgradeDatabase
 PassiveGeneratorDatabase
+AchievementDatabase
+RunUpgradeDatabase
 GameState
 PassiveSystem
+RunUpgradeSystem
+AchievementSystem
 SaveSystem
 ```
 
-### 3.1 EventBus
+The order matters because some systems depend on definitions loaded by databases.
+
+---
+
+# 4. Autoload Scripts
+
+---
+
+## 4.1 `event_bus.gd`
 
 Path:
 
@@ -118,32 +142,356 @@ Path:
 res://scripts/autoload/event_bus.gd
 ```
 
-Purpose:
+Class:
 
-Global signal hub for UI and systems.
+```gdscript
+extends Node
+```
 
-Current responsibilities:
+### Purpose
 
-* currency updates;
-* prestige count updates;
-* grid rebuild notifications;
-* selected square notifications;
-* story/status messages.
+Central signal bus for cross-system communication.
 
-Typical signals:
+This avoids direct references between unrelated UI and gameplay systems.
+
+### Signals
 
 ```gdscript
 signal squares_changed(value: float)
+```
+
+Emitted when current Squares change.
+
+Used by:
+
+* Main resource label.
+* Passive panel.
+* Run upgrades panel.
+* Grid upgrade button.
+* Prestige panel.
+
+---
+
+```gdscript
 signal vertices_changed(value: int)
+```
+
+Emitted when Vertices change.
+
+Used by:
+
+* Main resource label.
+* Vertex shop.
+* Prestige panel.
+
+---
+
+```gdscript
 signal prestige_changed(value: int)
+```
+
+Emitted when prestige count changes.
+
+Used by:
+
+* Prestige label.
+* Run upgrades panel.
+* Achievements.
+
+---
+
+```gdscript
 signal grid_changed()
+```
+
+Emitted when the grid should be rebuilt or refreshed.
+
+Used by:
+
+* GridPage.
+* Square details.
+* Run upgrade unlock checks.
+* Achievements.
+
+---
+
+```gdscript
+signal grid_upgraded(new_grid_size: int)
+```
+
+Emitted when the player expands the grid.
+
+Used by:
+
+* Achievements.
+* Future stats.
+* UI refresh.
+
+---
+
+```gdscript
 signal square_selected(square_id: String)
+```
+
+Emitted when a Square is clicked or selected.
+
+Used by:
+
+* SquareDetailsPanel.
+* Main UI.
+
+---
+
+```gdscript
 signal story_message(message: String)
+```
+
+Emitted when a narrative/status message should be shown.
+
+Used by:
+
+* Main story label/top bar.
+
+---
+
+## 4.2 `theme_system.gd`
+
+Path:
+
+```text
+res://scripts/autoload/theme_system.gd
+```
+
+Class:
+
+```gdscript
+extends Node
+```
+
+### Purpose
+
+Owns the currently active UI theme.
+
+Provides:
+
+* Color lookup.
+* Spacing lookup.
+* StyleBox generation.
+* Panel/card/button style creation.
+* `theme_changed` signal for runtime theme updates.
+
+### Constants
+
+```gdscript
+const DEFAULT_THEME_PATH := "res://data/themes/void_dark.tres"
+```
+
+Default theme loaded at startup.
+
+### Variables
+
+```gdscript
+var active_theme: UIThemeDefinition
+```
+
+Currently loaded UI theme resource.
+
+### Signals
+
+```gdscript
+signal theme_changed()
+```
+
+Emitted when a new theme is loaded.
+
+### Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Loads the default theme.
+
+---
+
+```gdscript
+func load_theme(theme_path: String) -> void
+```
+
+Loads a `UIThemeDefinition` resource from disk.
+
+Validates:
+
+* Resource exists.
+* Resource is `UIThemeDefinition`.
+
+Sets `active_theme`.
+
+Emits `theme_changed`.
+
+---
+
+```gdscript
+func get_theme_id() -> String
+```
+
+Returns the active theme ID.
+
+Returns empty string if no theme is loaded.
+
+---
+
+```gdscript
+func get_color(color_id: String) -> Color
+```
+
+Returns a named color from `active_theme`.
+
+Supported IDs:
+
+```text
+background
+background_subtle
+surface
+surface_soft
+surface_strong
+border
+border_soft
+border_strong
+text_primary
+text_secondary
+text_muted
+accent_primary
+accent_secondary
+success
+warning
+danger
+```
+
+Unknown IDs push a warning and return white.
+
+---
+
+```gdscript
+func get_spacing(spacing_id: String) -> int
+```
+
+Returns spacing values from the active theme.
+
+Supported IDs:
+
+```text
+screen_margin
+panel_gap
+section_gap
+card_gap
+inner_margin
+grid_gap
+prestige_gap
 ```
 
 ---
 
-### 3.2 TraitDatabase
+```gdscript
+func make_background_style() -> StyleBoxFlat
+```
+
+Creates a full background style using the theme background color.
+
+---
+
+```gdscript
+func make_panel_style() -> StyleBoxFlat
+```
+
+Creates a standard large panel style.
+
+Used for:
+
+* Top bar.
+* Side panels.
+* Square details panel.
+* Run upgrades panel.
+* Achievement summary panel.
+
+---
+
+```gdscript
+func make_elevated_panel_style() -> StyleBoxFlat
+```
+
+Creates a slightly stronger panel style.
+
+Used for:
+
+* Prestige panel.
+* Important containers.
+
+---
+
+```gdscript
+func make_card_style() -> StyleBoxFlat
+```
+
+Creates a card style.
+
+Used for:
+
+* Passive generator cards.
+* Run upgrade cards.
+* Vertex upgrade cards.
+* Achievement cards.
+* Square buttons.
+
+---
+
+```gdscript
+func make_selected_card_style() -> StyleBoxFlat
+```
+
+Creates a highlighted card style.
+
+Used for:
+
+* Hovered square buttons.
+* Selected square button state.
+* Important card highlight states.
+
+---
+
+```gdscript
+func make_button_style() -> StyleBoxFlat
+func make_button_hover_style() -> StyleBoxFlat
+func make_button_pressed_style() -> StyleBoxFlat
+func make_button_disabled_style() -> StyleBoxFlat
+```
+
+Creates button styles for each interaction state.
+
+---
+
+```gdscript
+func make_style_box(
+    background_color: Color,
+    border_color: Color,
+    corner_radius: int,
+    border_width: int
+) -> StyleBoxFlat
+```
+
+Low-level helper for creating `StyleBoxFlat` resources.
+
+Applies:
+
+* Background color.
+* Border color.
+* Border width.
+* Corner radius.
+* Content margins.
+
+---
+
+## 4.3 `trait_database.gd`
 
 Path:
 
@@ -151,29 +499,290 @@ Path:
 res://scripts/autoload/trait_database.gd
 ```
 
-Purpose:
+Class:
 
-Loads all Trait resources from:
-
-```text
-res://data/traits/
+```gdscript
+extends Node
 ```
 
-Responsibilities:
+### Purpose
 
-* recursively load `.tres` / `.res` Trait definitions;
-* store traits by ID;
-* provide random weighted Trait selection;
-* filter Traits by grid tier;
-* provide Trait lookups during save load.
+Loads all Trait definitions and provides Trait roll logic.
 
-Important design note:
+### Constants
 
-`TraitDatabase` is an autoload singleton and should not also use `class_name TraitDatabase`, to avoid name conflicts with the autoload.
+```gdscript
+const TRAIT_ROOT_PATH := "res://data/traits"
+```
+
+Root folder for Trait resources.
+
+### Variables
+
+```gdscript
+var traits_by_id: Dictionary = {}
+```
+
+Maps Trait ID to `TraitDefinition`.
 
 ---
 
-### 3.3 VertexUpgradeDatabase
+```gdscript
+var all_traits: Array[TraitDefinition] = []
+```
+
+Flat list of all loaded Traits.
+
+---
+
+```gdscript
+var traits_by_rarity: Dictionary = {}
+```
+
+Maps rarity enum value to all Traits of that rarity.
+
+---
+
+```gdscript
+const DEBUG_TRAIT_ROLLS := false
+```
+
+Enables debug logging for Trait rolls.
+
+### Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Loads Trait resources on startup.
+
+---
+
+```gdscript
+func load_traits() -> void
+```
+
+Clears all Trait collections and recursively loads all Trait resources.
+
+---
+
+```gdscript
+func get_trait(trait_id: String) -> TraitDefinition
+```
+
+Returns Trait by ID.
+
+---
+
+```gdscript
+func get_random_trait(current_grid_size: int) -> TraitDefinition
+```
+
+Main Trait roll entry point.
+
+Flow:
+
+1. Rolls rarity using current grid size.
+2. Gets eligible Traits of that rarity.
+3. Falls back to all eligible Traits if rarity has no candidates.
+4. Rolls weighted Trait by `TraitDefinition.weight`.
+
+---
+
+```gdscript
+func get_eligible_traits(current_grid_size: int) -> Array[TraitDefinition]
+```
+
+Returns all Traits eligible at current grid size.
+
+---
+
+```gdscript
+func get_rarity_weights_for_grid(current_grid_size: int) -> Dictionary
+```
+
+Returns rarity weights after applying Trait Luck.
+
+Example at 2x2:
+
+```text
+Common 85
+Uncommon 15
+```
+
+With +10 Trait Luck:
+
+```text
+Common 75
+Uncommon 25
+```
+
+---
+
+```gdscript
+func _load_traits_recursive(path: String) -> void
+```
+
+Recursively scans folders for `.tres` and `.res` files.
+
+---
+
+```gdscript
+func _load_trait_resource(path: String) -> void
+```
+
+Loads one Trait resource.
+
+Validates:
+
+* Resource exists.
+* Resource is `TraitDefinition`.
+* Trait ID is not empty.
+* Trait ID is unique.
+
+---
+
+```gdscript
+func _rebuild_traits_by_rarity() -> void
+```
+
+Groups loaded Traits by rarity.
+
+---
+
+```gdscript
+func _get_eligible_traits(current_grid_size: int) -> Array[TraitDefinition]
+```
+
+Internal eligibility filter.
+
+---
+
+```gdscript
+func _get_eligible_traits_for_rarity(
+    rarity: int,
+    current_grid_size: int
+) -> Array[TraitDefinition]
+```
+
+Returns eligible Traits of a specific rarity.
+
+---
+
+```gdscript
+func _is_trait_eligible(
+    trait_definition: TraitDefinition,
+    current_grid_size: int
+) -> bool
+```
+
+Checks:
+
+* Trait is not null.
+* Grid size is at least `min_grid_tier`.
+* Grid size does not exceed `max_grid_tier`, if set.
+* Rarity is unlocked for grid size.
+
+---
+
+```gdscript
+func _is_rarity_unlocked_for_grid(rarity: int, current_grid_size: int) -> bool
+```
+
+Checks whether a rarity can appear at a grid size.
+
+---
+
+```gdscript
+func _get_min_grid_size_for_rarity(rarity: int) -> int
+```
+
+Rarity gates:
+
+```text
+Common    -> 1
+Uncommon  -> 2
+Rare      -> 3
+Epic      -> 4
+Legendary -> 5
+Cosmic    -> 6
+```
+
+---
+
+```gdscript
+func _roll_rarity(current_grid_size: int) -> int
+```
+
+Rolls a rarity from the weighted rarity pool.
+
+---
+
+```gdscript
+func _get_base_rarity_weights(current_grid_size: int) -> Dictionary
+```
+
+Returns base rarity weights before luck.
+
+---
+
+```gdscript
+func _apply_luck_to_rarity_weights(
+    base_weights: Dictionary,
+    trait_luck: float
+) -> Dictionary
+```
+
+Applies additive Trait Luck.
+
+Important rule:
+
+Trait Luck only shifts weights among already-unlocked rarities. It does not make Rare possible before 3x3.
+
+---
+
+```gdscript
+func _apply_cascading_luck_step(weights: Dictionary, scale: float) -> void
+```
+
+Applies one luck step.
+
+Current behavior:
+
+```text
+Common -> Uncommon
+Uncommon -> Rare
+Rare -> Epic
+Epic -> Legendary
+Legendary -> Cosmic
+```
+
+Only applies transfers where both rarities exist in current weight table.
+
+---
+
+```gdscript
+func _apply_luck_transfer(
+    weights: Dictionary,
+    transfer: Dictionary,
+    scale: float
+) -> void
+```
+
+Moves weight from one rarity bucket to another.
+
+---
+
+```gdscript
+func _roll_weighted_trait(candidates: Array[TraitDefinition]) -> TraitDefinition
+```
+
+Rolls one Trait from candidates using `TraitDefinition.weight`.
+
+---
+
+## 4.4 `vertex_upgrade_database.gd`
 
 Path:
 
@@ -181,49 +790,53 @@ Path:
 res://scripts/autoload/vertex_upgrade_database.gd
 ```
 
-Purpose:
+### Purpose
 
-Loads all permanent Vertex upgrade resources from:
+Loads all Vertex upgrade resources.
 
-```text
-res://data/vertex_upgrades/
-```
-
-Responsibilities:
-
-* recursively load `VertexUpgradeDefinition` resources;
-* store upgrades by ID;
-* sort upgrades by `sort_order`;
-* expose visible upgrades for the Vertex Shop;
-* support dependency-based visibility.
-
-This enables tree-like upgrade progression.
-
-Example:
-
-```text
-Unlock First Generator
-        ↓
-Sharpened Origin
-        ↓
-future upgrades
-```
-
-An upgrade can require one dependency or many dependencies through:
+### Expected Variables
 
 ```gdscript
-required_upgrade_ids: Array[String]
+var upgrades_by_id: Dictionary = {}
 ```
 
-Visibility is controlled with:
-
-```gdscript
-hidden_until_requirements_met: bool
-```
+Maps Vertex upgrade ID to `VertexUpgradeDefinition`.
 
 ---
 
-### 3.4 PassiveGeneratorDatabase
+```gdscript
+var all_upgrades: Array[VertexUpgradeDefinition] = []
+```
+
+Flat sorted list of all upgrades.
+
+### Main Functions
+
+```gdscript
+func load_vertex_upgrades() -> void
+```
+
+Loads all upgrades from `res://data/vertex_upgrades`.
+
+---
+
+```gdscript
+func get_upgrade(upgrade_id: String) -> VertexUpgradeDefinition
+```
+
+Returns upgrade by ID.
+
+---
+
+```gdscript
+func get_all_upgrades() -> Array[VertexUpgradeDefinition]
+```
+
+Returns all loaded upgrades.
+
+---
+
+## 4.5 `passive_generator_database.gd`
 
 Path:
 
@@ -231,31 +844,188 @@ Path:
 res://scripts/autoload/passive_generator_database.gd
 ```
 
-Purpose:
+### Purpose
 
-Loads passive generator definitions from:
+Loads passive generator definitions.
 
-```text
-res://data/passive_generators/
+### Variables
+
+```gdscript
+var generators_by_id: Dictionary = {}
 ```
 
-Responsibilities:
-
-* recursively load `PassiveGeneratorDefinition` resources;
-* store passive generator definitions by ID;
-* expose all generator definitions to `PassiveSystem`;
-* allow new passive generators to be added without changing code.
-
-Current passive generator resources:
-
-```text
-first_generator.tres
-value_harvester.tres
-```
+Maps generator ID to `PassiveGeneratorDefinition`.
 
 ---
 
-### 3.5 GameState
+```gdscript
+var all_generators: Array[PassiveGeneratorDefinition] = []
+```
+
+Flat sorted list of generator definitions.
+
+### Functions
+
+```gdscript
+func get_generator(generator_id: String) -> PassiveGeneratorDefinition
+```
+
+Returns generator definition by ID.
+
+---
+
+```gdscript
+func get_all_generators() -> Array[PassiveGeneratorDefinition]
+```
+
+Returns all generator definitions.
+
+---
+
+## 4.6 `achievement_database.gd`
+
+Path:
+
+```text
+res://scripts/autoload/achievement_database.gd
+```
+
+### Purpose
+
+Loads achievement definitions.
+
+### Variables
+
+```gdscript
+var achievements_by_id: Dictionary = {}
+```
+
+Maps achievement ID to `AchievementDefinition`.
+
+---
+
+```gdscript
+var all_achievements: Array[AchievementDefinition] = []
+```
+
+Flat sorted list of achievements.
+
+### Functions
+
+```gdscript
+func get_achievement(achievement_id: String) -> AchievementDefinition
+```
+
+Returns achievement by ID.
+
+---
+
+```gdscript
+func get_all_achievements() -> Array[AchievementDefinition]
+```
+
+Returns all achievements.
+
+---
+
+## 4.7 `run_upgrade_database.gd`
+
+Path:
+
+```text
+res://scripts/autoload/run_upgrade_database.gd
+```
+
+Class:
+
+```gdscript
+extends Node
+```
+
+### Purpose
+
+Loads run upgrade definitions.
+
+### Constants
+
+```gdscript
+const RUN_UPGRADE_ROOT_PATH := "res://data/run_upgrades"
+```
+
+Resource folder for run upgrades.
+
+### Variables
+
+```gdscript
+var upgrades_by_id: Dictionary = {}
+```
+
+Maps run upgrade ID to `RunUpgradeDefinition`.
+
+---
+
+```gdscript
+var all_upgrades: Array[RunUpgradeDefinition] = []
+```
+
+Flat sorted list of all run upgrades.
+
+### Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Loads run upgrades on startup.
+
+---
+
+```gdscript
+func load_run_upgrades() -> void
+```
+
+Clears and reloads all run upgrade resources.
+
+---
+
+```gdscript
+func get_upgrade(upgrade_id: String) -> RunUpgradeDefinition
+```
+
+Returns run upgrade by ID.
+
+---
+
+```gdscript
+func get_all_upgrades() -> Array[RunUpgradeDefinition]
+```
+
+Returns all loaded run upgrades.
+
+---
+
+```gdscript
+func _load_run_upgrades_recursive(path: String) -> void
+```
+
+Recursively scans folders for run upgrade resources.
+
+---
+
+```gdscript
+func _load_run_upgrade_resource(path: String) -> void
+```
+
+Loads one resource and validates:
+
+* Resource exists.
+* Resource is `RunUpgradeDefinition`.
+* ID is valid.
+* ID is unique.
+
+---
+
+## 4.8 `game_state.gd`
 
 Path:
 
@@ -263,61 +1033,605 @@ Path:
 res://scripts/autoload/game_state.gd
 ```
 
-Purpose:
-
-Main runtime game state.
-
-Responsibilities:
-
-* hold current currency values;
-* hold prestige count;
-* hold grid size;
-* own square data;
-* handle square clicks;
-* handle prestige;
-* handle Vertex upgrade purchases;
-* apply permanent Vertex upgrade effects;
-* expose save/load serialization.
-
-Important state includes:
+Class:
 
 ```gdscript
-var squares: float
-var vertices: int
-var prestige_count: int
-var grid_size: int
-
-var square_ids: Array[String]
-var squares_by_id: Dictionary
-
-var unlocked_vertex_upgrades: Dictionary
-var permanent_stat_multipliers: Dictionary
+extends Node
 ```
 
-`unlocked_vertex_upgrades` stores permanent meta-upgrade purchase counts.
+### Purpose
+
+Owns core game state.
+
+GameState should own:
+
+* Core currencies.
+* Grid state.
+* Square data.
+* Prestige.
+* Vertex upgrades.
+* Permanent stats.
+
+GameState should not own:
+
+* Passive generator runtime state.
+* Run upgrade runtime state.
+* Achievement state.
+* UI state.
+
+### Constants
+
+```gdscript
+const INITIAL_GRID_SIZE := 1
+```
+
+Starting grid size.
+
+---
+
+```gdscript
+const INITIAL_SQUARE_ID := "A1"
+```
+
+Starting Square ID.
+
+---
+
+```gdscript
+const MAX_GRID_SIZE := 6
+```
+
+Maximum grid size currently supported.
+
+---
+
+```gdscript
+const GRID_UPGRADE_BASE_COST := 25.0
+```
+
+Base Square cost for first grid upgrade.
+
+---
+
+```gdscript
+const GRID_UPGRADE_COST_MULTIPLIER := 6.0
+```
+
+Grid upgrade cost multiplier per grid tier.
+
+---
+
+```gdscript
+const PRESTIGE_REQUIRED_SQUARES := 10.0
+```
+
+Minimum Squares required to prestige.
+
+---
+
+```gdscript
+const VERTEX_GAIN_DIVISOR := 100.0
+```
+
+Controls Vertex gain curve.
+
+---
+
+```gdscript
+const DEBUG_VERTEX_UPGRADES := false
+const DEBUG_PERMANENT_STATS := false
+```
+
+Debug flags.
+
+### Variables
+
+```gdscript
+var squares: float = 0.0
+```
+
+Current run currency.
+
+Resets on prestige.
+
+---
+
+```gdscript
+var vertices: int = 0
+```
+
+Permanent prestige currency.
+
+Persists through prestige.
+
+---
+
+```gdscript
+var prestige_count: int = 0
+```
+
+Total number of prestiges.
+
+Persists through prestige.
+
+---
+
+```gdscript
+var grid_size: int = INITIAL_GRID_SIZE
+```
+
+Current grid dimension.
 
 Example:
 
-```gdscript
-{
-  "unlock_first_generator": 1,
-  "sharpened_origin": 1
-}
-```
-
-`permanent_stat_multipliers` stores permanent economy modifiers.
-
-Example:
-
-```gdscript
-{
-  "square_base_value": 1.1
-}
+```text
+1 = 1x1
+2 = 2x2
+3 = 3x3
 ```
 
 ---
 
-### 3.6 PassiveSystem
+```gdscript
+var square_ids: Array[String] = [INITIAL_SQUARE_ID]
+```
+
+Ordered list of active Square IDs.
+
+Used to build the grid UI.
+
+---
+
+```gdscript
+var squares_by_id: Dictionary = {}
+```
+
+Maps Square ID to `SquareData`.
+
+---
+
+```gdscript
+var unlocked_vertex_upgrades: Dictionary = {}
+```
+
+Maps Vertex upgrade ID to purchase count.
+
+Supports repeatable upgrades.
+
+---
+
+```gdscript
+var permanent_stat_multipliers: Dictionary = {}
+```
+
+Permanent multiplicative stats.
+
+Default multiplier is `1.0`.
+
+Example:
+
+```text
+square_base_value -> 1.10
+```
+
+---
+
+```gdscript
+var permanent_stat_additions: Dictionary = {}
+```
+
+Permanent additive stats.
+
+Default addition is `0.0`.
+
+Example:
+
+```text
+trait_luck -> 10.0
+```
+
+### Core Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Creates initial grid.
+
+---
+
+```gdscript
+func get_square(square_id: String) -> SquareData
+```
+
+Returns SquareData by ID.
+
+---
+
+```gdscript
+func click_square(square_id: String) -> void
+```
+
+Handles manual square click.
+
+Flow:
+
+1. Get SquareData.
+2. Calculate manual payout.
+3. Record manual click on SquareData.
+4. Add Squares.
+5. Emit square selected event.
+
+---
+
+```gdscript
+func add_squares(amount: float) -> void
+```
+
+Adds to current Squares.
+
+Ignores non-positive amounts.
+
+Emits:
+
+```gdscript
+EventBus.squares_changed
+```
+
+---
+
+```gdscript
+func spend_squares(amount: float) -> bool
+```
+
+Attempts to spend Squares.
+
+Returns `true` if successful.
+
+---
+
+```gdscript
+func can_prestige() -> bool
+```
+
+Returns whether player has enough Squares to prestige.
+
+---
+
+```gdscript
+func calculate_vertices_gain() -> int
+```
+
+Calculates Vertex gain from current Squares.
+
+Current formula:
+
+```text
+floor(sqrt(squares / VERTEX_GAIN_DIVISOR))
+```
+
+Prestige clamps this to at least `1`.
+
+---
+
+```gdscript
+func prestige() -> void
+```
+
+Performs prestige.
+
+Current behavior:
+
+1. Check `can_prestige`.
+2. Calculate gained Vertices.
+3. Add Vertices.
+4. Increment prestige count.
+5. Reset Squares to 0.
+6. Reset PassiveSystem run state.
+7. Reset RunUpgradeSystem run state.
+8. Apply random Trait to random Square using current grid size.
+9. Emit core state changes.
+10. Emit grid changed.
+11. Save game.
+
+Prestige does **not** expand grid.
+
+---
+
+### Grid Functions
+
+```gdscript
+func can_upgrade_grid() -> bool
+```
+
+Returns whether current grid can be upgraded.
+
+Requires:
+
+* Grid size below max.
+* Enough Squares.
+
+---
+
+```gdscript
+func get_grid_upgrade_cost() -> float
+```
+
+Calculates current grid upgrade cost.
+
+Formula:
+
+```text
+GRID_UPGRADE_BASE_COST * pow(GRID_UPGRADE_COST_MULTIPLIER, grid_size - 1)
+```
+
+---
+
+```gdscript
+func get_next_grid_size() -> int
+```
+
+Returns next grid size, capped by `MAX_GRID_SIZE`.
+
+---
+
+```gdscript
+func upgrade_grid() -> bool
+```
+
+Attempts to expand grid.
+
+Flow:
+
+1. Check `can_upgrade_grid`.
+2. Spend Squares.
+3. Set new grid size.
+4. Emit `grid_upgraded`.
+5. Emit `grid_changed`.
+6. Emit story message.
+
+---
+
+```gdscript
+func _create_initial_grid() -> void
+```
+
+Creates initial `A1` square.
+
+---
+
+```gdscript
+func _set_grid_size(new_grid_size: int) -> void
+```
+
+Rebuilds active grid to target size.
+
+Preserves existing SquareData where Square IDs already exist.
+
+Creates new SquareData for newly added positions.
+
+---
+
+```gdscript
+func _get_square_id_from_position(x: int, y: int) -> String
+```
+
+Converts grid coordinates to Square ID.
+
+Examples:
+
+```text
+0,0 -> A1
+1,0 -> A2
+0,1 -> B1
+```
+
+---
+
+### Trait Functions
+
+```gdscript
+func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> void
+```
+
+Rolls one Trait and applies it to a random existing Square.
+
+Uses `TraitDatabase.get_random_trait(trait_roll_grid_size)`.
+
+---
+
+### Vertex Upgrade Functions
+
+```gdscript
+func has_vertex_upgrade(upgrade_id: String) -> bool
+```
+
+Returns whether upgrade has at least one purchase.
+
+---
+
+```gdscript
+func get_vertex_upgrade_purchase_count(upgrade_id: String) -> int
+```
+
+Returns purchase count.
+
+Supports old bool-style saves by interpreting `true` as 1.
+
+---
+
+```gdscript
+func can_buy_vertex_upgrade(upgrade_id: String) -> bool
+```
+
+Checks:
+
+* Upgrade exists.
+* Enough Vertices.
+* Requirements met.
+* Repeat/max purchases valid.
+
+---
+
+```gdscript
+func buy_vertex_upgrade(upgrade_id: String) -> bool
+```
+
+Buys a Vertex upgrade.
+
+Flow:
+
+1. Check `can_buy_vertex_upgrade`.
+2. Load definition.
+3. Spend Vertices.
+4. Apply effects.
+5. Record purchase count.
+6. Emit Vertices changed.
+7. Emit Vertex upgrade purchased.
+8. Emit story message.
+
+---
+
+```gdscript
+func _record_vertex_upgrade_purchase(upgrade_id: String) -> void
+```
+
+Increments purchase count.
+
+---
+
+```gdscript
+func _apply_vertex_upgrade_effects(upgrade: VertexUpgradeDefinition) -> void
+```
+
+Applies each effect resource.
+
+---
+
+```gdscript
+func _apply_vertex_upgrade_effect(effect_iter: VertexUpgradeEffect) -> void
+```
+
+Dispatches effect by type.
+
+---
+
+```gdscript
+func _apply_unlock_passive_generator_effect(effect_iter: VertexUpgradeEffect) -> void
+```
+
+Unlocks a passive generator using `PassiveSystem.unlock_generator`.
+
+Uses:
+
+```gdscript
+effect_iter.target_id
+```
+
+---
+
+```gdscript
+func _apply_global_stat_multiplier_effect(effect_iter: VertexUpgradeEffect) -> void
+```
+
+Applies permanent multiplier.
+
+Uses:
+
+```gdscript
+effect_iter.target_stat
+effect_iter.value
+```
+
+---
+
+```gdscript
+func _apply_add_permanent_stat_effect(effect_iter: VertexUpgradeEffect) -> void
+```
+
+Applies permanent additive stat.
+
+Used for Trait Luck.
+
+---
+
+### Permanent Stat Functions
+
+```gdscript
+func get_permanent_stat_multiplier(stat_id: String) -> float
+```
+
+Returns multiplier or `1.0`.
+
+---
+
+```gdscript
+func multiply_permanent_stat(stat_id: String, multiplier: float) -> void
+```
+
+Multiplies permanent stat.
+
+---
+
+```gdscript
+func get_permanent_stat_addition(stat_id: String) -> float
+```
+
+Returns addition or `0.0`.
+
+---
+
+```gdscript
+func add_permanent_stat(stat_id: String, amount: float) -> void
+```
+
+Adds to permanent stat.
+
+---
+
+### Save Functions
+
+```gdscript
+func to_save_dict() -> Dictionary
+```
+
+Serializes core game state.
+
+Includes:
+
+```text
+squares
+vertices
+prestige_count
+grid_size
+square_ids
+squares_by_id
+unlocked_vertex_upgrades
+permanent_stat_multipliers
+permanent_stat_additions
+```
+
+---
+
+```gdscript
+func from_save_dict(data: Dictionary) -> void
+```
+
+Loads core game state from save dictionary.
+
+---
+
+```gdscript
+func reset_to_new_game() -> void
+```
+
+Resets GameState for hard reset.
+
+Does not directly reset every other system. SaveSystem should coordinate full reset.
+
+---
+
+## 4.9 `passive_system.gd`
 
 Path:
 
@@ -325,48 +1639,421 @@ Path:
 res://scripts/autoload/passive_system.gd
 ```
 
-Purpose:
+### Purpose
 
-Runtime passive generator manager.
+Owns runtime passive generator state.
 
-Responsibilities:
+### Signals
 
-* create runtime `PassiveGeneratorInstance` objects from data definitions;
-* unlock generators permanently;
-* tick active generators;
-* select target squares;
-* generate passive Squares;
-* handle run-based passive levels;
-* reset run-based passive state on prestige;
-* expose save/load serialization.
-
-Important design:
-
-Passive generators have two layers of progression:
-
-```text
-Permanent unlock:
-  Bought with Vertices.
-  Survives prestige.
-
-Run-based level:
-  Bought with Squares.
-  Resets to 0 on prestige.
+```gdscript
+signal passive_state_changed()
 ```
 
-Example:
+Emitted when generator levels/unlocks/pulses change.
+
+---
+
+```gdscript
+signal passive_pulsed(generator_id: String, square_id: String, payout: float)
+```
+
+Emitted when a passive generator produces Squares.
+
+### Variables
+
+```gdscript
+var generators_by_id: Dictionary = {}
+```
+
+Maps generator ID to `PassiveGeneratorInstance`.
+
+---
+
+```gdscript
+var generator_order: Array[String] = []
+```
+
+Sorted list of generator IDs for UI display.
+
+### Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Initializes generator instances from database definitions.
+
+---
+
+```gdscript
+func _process(delta: float) -> void
+```
+
+Ticks active generators.
+
+---
+
+```gdscript
+func _initialize_generators() -> void
+```
+
+Creates one `PassiveGeneratorInstance` per definition.
+
+---
+
+```gdscript
+func get_generator_instance(generator_id: String) -> PassiveGeneratorInstance
+```
+
+Returns runtime generator instance.
+
+---
+
+```gdscript
+func get_all_generator_instances() -> Array[PassiveGeneratorInstance]
+```
+
+Returns all generator instances.
+
+---
+
+```gdscript
+func get_unlocked_generator_instances() -> Array[PassiveGeneratorInstance]
+```
+
+Returns unlocked generators.
+
+---
+
+```gdscript
+func unlock_generator(generator_id: String) -> void
+```
+
+Permanently unlocks generator.
+
+---
+
+```gdscript
+func reset_run_state_on_prestige() -> void
+```
+
+Resets run levels/timers but keeps permanent unlocks.
+
+---
+
+```gdscript
+func can_upgrade_generator(generator_id: String) -> bool
+```
+
+Checks if player can buy next passive generator level.
+
+---
+
+```gdscript
+func upgrade_generator(generator_id: String) -> bool
+```
+
+Buys one level of passive generator.
+
+Costs Squares.
+
+---
+
+```gdscript
+func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void
+```
+
+Processes one passive pulse.
+
+Flow:
+
+1. Pick target Square.
+2. Calculate base payout from SquareCalculator.
+3. Multiply by generator extraction rate.
+4. Apply run passive click multiplier/addition.
+5. Record passive click on SquareData.
+6. Add Squares.
+7. Record pulse on generator.
+8. Emit pulse/state signals.
+
+---
+
+```gdscript
+func to_save_dict() -> Dictionary
+func from_save_dict(data: Dictionary) -> void
+func reset_to_new_game() -> void
+```
+
+Save/load/reset passive system state.
+
+---
+
+## 4.10 `run_upgrade_system.gd`
+
+Path:
 
 ```text
-Unlock First Generator with Vertices.
-It remains permanently available.
-Each run it starts at Level 0.
-Buy Level 1 with Squares to activate it.
-Prestige resets it back to Level 0.
+res://scripts/autoload/run_upgrade_system.gd
+```
+
+### Purpose
+
+Owns current-run upgrade state.
+
+### Signals
+
+```gdscript
+signal run_upgrades_changed()
+signal run_upgrade_bought(upgrade_id: String)
+```
+
+### Variables
+
+```gdscript
+var run_upgrade_levels: Dictionary = {}
+```
+
+Maps run upgrade ID to current level.
+
+Resets on prestige.
+
+---
+
+```gdscript
+var run_stat_multipliers: Dictionary = {}
+```
+
+Run-only multiplicative stats.
+
+Default multiplier is `1.0`.
+
+---
+
+```gdscript
+var run_stat_additions: Dictionary = {}
+```
+
+Run-only additive stats.
+
+Default addition is `0.0`.
+
+### Functions
+
+```gdscript
+func get_run_stat_multiplier(stat_id: String) -> float
+```
+
+Returns run multiplier.
+
+---
+
+```gdscript
+func multiply_run_stat(stat_id: String, multiplier: float) -> void
+```
+
+Multiplies run stat.
+
+---
+
+```gdscript
+func get_run_stat_addition(stat_id: String) -> float
+```
+
+Returns run addition.
+
+---
+
+```gdscript
+func add_run_stat(stat_id: String, amount: float) -> void
+```
+
+Adds to run stat.
+
+---
+
+```gdscript
+func get_run_upgrade_level(upgrade_id: String) -> int
+```
+
+Returns current run upgrade level.
+
+---
+
+```gdscript
+func is_run_upgrade_unlocked(upgrade_id: String) -> bool
+```
+
+Checks unlock conditions on definition.
+
+---
+
+```gdscript
+func can_buy_run_upgrade(upgrade_id: String) -> bool
+```
+
+Checks:
+
+* Definition exists.
+* Upgrade is unlocked.
+* Not maxed.
+* Enough Squares.
+
+---
+
+```gdscript
+func buy_run_upgrade(upgrade_id: String) -> bool
+```
+
+Buys one run upgrade level.
+
+Flow:
+
+1. Check `can_buy_run_upgrade`.
+2. Spend Squares.
+3. Apply effects.
+4. Increment level.
+5. Emit story message.
+6. Emit `run_upgrade_bought`.
+7. Emit `run_upgrades_changed`.
+
+---
+
+```gdscript
+func reset_run_state_on_prestige() -> void
+```
+
+Clears run upgrade levels and run stats.
+
+---
+
+```gdscript
+func reset_to_new_game() -> void
+```
+
+Same as prestige reset for this system.
+
+---
+
+```gdscript
+func to_save_dict() -> Dictionary
+```
+
+Saves:
+
+```text
+run_upgrade_levels
+run_stat_multipliers
+run_stat_additions
 ```
 
 ---
 
-### 3.7 SaveSystem
+```gdscript
+func from_save_dict(data: Dictionary) -> void
+```
+
+Loads run upgrade state.
+
+---
+
+```gdscript
+func _apply_run_upgrade_effects(upgrade: RunUpgradeDefinition) -> void
+```
+
+Applies all effects for one purchased level.
+
+---
+
+```gdscript
+func _apply_run_upgrade_effect(effect_iter: RunUpgradeEffect) -> void
+```
+
+Dispatches run upgrade effect.
+
+---
+
+## 4.11 `achievement_system.gd`
+
+Path:
+
+```text
+res://scripts/autoload/achievement_system.gd
+```
+
+### Purpose
+
+Owns achievement unlock state.
+
+### Signals
+
+```gdscript
+signal achievements_changed()
+signal achievement_unlocked(achievement_id: String)
+```
+
+### Expected Variables
+
+```gdscript
+var unlocked_achievements: Dictionary = {}
+```
+
+Maps achievement ID to `true`.
+
+### Main Functions
+
+```gdscript
+func check_all_achievements() -> void
+```
+
+Checks all loaded achievements.
+
+---
+
+```gdscript
+func is_achievement_unlocked(achievement_id: String) -> bool
+```
+
+Returns unlock state.
+
+---
+
+```gdscript
+func get_unlocked_count() -> int
+```
+
+Returns number of unlocked achievements.
+
+---
+
+```gdscript
+func unlock_achievement(achievement: AchievementDefinition) -> void
+```
+
+Marks achievement unlocked and applies rewards.
+
+---
+
+```gdscript
+func _apply_reward(reward: AchievementReward) -> void
+```
+
+Dispatches reward.
+
+Rewards can affect permanent stats.
+
+---
+
+```gdscript
+func to_save_dict() -> Dictionary
+func from_save_dict(data: Dictionary) -> void
+func reset_to_new_game() -> void
+```
+
+Save/load/reset achievement state.
+
+---
+
+## 4.12 `save_system.gd`
 
 Path:
 
@@ -374,60 +2061,140 @@ Path:
 res://scripts/autoload/save_system.gd
 ```
 
-Purpose:
+### Purpose
 
-Centralized save/load/export/import/hard-reset manager.
+Owns persistence.
 
-Responsibilities:
+### Constants
 
-* save game data to disk;
-* load game data from disk;
-* export save data as a compressed Base64 string;
-* import save data from a compressed Base64 string;
-* hard reset the game;
-* emit save/load status signals.
-
-Save path:
-
-```text
-user://savegame.json
+```gdscript
+const SAVE_VERSION := 1
+const SAVE_PATH := "user://savegame.json"
+const MIN_AUTOSAVE_INTERVAL_SECONDS := 5.0
+const DEFAULT_AUTOSAVE_INTERVAL_SECONDS := 60.0
 ```
 
-Export format:
+### Signals
 
-```text
-Save dictionary
-  -> JSON
-  -> UTF-8 bytes
-  -> GZIP compression
-  -> Base64 string
+```gdscript
+signal save_loaded()
+signal save_saved()
+signal save_failed(message: String)
+signal save_settings_changed()
 ```
 
-This makes export/import compatible with the typical incremental-game save pattern without requiring a separate save structure.
+### Variables
 
-Current save policy:
+```gdscript
+var autosave_enabled: bool = true
+var autosave_interval_seconds: float = DEFAULT_AUTOSAVE_INTERVAL_SECONDS
+var autosave_elapsed_seconds: float = 0.0
+var is_applying_save_data: bool = false
+```
 
-* Manual save exists in Options.
-* Export/import exists in Options.
-* Hard reset exists in Options.
-* Prestige triggers an automatic save because it is an irreversible milestone.
-* Normal upgrades and Vertex purchases do not currently force-save.
-* A configurable timed autosave should be added later through Options.
+### Functions
 
-Intended future autosave behavior:
+```gdscript
+func _process(delta: float) -> void
+```
+
+Runs autosave timer.
+
+---
+
+```gdscript
+func save_game() -> bool
+```
+
+Writes save JSON to disk.
+
+---
+
+```gdscript
+func load_game() -> bool
+```
+
+Reads save from disk and applies it.
+
+---
+
+```gdscript
+func export_save_to_string() -> String
+```
+
+Exports compressed/base64 save string.
+
+---
+
+```gdscript
+func import_save_from_string(save_string: String) -> bool
+```
+
+Imports save from string.
+
+---
+
+```gdscript
+func hard_reset() -> void
+```
+
+Resets all systems and saves fresh game.
+
+---
+
+```gdscript
+func _build_save_data() -> Dictionary
+```
+
+Builds full save dictionary.
+
+Includes:
 
 ```text
-Autosave every X seconds/minutes, configurable by the player.
-0 or disabled = no timed autosave.
-Prestige still force-saves.
-Manual save remains available.
+version
+settings
+game_state
+passive_system
+achievement_system
+run_upgrade_system
 ```
 
 ---
 
-## 4. Core Runtime Data
+```gdscript
+func _apply_save_data(save_data: Dictionary) -> void
+```
 
-### 4.1 SquareData
+Applies full save data to systems.
+
+---
+
+```gdscript
+func _apply_settings_save_data(settings_data: Dictionary) -> void
+```
+
+Loads settings.
+
+Current settings:
+
+```text
+autosave_enabled
+autosave_interval_seconds
+```
+
+Future settings:
+
+```text
+selected_theme_id
+```
+
+---
+
+# 5. Core Runtime Classes
+
+---
+
+## 5.1 `square_data.gd`
 
 Path:
 
@@ -435,70 +2202,204 @@ Path:
 res://scripts/core/square_data.gd
 ```
 
-Purpose:
+Class:
 
-Represents the real runtime state of a square. It is not a UI node.
-
-Responsibilities:
-
-* square identity;
-* coordinate;
-* display name;
-* grid position;
-* Traits;
-* tags;
-* visual profile;
-* base stats;
-* run stats;
-* lifetime stats;
-* save/load serialization.
-
-Important distinction:
-
-```text
-SquareData = gameplay state
-SquareButton = visual UI representation
+```gdscript
+class_name SquareData
 ```
 
-A square can survive across many prestiges and accumulate history.
+### Purpose
 
-Important fields include:
+Runtime state for one Square.
+
+### Important Variables
 
 ```gdscript
 var id: String
-var coordinate: String
-var display_name: String
-
-var grid_x: int
-var grid_y: int
-
-var traits: Array[TraitInstance]
-
-var base_value: float
-var base_respawn_time: float
-
-var run_squares_generated: float
-var run_manual_clicks: int
-var run_passive_clicks: int
-
-var lifetime_squares_generated: float
-var lifetime_manual_clicks: int
-var lifetime_passive_clicks: int
-
-var times_traited: int
-var times_selected_for_prestige: int
 ```
 
-SquareData supports:
-
-```gdscript
-to_save_dict()
-from_save_dict(data)
-```
+Square ID, e.g. `A1`.
 
 ---
 
-### 4.2 TraitInstance
+```gdscript
+var coordinate: String
+```
+
+Human-readable coordinate.
+
+---
+
+```gdscript
+var grid_x: int
+var grid_y: int
+```
+
+Grid position.
+
+---
+
+```gdscript
+var display_name: String
+```
+
+Generated display name.
+
+Can become long when Traits stack.
+
+---
+
+```gdscript
+var base_value: float
+```
+
+Base Square value before modifiers.
+
+---
+
+```gdscript
+var base_respawn_time: float
+```
+
+Base respawn time.
+
+---
+
+```gdscript
+var base_manual_multiplier: float
+```
+
+Square-specific manual multiplier.
+
+---
+
+```gdscript
+var temporary_value_multiplier: float
+```
+
+Temporary multiplier for future effects.
+
+---
+
+```gdscript
+var traits: Array[TraitInstance]
+```
+
+Traits applied to this Square.
+
+---
+
+```gdscript
+var run_squares_generated: float
+var lifetime_squares_generated: float
+```
+
+Generated Squares counters.
+
+---
+
+```gdscript
+var run_manual_clicks: int
+var lifetime_manual_clicks: int
+```
+
+Manual click counters.
+
+---
+
+```gdscript
+var run_passive_clicks: int
+var lifetime_passive_clicks: int
+```
+
+Passive click counters.
+
+---
+
+```gdscript
+var times_traited: int
+```
+
+Number of times this Square received a Trait.
+
+---
+
+```gdscript
+var highest_single_payout: float
+```
+
+Highest payout this Square has generated.
+
+---
+
+```gdscript
+var created_at_prestige: int
+var created_at_grid_tier: int
+```
+
+Creation metadata.
+
+---
+
+```gdscript
+var permanent_tags: Array[String]
+var temporary_tags: Array[String]
+```
+
+Tags for future mechanics.
+
+### Important Functions
+
+```gdscript
+func add_trait(trait_instance: TraitInstance) -> void
+```
+
+Adds Trait instance, increments counters, updates display name/visuals.
+
+---
+
+```gdscript
+func record_manual_click(payout: float) -> void
+```
+
+Records manual click stats.
+
+---
+
+```gdscript
+func record_passive_click(payout: float) -> void
+```
+
+Records passive click stats.
+
+---
+
+```gdscript
+func get_trait_stack_display_text() -> String
+```
+
+Returns readable list of Traits.
+
+---
+
+```gdscript
+func get_trait_effect_summary_text() -> String
+```
+
+Returns readable Trait effect summary.
+
+---
+
+```gdscript
+func to_save_dict() -> Dictionary
+func from_save_dict(data: Dictionary) -> SquareData
+```
+
+Serialize/deserialize Square state.
+
+---
+
+## 5.2 `trait_instance.gd`
 
 Path:
 
@@ -506,62 +2407,87 @@ Path:
 res://scripts/core/trait_instance.gd
 ```
 
-Purpose:
+Class:
 
-Runtime instance of a Trait on a specific square.
-
-`TraitDefinition` is the blueprint. `TraitInstance` is the actual rolled instance.
-
-Responsibilities:
-
-* reference the Trait definition;
-* store rolled effect values;
-* store acquisition metadata;
-* store stack index;
-* store copy/absorb metadata for future mechanics;
-* expose effect summary text;
-* save/load serialization.
-
-Important design:
-
-Trait values are rolled once when acquired, then stored.
-
-Example:
-
-```text
-Common Dense
-+37.2% square value
-+8.4% respawn time
+```gdscript
+class_name TraitInstance
 ```
 
-Those rolls should persist after save/load.
+### Purpose
 
-This is why `TraitInstance` stores:
+Runtime instance of a TraitDefinition.
+
+Each instance stores its own rolled values.
+
+### Variables
+
+```gdscript
+var definition_id: String
+```
+
+Trait definition ID.
+
+---
+
+```gdscript
+var definition: TraitDefinition
+```
+
+Loaded definition reference.
+
+---
+
+```gdscript
+var applied_at_prestige: int
+```
+
+Prestige count when applied.
+
+---
+
+```gdscript
+var applied_at_grid_tier: int
+```
+
+Grid tier used for roll.
+
+---
 
 ```gdscript
 var rolled_values: Dictionary
 ```
 
-Save/load behavior:
+Stores rolled effect values by `roll_key`.
 
-* On load, the Trait definition is looked up by `definition_id`.
-* A new TraitInstance is created.
-* Its `rolled_values` are overwritten from save data.
-* This prevents Traits from rerolling after load.
+Example:
 
-Important naming note:
+```text
+square_value_multiplier -> 1.314
+respawn_time_multiplier -> 1.127
+```
 
-Do not use `trait` as a variable name in GDScript because it is reserved. Use names like:
+### Functions
 
 ```gdscript
-trait_iter
-trait_instance
-trait_definition
+func get_effect_value(effect_component: EffectComponent) -> float
 ```
+
+Returns rolled value if available.
+
+Otherwise returns component static value.
 
 ---
 
-### 4.3 PassiveGeneratorInstance
+```gdscript
+func to_save_dict() -> Dictionary
+func from_save_dict(data: Dictionary) -> TraitInstance
+```
+
+Serialize/deserialize Trait instance.
+
+---
+
+## 5.3 `passive_generator_instance.gd`
 
 Path:
 
@@ -569,56 +2495,194 @@ Path:
 res://scripts/core/passive_generator_instance.gd
 ```
 
-Purpose:
+Class:
 
-Runtime state of a passive generator.
+```gdscript
+class_name PassiveGeneratorInstance
+```
 
-`PassiveGeneratorDefinition` is the data resource. `PassiveGeneratorInstance` is the runtime state.
+### Purpose
 
-Responsibilities:
+Runtime state for one passive generator.
 
-* store unlock state;
-* store current run level;
-* store current progress timer;
-* store self-prestige state for future use;
-* track lifetime/run pulses;
-* calculate current interval;
-* calculate current extraction rate;
-* calculate next level cost;
-* save/load serialization.
-
-Important fields:
+### Variables
 
 ```gdscript
 var definition: PassiveGeneratorDefinition
+```
 
+Definition resource.
+
+---
+
+```gdscript
 var is_unlocked: bool
-var level: int
+```
 
+Permanent unlock state.
+
+---
+
+```gdscript
+var level: int
+```
+
+Run level.
+
+Resets on prestige.
+
+---
+
+```gdscript
 var self_prestige_level: int
 var can_self_prestige: bool
+```
 
+Reserved for future passive self-prestige.
+
+---
+
+```gdscript
 var elapsed_seconds: float
+```
+
+Pulse timer.
+
+---
+
+```gdscript
 var last_target_square_id: String
 var last_payout: float
+```
+
+Last pulse display data.
+
+---
+
+```gdscript
 var lifetime_squares_generated: float
 var lifetime_pulses: int
 ```
 
-Important behavior:
+Current run passive stats.
 
-```text
-is_unlocked = permanent
-level = run-based
-level 0 = unlocked but inactive
-level > 0 = active
+### Functions
+
+```gdscript
+func get_id() -> String
+func get_display_name() -> String
 ```
+
+Definition accessors.
 
 ---
 
-## 5. Resource Definitions
+```gdscript
+func unlock_permanently() -> void
+```
 
-### 5.1 TraitDefinition
+Unlocks generator.
+
+---
+
+```gdscript
+func reset_run_state() -> void
+```
+
+Resets level/timer/run pulse data.
+
+---
+
+```gdscript
+func is_active() -> bool
+```
+
+Returns true if unlocked and level > 0.
+
+---
+
+```gdscript
+func get_current_interval_seconds() -> float
+```
+
+Calculates pulse interval.
+
+Includes:
+
+* Definition interval scaling.
+* Run passive interval multiplier/addition.
+
+---
+
+```gdscript
+func get_current_extraction_rate() -> float
+```
+
+Calculates extraction rate.
+
+Includes:
+
+* Definition base extraction.
+* Level scaling.
+* Run passive extraction multiplier/addition.
+
+---
+
+```gdscript
+func get_next_level_cost() -> int
+```
+
+Calculates next level cost.
+
+---
+
+```gdscript
+func can_level_up(current_squares: float) -> bool
+```
+
+Checks level/cost.
+
+---
+
+```gdscript
+func level_up() -> bool
+```
+
+Increments level.
+
+---
+
+```gdscript
+func get_progress_ratio() -> float
+```
+
+Returns timer progress 0 to 1.
+
+---
+
+```gdscript
+func record_pulse(target_square_id: String, payout: float) -> void
+```
+
+Stores last pulse and run pulse stats.
+
+---
+
+```gdscript
+func to_save_dict() -> Dictionary
+func apply_save_dict(data: Dictionary) -> void
+func reset_to_new_game() -> void
+```
+
+Persistence functions.
+
+---
+
+# 6. Resource Classes
+
+---
+
+## 6.1 `trait_definition.gd`
 
 Path:
 
@@ -626,60 +2690,36 @@ Path:
 res://scripts/resources/trait_definition.gd
 ```
 
-Purpose:
+Defines Trait content.
 
-Data blueprint for a Trait.
-
-A TraitDefinition stores:
-
-* ID;
-* display name;
-* family ID;
-* rarity;
-* tags;
-* weight;
-* grid requirements;
-* stack rules;
-* effect components;
-* naming components;
-* visual influence.
-
-Traits are stored as resources in:
-
-```text
-res://data/traits/
-```
-
-Current Traits:
-
-```text
-common_dense
-common_quick
-```
-
-Current direction:
-
-Rarities should be represented as separate TraitDefinition resources.
-
-Example:
-
-```text
-common_dense.tres
-rare_dense.tres
-legendary_dense.tres
-```
-
-All can share:
+Important exported variables:
 
 ```gdscript
-family_id = "dense"
+@export var id: String
+@export var display_name: String
+@export var family_id: String
+@export var family_display_name: String
+@export_multiline var description: String
+@export var rarity: Rarity
+@export var tags: Array[String]
+@export var weight: float
+@export var min_grid_tier: int
+@export var max_grid_tier: int
+@export var max_stack_count: int
+@export var can_duplicate: bool
+@export var effect_components: Array[EffectComponent]
+@export var name_prefixes: Array[String]
+@export var name_suffixes: Array[String]
+@export var visual_glow_weight: int
+@export var visual_edge_complexity_weight: int
+@export var visual_gloss_weight: int
+@export var visual_distortion_weight: int
+@export var script_hook_id: String
 ```
-
-but have different exact IDs and tuning.
 
 ---
 
-### 5.2 EffectComponent
+## 6.2 `effect_component.gd`
 
 Path:
 
@@ -687,39 +2727,46 @@ Path:
 res://scripts/resources/effect_component.gd
 ```
 
-Purpose:
+Defines one stat effect.
 
-Generic effect data used by Traits.
-
-Currently used for stat modifiers such as:
-
-```text
-square_value
-respawn_time
-```
-
-Supports rolled values through:
+Important variables:
 
 ```gdscript
-use_value_range
-value_min
-value_max
-roll_key
-roll_decimals
+@export var target_stat: String
+@export var operation
+@export var value: float
+@export var use_value_range: bool
+@export var value_min: float
+@export var value_max: float
+@export var roll_key: String
+@export var roll_decimals: int
 ```
 
-`roll_key` is important because multiple effects can affect the same target stat. It gives each rolled value a stable save key.
-
-Example:
-
-```text
-square_value_multiplier
-respawn_time_multiplier
-```
+Used by Traits.
 
 ---
 
-### 5.3 VertexUpgradeDefinition
+## 6.3 `visual_profile.gd`
+
+Path:
+
+```text
+res://scripts/resources/visual_profile.gd
+```
+
+Defines future visual identity data for Squares/Traits.
+
+Used for eventual:
+
+* Glow.
+* Edge style.
+* Distortion.
+* Gloss.
+* Rarity presentation.
+
+---
+
+## 6.4 `vertex_upgrade_definition.gd`
 
 Path:
 
@@ -727,49 +2774,48 @@ Path:
 res://scripts/resources/vertex_upgrade_definition.gd
 ```
 
-Purpose:
-
-Data blueprint for a permanent Vertex upgrade.
-
-Stored in:
-
-```text
-res://data/vertex_upgrades/
-```
-
-Important fields:
+Important variables:
 
 ```gdscript
-id
-display_name
-description
-category
-cost_vertices
-sort_order
-
-required_prestige_count
-required_grid_size
-required_upgrade_ids
-hidden_until_requirements_met
-
-is_repeatable
-max_purchases
-
-effects
+@export var id: String
+@export var display_name: String
+@export_multiline var description: String
+@export var category: UpgradeCategory
+@export var cost_vertices: int
+@export var is_visible_by_default: bool
+@export var sort_order: int
+@export var required_prestige_count: int
+@export var required_grid_size: int
+@export var required_upgrade_ids: Array[String]
+@export var hidden_until_requirements_met: bool
+@export var is_repeatable: bool
+@export var max_purchases: int
+@export var effects: Array[VertexUpgradeEffect]
 ```
 
-This allows upgrade trees.
+Important functions:
 
-Example:
-
-```text
-unlock_value_harvester requires unlock_first_generator
-sharpened_origin requires unlock_first_generator
+```gdscript
+func requirements_are_met(
+    prestige_count: int,
+    grid_size: int,
+    unlocked_vertex_upgrades: Dictionary
+) -> bool
 ```
+
+Checks upgrade requirements.
 
 ---
 
-### 5.4 VertexUpgradeEffect
+```gdscript
+func get_category_name() -> String
+```
+
+Returns display category name.
+
+---
+
+## 6.5 `vertex_upgrade_effect.gd`
 
 Path:
 
@@ -777,44 +2823,32 @@ Path:
 res://scripts/resources/vertex_upgrade_effect.gd
 ```
 
-Purpose:
+Important variables:
 
-Generic effect attached to a VertexUpgradeDefinition.
+```gdscript
+@export var effect_type: EffectType
+@export var target_id: String
+@export var target_stat: String
+@export var mechanic_id: String
+@export var script_hook_id: String
+@export var value: float
+```
 
-Current effect types include:
+Effect types:
 
 ```gdscript
 UNLOCK_PASSIVE_GENERATOR
 GLOBAL_STAT_MULTIPLIER
+ADD_PERMANENT_STAT
 UNLOCK_MECHANIC
 ADD_STARTING_SQUARES
 UNLOCK_TAB
 SCRIPT_HOOK
 ```
 
-Currently implemented effects:
-
-```text
-UNLOCK_PASSIVE_GENERATOR
-GLOBAL_STAT_MULTIPLIER
-```
-
-Examples:
-
-```text
-Unlock First Generator:
-  effect_type = UNLOCK_PASSIVE_GENERATOR
-  target_id = first_generator
-
-Sharpened Origin:
-  effect_type = GLOBAL_STAT_MULTIPLIER
-  target_stat = square_base_value
-  value = 1.10
-```
-
 ---
 
-### 5.5 PassiveGeneratorDefinition
+## 6.6 `passive_generator_definition.gd`
 
 Path:
 
@@ -822,69 +2856,206 @@ Path:
 res://scripts/resources/passive_generator_definition.gd
 ```
 
-Purpose:
-
-Data blueprint for a passive generator.
-
-Stored in:
-
-```text
-res://data/passive_generators/
-```
-
-Important fields:
+Important variables:
 
 ```gdscript
-id
-display_name
-description
-sort_order
-
-max_level
-
-base_interval_seconds
-minimum_interval_seconds
-interval_level_multiplier
-
-base_extraction_rate
-extraction_per_level
-maximum_extraction_rate
-
-base_level_cost
-level_cost_multiplier
-
-targeting_mode
-
-self_prestige_is_permanent
-self_prestige_unlock_level
+@export var id: String
+@export var display_name: String
+@export_multiline var description: String
+@export var sort_order: int
+@export var max_level: int
+@export var base_interval_seconds: float
+@export var minimum_interval_seconds: float
+@export var interval_level_multiplier: float
+@export var base_extraction_rate: float
+@export var extraction_per_level: float
+@export var maximum_extraction_rate: float
+@export var base_level_cost: float
+@export var level_cost_multiplier: float
+@export var targeting_mode: TargetingMode
+@export var self_prestige_is_permanent: bool
+@export var self_prestige_unlock_level: int
 ```
 
-Current passive generators:
+Targeting modes:
 
-```text
-first_generator
-value_harvester
-```
-
-Example identities:
-
-```text
-First Generator:
-  random target
-  faster
-  lower extraction
-
-Value Harvester:
-  highest-payout target
-  slower
-  higher extraction
+```gdscript
+RANDOM_SQUARE
+HIGHEST_PAYOUT
+LOWEST_RESPAWN
+SELECTED_SQUARE
 ```
 
 ---
 
-## 6. Systems
+## 6.7 `run_upgrade_definition.gd`
 
-### 6.1 SquareCalculator
+Path:
+
+```text
+res://scripts/resources/run_upgrade_definition.gd
+```
+
+Important variables:
+
+```gdscript
+@export var id: String
+@export var display_name: String
+@export_multiline var description: String
+@export var category: UpgradeCategory
+@export var sort_order: int
+@export var base_cost: float
+@export var cost_multiplier: float
+@export var max_level: int
+@export var is_visible_by_default: bool
+@export var hidden_until_unlocked: bool
+@export var unlock_conditions: Array[RunUpgradeUnlockCondition]
+@export var effects_per_level: Array[RunUpgradeEffect]
+```
+
+Important functions:
+
+```gdscript
+func is_valid_definition() -> bool
+func get_category_name() -> String
+func get_cost_for_next_level(current_level: int) -> float
+func is_unlocked_by_conditions() -> bool
+```
+
+---
+
+## 6.8 `run_upgrade_unlock_condition.gd`
+
+Path:
+
+```text
+res://scripts/resources/run_upgrade_unlock_condition.gd
+```
+
+Variables:
+
+```gdscript
+@export var condition_type: ConditionType
+@export var threshold: float
+@export var target_id: String
+```
+
+Condition types:
+
+```gdscript
+ALWAYS
+CURRENT_SQUARES
+PRESTIGE_COUNT
+GRID_SIZE
+ACHIEVEMENT_UNLOCKED
+PASSIVE_GENERATOR_LEVEL
+VERTEX_UPGRADE_PURCHASED
+TOTAL_MANUAL_CLICKS
+TOTAL_PASSIVE_CLICKS
+```
+
+Functions:
+
+```gdscript
+func is_met() -> bool
+func get_display_text() -> String
+```
+
+---
+
+## 6.9 `run_upgrade_effect.gd`
+
+Path:
+
+```text
+res://scripts/resources/run_upgrade_effect.gd
+```
+
+Variables:
+
+```gdscript
+@export var effect_type: EffectType
+@export var target_stat: String
+@export var value: float
+```
+
+Effect types:
+
+```gdscript
+GLOBAL_RUN_STAT_MULTIPLIER
+GLOBAL_RUN_STAT_ADDITION
+```
+
+---
+
+## 6.10 `ui_theme_definition.gd`
+
+Path:
+
+```text
+res://scripts/resources/ui_theme_definition.gd
+```
+
+Defines a UI theme.
+
+Variables include:
+
+```gdscript
+@export var id: String
+@export var display_name: String
+```
+
+Colors:
+
+```gdscript
+background
+background_subtle
+surface
+surface_soft
+surface_strong
+border
+border_soft
+border_strong
+text_primary
+text_secondary
+text_muted
+accent_primary
+accent_secondary
+success
+warning
+danger
+```
+
+Shape:
+
+```gdscript
+panel_corner_radius
+card_corner_radius
+button_corner_radius
+panel_border_width
+card_border_width
+button_border_width
+```
+
+Spacing:
+
+```gdscript
+screen_margin
+panel_gap
+section_gap
+card_gap
+inner_margin
+grid_gap
+prestige_gap
+```
+
+---
+
+# 7. Systems
+
+---
+
+## 7.1 `square_calculator.gd`
 
 Path:
 
@@ -892,1164 +3063,1124 @@ Path:
 res://scripts/systems/square_calculator.gd
 ```
 
-Purpose:
+Class:
 
-Central calculation system for square payouts and respawn time.
+```gdscript
+class_name SquareCalculator
+```
 
-Responsibilities:
+### Purpose
 
-* calculate manual payout;
-* calculate respawn time;
-* apply Trait effects;
-* apply permanent stat multipliers.
+Pure calculation helper for Square payout and respawn.
 
-Current manual payout flow:
+### Functions
+
+```gdscript
+static func calculate_manual_payout(square_data: SquareData) -> float
+```
+
+Calculates manual click payout.
+
+Applies:
+
+* Square base value.
+* Permanent base value multiplier.
+* Run square base value multiplier.
+* Run manual click multiplier.
+* Run additions.
+* Square-specific multipliers.
+* Trait effects.
+
+---
+
+```gdscript
+static func calculate_respawn_time(square_data: SquareData) -> float
+```
+
+Calculates respawn time.
+
+Applies:
+
+* Base respawn time.
+* Run respawn multipliers/additions.
+* Trait effects.
+
+---
+
+```gdscript
+static func _apply_trait_to_stat(
+    base_value: float,
+    trait_iter: TraitInstance,
+    target_stat: String
+) -> float
+```
+
+Applies Trait effects matching a target stat.
+
+Important: use `trait_iter`, not `trait`.
+
+---
+
+## 7.2 `number_formatter.gd`
+
+Path:
 
 ```text
-square base value
-x permanent square_base_value multiplier
-x square manual multiplier
-x temporary value multiplier
-x Trait modifiers
+res://scripts/systems/number_formatter.gd
 ```
+
+Class:
+
+```gdscript
+class_name NumberFormatter
+```
+
+### Purpose
+
+Central formatting helper for numbers.
+
+### Functions
+
+```gdscript
+static func amount(value: float) -> String
+```
+
+Formats currency-like values.
+
+Examples:
+
+```text
+1 -> 1
+1.25 -> 1.25
+1234 -> 1.23K
+```
+
+---
+
+```gdscript
+static func integer_amount(value: int) -> String
+```
+
+Formats integer resources.
+
+---
+
+```gdscript
+static func cost(value: float) -> String
+```
+
+Formats upgrade costs.
+
+---
+
+```gdscript
+static func multiplier(value: float) -> String
+```
+
+Formats multiplier values.
 
 Example:
 
 ```text
-base value = 1.0
-Sharpened Origin = x1.10
-Dense roll = x1.35
-
-final payout = 1.0 * 1.10 * 1.35 = 1.485
+x1.003
 ```
-
-Important:
-
-Permanent modifiers such as `square_base_value` are stored in `GameState.permanent_stat_multipliers`.
 
 ---
-
-### 6.2 Prestige System
-
-Current prestige behavior:
-
-* requires enough Squares;
-* grants Vertices;
-* increments prestige count;
-* resets current Squares;
-* resets run-based passive generator levels;
-* expands grid when applicable;
-* applies one random Trait to one random square;
-* emits UI update signals;
-* saves the game after prestige.
-
-Current dev-tuned threshold:
-
-```text
-10 Squares
-```
-
-Current Vertex gain formula:
 
 ```gdscript
-floor(sqrt(squares / 10.0))
+static func percent(value: float) -> String
 ```
 
-This is intentionally low for development testing.
-
-Important design:
-
-Prestige should be an irreversible milestone, so it triggers a forced save.
+Formats ratio as percent.
 
 ---
 
-### 6.3 Vertex Upgrade System
-
-Permanent Vertex upgrades are data-driven.
-
-Flow:
-
-```text
-VertexUpgradeDatabase loads resources
-Vertex Shop renders visible upgrade cards
-Player buys upgrade
-GameState validates requirements/cost
-GameState applies upgrade effects
-Purchased upgrade count is stored
-UI refreshes
+```gdscript
+static func signed_percent(value: float) -> String
 ```
 
-Current upgrades:
-
-```text
-unlock_first_generator
-unlock_value_harvester
-sharpened_origin
-```
-
-Current dependency example:
-
-```text
-unlock_first_generator
-   ├── sharpened_origin
-   └── unlock_value_harvester
-```
-
-`sharpened_origin`:
-
-* hidden until `unlock_first_generator` is purchased;
-* costs 5 Vertices;
-* permanently multiplies all square base value by 1.10.
+Formats signed percent.
 
 ---
 
-### 6.4 Passive Generator System
-
-Passive generators are data-driven.
-
-Flow:
-
-```text
-PassiveGeneratorDatabase loads generator definitions
-PassiveSystem creates runtime instances
-Vertex upgrades unlock generators permanently
-Unlocked generators appear in the passive UI
-Player buys run-based levels with Squares
-Active generators tick independently
-Prestige resets levels to 0
-Permanent unlocks remain
+```gdscript
+static func percent_from_multiplier(value: float) -> String
 ```
 
-Current passive generators:
+Formats multiplier delta as percent.
 
-```text
-First Generator
-Value Harvester
+---
+
+```gdscript
+static func precise_percent_from_multiplier(value: float) -> String
 ```
 
-First Generator:
+Used for small effects.
+
+Example:
 
 ```text
-Targeting: random square
-Base interval: 2.5s
-Base extraction: 25%
-Level 1 cost: 10 Squares
-```
-
-Value Harvester:
-
-```text
-Targeting: highest payout square
-Base interval: 4.0s
-Base extraction: 50%
-Level 1 cost: 50 Squares
-```
-
-Important behavior:
-
-```text
-Unlocked but Level 0 = visible but inactive.
-Level 1+ = active.
-Levels reset on prestige.
-Unlock state does not reset on prestige.
++0.10%
 ```
 
 ---
 
-## 7. UI Architecture
-
-### 7.1 Main Scene
-
-Main scene:
-
-```text
-res://scenes/main/Main.tscn
+```gdscript
+static func seconds(value: float) -> String
 ```
 
-The main UI currently contains:
+Formats seconds.
 
-```text
-Resources
-Center tab banner
-Left passive panel
-Center page area
-Right square details panel
-Story/status label
+---
+
+```gdscript
+static func signed_amount(value: float) -> String
 ```
 
-Center pages currently include:
+Formats additive values with sign.
+
+---
+
+# 8. UI Scripts
+
+---
+
+## 8.1 `main.gd`
+
+Path:
 
 ```text
-Grid
-Vertex Shop
-Options
+res://scripts/main/main.gd
 ```
 
-Future pages may include:
+### Purpose
+
+Coordinates main UI.
+
+Main responsibilities:
+
+* Connect global game signals.
+* Connect UI button signals.
+* Switch center pages.
+* Refresh labels.
+* Refresh panels.
+* Apply global theme to major layout nodes.
+* Handle prestige button.
+* Handle top/navigation buttons.
+* Handle story messages.
+
+### Important References
+
+Common onready vars:
+
+```gdscript
+@onready var squares_label: Label
+@onready var vertices_label: Label
+@onready var prestige_label: Label
+@onready var story_label: Label
+@onready var prestige_button: Button
+```
+
+Page refs:
+
+```gdscript
+@onready var grid_page: GridPage
+@onready var vertex_shop_page: VertexShopPage
+@onready var options_page: OptionsPage
+@onready var achievements_page: AchievementsPage
+@onready var stats_page: Control
+```
+
+Panel refs:
+
+```gdscript
+@onready var passive_panel: PassivePanel
+@onready var square_details_panel: SquareDetailsPanel
+@onready var run_upgrades_panel: RunUpgradesPanel
+```
+
+Layout refs:
+
+```gdscript
+@onready var root_margin: MarginContainer
+@onready var main_v_box: VBoxContainer
+@onready var top_bar: PanelContainer
+@onready var body_h_box: HBoxContainer
+@onready var left_panel: VBoxContainer
+@onready var right_panel: VBoxContainer
+@onready var center_page_root: Control
+@onready var prestige_panel: PanelContainer
+@onready var prestige_details: Label
+```
+
+### Important Functions
+
+```gdscript
+func _ready() -> void
+```
+
+Initializes UI:
+
+1. Connect signals.
+2. Apply theme.
+3. Show grid page.
+4. Load save.
+5. Refresh UI.
+
+---
+
+```gdscript
+func _connect_global_signals() -> void
+```
+
+Connects EventBus/system signals.
+
+---
+
+```gdscript
+func _connect_ui_signals() -> void
+```
+
+Connects buttons.
+
+---
+
+```gdscript
+func _connect_page_signals() -> void
+```
+
+Connects page-level signals.
+
+---
+
+```gdscript
+func _apply_theme() -> void
+```
+
+Applies theme to main layout controls and buttons.
+
+---
+
+```gdscript
+func _refresh_all_ui() -> void
+```
+
+Refreshes all visible systems.
+
+---
+
+```gdscript
+func _show_center_page(page_id: String) -> void
+```
+
+Switches center page stack.
+
+Supported pages:
 
 ```text
-Achievements
-Statistics
-Settings
-Debug
+grid
+vertex_shop
+stats
+options
+achievements
 ```
 
 ---
 
-### 7.2 Center Tabs
-
-The center tab banner sits below the resource display.
-
-Current intended tabs:
-
-```text
-Grid
-Vertex Shop
-Options
-Achievements
+```gdscript
+func _refresh_prestige_panel() -> void
 ```
 
-The tab system switches which center page is visible.
-
-This is deliberately more scalable than having everything inside `main.gd` as one static layout.
+Updates prestige button/detail text.
 
 ---
 
-### 7.3 VertexUpgradeCard
-
-Scene:
-
-```text
-res://scenes/ui/VertexUpgradeCard.tscn
+```gdscript
+func _refresh_achievement_summary() -> void
 ```
 
-Script:
+Updates achievement summary panel.
+
+---
+
+## 8.2 `grid_page.gd`
+
+Path:
 
 ```text
-res://scripts/ui/vertex_upgrade_card.gd
+res://scripts/ui/grid_page.gd
 ```
 
-Purpose:
+Class:
 
-Reusable UI component for one Vertex upgrade.
+```gdscript
+class_name GridPage
+```
+
+### Purpose
+
+Owns grid UI.
 
 Responsibilities:
 
-* display upgrade title;
-* display category and cost;
-* display description;
-* display requirements;
-* display purchased/locked/available state;
-* emit `buy_requested(upgrade_id)`.
+* Build Square buttons.
+* Refresh Square buttons.
+* Emit square selection.
+* Emit grid upgrade request.
+* Update grid upgrade button.
 
-The Vertex Shop dynamically creates one card per visible upgrade.
+### Signals
+
+```gdscript
+signal square_selected(square_id: String)
+signal grid_upgrade_requested()
+```
+
+### Variables
+
+```gdscript
+@onready var grid_root: GridContainer
+@onready var upgrade_grid_button: Button
+@onready var grid_v_box: VBoxContainer
+```
 
 ---
 
-### 7.4 PassiveGeneratorCard
-
-Scene:
-
-```text
-res://scenes/ui/PassiveGeneratorCard.tscn
+```gdscript
+var square_button_scene: PackedScene
 ```
 
-Script:
+Scene used to instantiate Square buttons.
+
+---
+
+```gdscript
+var square_buttons_by_id: Dictionary
+```
+
+Maps Square ID to button instance.
+
+### Functions
+
+```gdscript
+func rebuild() -> void
+```
+
+Clears and recreates grid buttons based on `GameState.square_ids`.
+
+---
+
+```gdscript
+func refresh_buttons() -> void
+```
+
+Refreshes all existing buttons.
+
+---
+
+```gdscript
+func _refresh_upgrade_button() -> void
+```
+
+Updates grid upgrade button text/disabled state/tooltip.
+
+---
+
+```gdscript
+func _get_rarity_unlock_text(next_grid_size: int) -> String
+```
+
+Returns rarity unlocked by next grid upgrade.
+
+---
+
+## 8.3 `square_button.gd`
+
+Path:
+
+```text
+res://scripts/squares/square_button.gd
+```
+
+Class:
+
+```gdscript
+class_name SquareButton
+```
+
+### Purpose
+
+Visual button for one Square.
+
+Responsibilities:
+
+* Display Square state.
+* Emit clicked signal.
+* Apply square visuals.
+* Apply theme.
+
+### Signals
+
+```gdscript
+signal square_clicked(square_id: String)
+```
+
+### Important Variables
+
+```gdscript
+var square_id: String
+var square_data: SquareData
+```
+
+### Important Functions
+
+```gdscript
+func setup(square_id: String, display_text: String) -> void
+```
+
+Initializes button.
+
+---
+
+```gdscript
+func set_square_data(p_square_data: SquareData) -> void
+```
+
+Updates runtime data and visuals.
+
+---
+
+```gdscript
+func _apply_square_visuals() -> void
+```
+
+Applies color/visuals based on Square data.
+
+---
+
+```gdscript
+func _apply_theme() -> void
+```
+
+Applies base themed button/card styles.
+
+---
+
+## 8.4 `square_details_panel.gd`
+
+Path:
+
+```text
+res://scripts/ui/square_details_panel.gd
+```
+
+Class:
+
+```gdscript
+class_name SquareDetailsPanel
+```
+
+### Purpose
+
+Displays selected Square information.
+
+Should be concise. Debug/lifetime details belong in Stats page.
+
+### Variables
+
+```gdscript
+@onready var selected_square_title: Label
+@onready var selected_square_details: RichTextLabel
+```
+
+---
+
+```gdscript
+var selected_square_id: String
+```
+
+Currently inspected Square.
+
+### Functions
+
+```gdscript
+func show_square(square_id: String) -> void
+```
+
+Selects and displays Square.
+
+---
+
+```gdscript
+func refresh() -> void
+```
+
+Refreshes current selected Square.
+
+---
+
+```gdscript
+func refresh_if_selected(square_id: String) -> void
+```
+
+Refreshes only if matching selected Square.
+
+---
+
+```gdscript
+func clear() -> void
+```
+
+Clears panel.
+
+---
+
+```gdscript
+func _build_square_details_text(square_data: SquareData) -> String
+```
+
+Builds display text.
+
+Currently intended to show:
+
+```text
+Base Value
+Manual Value
+Respawn Time
+Traits
+Main Effects
+```
+
+---
+
+## 8.5 `passive_panel.gd`
+
+Path:
+
+```text
+res://scripts/ui/passive_panel.gd
+```
+
+Class:
+
+```gdscript
+class_name PassivePanel
+```
+
+### Purpose
+
+Displays passive generator cards.
+
+### Signals
+
+```gdscript
+signal passive_generator_upgraded(generator_id: String)
+```
+
+### Variables
+
+```gdscript
+@onready var passive_generator_list: VBoxContainer
+var passive_generator_card_scene: PackedScene
+var passive_generator_cards: Dictionary
+```
+
+### Functions
+
+```gdscript
+func refresh() -> void
+```
+
+Refreshes passive cards.
+
+---
+
+```gdscript
+func _rebuild_list() -> void
+```
+
+Recreates visible passive generator cards.
+
+---
+
+```gdscript
+func _on_upgrade_requested(generator_id: String) -> void
+```
+
+Calls `PassiveSystem.upgrade_generator`.
+
+---
+
+## 8.6 `passive_generator_card.gd`
+
+Path:
 
 ```text
 res://scripts/ui/passive_generator_card.gd
 ```
 
-Purpose:
+Class:
 
-Reusable UI component for one unlocked passive generator.
+```gdscript
+class_name PassiveGeneratorCard
+```
+
+### Purpose
+
+Displays one passive generator instance.
 
 Responsibilities:
 
-* display generator name;
-* display level;
-* display interval;
-* display extraction;
-* display targeting mode;
-* display progress bar;
-* display last pulse;
-* display run totals;
-* display next level cost;
-* emit `upgrade_requested(generator_id)`.
-
-The passive panel dynamically creates one card per unlocked passive generator.
-
----
-
-### 7.5 Options Page
-
-The Options page currently contains save-management actions.
-
-Current options:
-
-```text
-Save Game
-Export Save
-Import Save
-Hard Reset
-```
-
-Save export/import uses a compressed Base64 string.
-
-Future Options work:
-
-```text
-Autosave enabled/disabled
-Autosave interval
-Confirm hard reset
-UI scale
-Number formatting
-Accessibility settings
-Debug tools
-```
-
----
-
-## 8. Save / Load System
-
-### 8.1 Save Philosophy
-
-The save system should preserve meaningful progression without forcing a save on every minor change.
-
-Current design:
-
-```text
-Manual Save:
-  Player-triggered from Options.
-
-Auto-save on prestige:
-  Forced because prestige is irreversible and meaningful.
-
-Export:
-  Player-triggered from Options.
-
-Import:
-  Player-triggered from Options.
-
-Hard Reset:
-  Player-triggered from Options.
-```
-
-Current non-goals:
-
-```text
-Do not force-save every passive level purchase.
-Do not force-save every Vertex upgrade purchase.
-Do not force-save every click.
-Do not save every frame.
-```
-
-Planned:
-
-```text
-Configurable autosave interval from Options.
-```
-
----
-
-### 8.2 Save Data Contents
-
-Top-level save structure:
-
-```json
-{
-  "version": 1,
-  "game_state": {},
-  "passive_system": {}
-}
-```
-
-`game_state` includes:
-
-```text
-Squares
-Vertices
-Prestige count
-Grid size
-Square IDs
-Square data
-Unlocked Vertex upgrades
-Permanent stat multipliers
-```
-
-`passive_system` includes:
-
-```text
-Passive generator unlock states
-Current run levels
-Progress timers
-Self-prestige state
-Last pulse info
-Run generated totals
-```
-
----
-
-### 8.3 Export / Import
-
-Export converts the save dictionary into a portable text string.
-
-Pipeline:
-
-```text
-Dictionary
-  -> JSON
-  -> UTF-8 buffer
-  -> GZIP-compressed bytes
-  -> Base64 string
-```
-
-Import reverses the process.
-
-This allows players to copy/paste their save string and restore progress later.
-
----
-
-### 8.4 Hard Reset
-
-Hard reset should clear:
-
-```text
-Squares
-Vertices
-Prestige count
-Grid progress
-Square Traits
-Vertex upgrades
-Permanent stat multipliers
-Passive unlocks
-Passive levels
-Save file
-```
-
-After hard reset, the game should return to:
-
-```text
-1x1 grid
-single untraited square
-0 Squares
-0 Vertices
-0 Prestiges
-no passive systems
-no permanent upgrades
-```
-
----
-
-## 9. Current Gameplay Loop
-
-Current loop:
-
-```text
-Click square
-Gain Squares
-Reach prestige threshold
-Prestige
-Gain Vertices
-Grid expands
-Random square gains random Trait
-Spend Vertices on permanent upgrades
-Unlock passive generators
-Buy run-based passive levels with Squares
-Gain more Squares
-Prestige again
-```
-
-Current early progression:
-
-```text
-Start:
-  1 square
-
-First prestige:
-  gain 1 Vertex
-  grid becomes 2x2
-  one random square gains one random Trait
-
-Vertex Shop:
-  unlock First Generator
-
-After unlocking First Generator:
-  buy Level 1 with Squares each run
-
-Later:
-  unlock Value Harvester
-  buy Sharpened Origin
-```
-
----
-
-## 10. Current Data Content
-
-### Traits
-
-Current Trait resources:
-
-```text
-common_dense
-common_quick
-```
-
-Common Dense:
-
-```text
-Increases square value.
-Increases respawn time.
-```
-
-Common Quick:
-
-```text
-Reduces respawn time.
-Slightly reduces square value.
-```
-
-Both use rolled effect values.
-
----
-
-### Vertex Upgrades
-
-Current Vertex upgrades:
-
-```text
-unlock_first_generator
-unlock_value_harvester
-sharpened_origin
-```
-
-`unlock_first_generator`:
-
-```text
-Cost: 1 Vertex
-Effect: permanently unlocks First Generator
-```
-
-`unlock_value_harvester`:
-
-```text
-Cost: 2 Vertices
-Requires: unlock_first_generator
-Effect: permanently unlocks Value Harvester
-```
-
-`sharpened_origin`:
-
-```text
-Cost: 5 Vertices
-Requires: unlock_first_generator
-Effect: permanent x1.10 square_base_value multiplier
-```
-
----
-
-### Passive Generators
-
-Current passive generators:
-
-```text
-first_generator
-value_harvester
-```
-
-`first_generator`:
-
-```text
-Targets random square.
-Faster and cheaper.
-Lower extraction.
-```
-
-`value_harvester`:
-
-```text
-Targets highest-payout square.
-Slower and more expensive.
-Higher extraction.
-```
-
----
-
-## 11. Technical Principles
-
-### 11.1 Data-driven first
-
-New content should usually be added through `.tres` resources, not hardcoded matches.
-
-Current data-driven systems:
-
-```text
-Traits
-Vertex upgrades
-Passive generators
-```
-
-Preferred future pattern:
-
-```text
-Definition resource
-Runtime instance if needed
-Database autoload
-Reusable UI card/page
-System-level effect application
-```
-
----
-
-### 11.2 Runtime state separate from definitions
-
-Blueprint data and runtime state should stay separate.
-
-Examples:
-
-```text
-TraitDefinition vs TraitInstance
-PassiveGeneratorDefinition vs PassiveGeneratorInstance
-VertexUpgradeDefinition vs purchased upgrade count
-```
-
-This makes save/load clearer and avoids mutating design-time resources.
-
----
-
-### 11.3 UI components should be reusable
-
-Avoid building every UI interaction directly inside `main.gd`.
-
-Current reusable UI components:
-
-```text
-VertexUpgradeCard
-PassiveGeneratorCard
-```
-
-Future UI work should continue moving logic into page/card scripts.
-
-Likely future components:
-
-```text
-OptionsPage
-GridPage
-SquareDetailsPanel
-AchievementCard
-StatRow
-ConfirmationDialog
-```
-
----
-
-### 11.4 Avoid reserved names in GDScript
-
-Do not use:
+* Show generator name.
+* Show level.
+* Show production details.
+* Show upgrade button.
+* Show progress.
+* Emit upgrade request.
+
+### Signals
 
 ```gdscript
-trait
+signal upgrade_requested(generator_id: String)
 ```
 
-as a variable name.
-
-Use:
+### Important Variables
 
 ```gdscript
-trait_iter
-trait_instance
-trait_definition
+var generator_instance: PassiveGeneratorInstance
 ```
 
-This avoids GDScript reserved keyword issues.
-
----
-
-### 11.5 Warnings-as-errors compatibility
-
-The project should remain clean with warnings-as-errors enabled.
-
-Preferred style:
+### Important Functions
 
 ```gdscript
-var loaded: bool = SaveSystem.load_game()
-var square_data: SquareData = GameState.get_square(square_id)
-var card: PassiveGeneratorCard = passive_generator_card_scene.instantiate() as PassiveGeneratorCard
+func setup(instance: PassiveGeneratorInstance) -> void
+func refresh() -> void
 ```
 
-Avoid ambiguous `Variant` inference where Godot complains.
-
 ---
 
-## 12. Milestone History
+## 8.7 `run_upgrades_panel.gd`
 
-This section consolidates the work done so far. Daily changelog entries were not maintained continuously, so this is a reconstructed milestone log.
-
-### Milestone 1 — Initial Godot Project Setup
-
-Completed:
-
-* Created Godot 4.6 project.
-* Set up main scene.
-* Set up base UI.
-* Added basic square clicking.
-* Added base currency: Squares.
-* Added first square.
-* Added grid rebuild foundation.
-
----
-
-### Milestone 2 — Prestige and Traits Foundation
-
-Completed:
-
-* Added Vertices as prestige currency.
-* Added prestige count.
-* Added early prestige formula.
-* Added grid expansion.
-* Added random Trait assignment on prestige.
-* Added TraitDefinition resources.
-* Added TraitDatabase.
-* Added SquareData and TraitInstance separation.
-* Added SquareCalculator.
-
----
-
-### Milestone 3A — Rarity-aware Trait Stacking and Naming
-
-Completed:
-
-* Added Trait rarity enum.
-* Added Trait family concepts.
-* Added stack-aware square naming.
-* Added readable Trait stack summaries.
-* Fixed duplicate naming behavior.
-* Moved generated square naming into SquareData.
-
-Important design decision:
+Path:
 
 ```text
-Different rarity versions of the same family should be separate TraitDefinition resources.
+res://scripts/ui/run_upgrades_panel.gd
 ```
 
-Example:
+Class:
+
+```gdscript
+class_name RunUpgradesPanel
+```
+
+### Purpose
+
+Displays current run upgrades.
+
+### Variables
+
+```gdscript
+@onready var run_upgrade_list: VBoxContainer
+var run_upgrade_card_scene: PackedScene
+var run_upgrade_cards: Dictionary
+```
+
+### Functions
+
+```gdscript
+func refresh() -> void
+```
+
+Refreshes cards.
+
+---
+
+```gdscript
+func _rebuild_if_needed() -> void
+```
+
+Checks whether visible upgrade set changed.
+
+---
+
+```gdscript
+func _rebuild_list() -> void
+```
+
+Recreates visible cards.
+
+---
+
+```gdscript
+func _get_visible_upgrades() -> Array[RunUpgradeDefinition]
+```
+
+Applies visibility rules.
+
+---
+
+```gdscript
+func _on_buy_requested(upgrade_id: String) -> void
+```
+
+Calls `RunUpgradeSystem.buy_run_upgrade`.
+
+---
+
+## 8.8 `run_upgrade_card.gd`
+
+Path:
 
 ```text
-common_dense
-rare_dense
-legendary_dense
+res://scripts/ui/run_upgrade_card.gd
+```
+
+Class:
+
+```gdscript
+class_name RunUpgradeCard
+```
+
+### Purpose
+
+Displays one run upgrade.
+
+### Signals
+
+```gdscript
+signal buy_requested(upgrade_id: String)
+```
+
+### Variables
+
+```gdscript
+var upgrade_definition: RunUpgradeDefinition
+```
+
+### Functions
+
+```gdscript
+func setup(upgrade: RunUpgradeDefinition) -> void
+func refresh() -> void
+func _get_detail_text() -> String
+func _get_requirement_text() -> String
+func _get_effect_text() -> String
+func _format_effect(effect_iter: RunUpgradeEffect) -> String
+func _format_stat_name(stat_id: String) -> String
 ```
 
 ---
 
-### Milestone 3B — Rolled Trait Values
+## 8.9 `vertex_shop_page.gd`
 
-Completed:
-
-* Added value ranges to EffectComponent.
-* Added `roll_key`.
-* Added rolled values to TraitInstance.
-* Added effect summary display.
-* Ensured each Trait instance can have unique rolled values.
-* Prepared rolled values for save/load persistence.
-
-Example:
+Path:
 
 ```text
-Common Dense can roll x1.20 to x1.50 square value.
-Common Quick can roll x0.75 to x0.90 respawn time.
+res://scripts/ui/vertex_shop_page.gd
+```
+
+Class:
+
+```gdscript
+class_name VertexShopPage
+```
+
+### Purpose
+
+Displays Vertex upgrades.
+
+### Signals
+
+```gdscript
+signal vertex_upgrade_purchased(upgrade_id: String)
+```
+
+### Variables
+
+```gdscript
+@onready var vertex_upgrade_list: VBoxContainer
+var vertex_upgrade_card_scene: PackedScene
+var vertex_upgrade_cards: Dictionary
+```
+
+### Functions
+
+```gdscript
+func refresh() -> void
+func _rebuild_list() -> void
+func _on_buy_requested(upgrade_id: String) -> void
 ```
 
 ---
 
-### Milestone 4A — Passive Generator Progression
+## 8.10 `vertex_upgrade_card.gd`
 
-Completed:
-
-* Added first passive generator system.
-* Added permanent unlock vs run-based level distinction.
-* Added Level 0 inactive state.
-* Added Square-cost level purchases.
-* Added passive ticking.
-* Added passive-generated Squares.
-* Added passive click tracking.
-* Added run-based passive reset on prestige.
-
-Important design decision:
+Path:
 
 ```text
-Vertex Shop unlocks passive generators permanently.
-Squares buy passive levels during the current run.
-Prestige resets passive levels to 0.
+res://scripts/ui/vertex_upgrade_card.gd
+```
+
+Class:
+
+```gdscript
+class_name VertexUpgradeCard
+```
+
+### Purpose
+
+Displays one Vertex upgrade.
+
+### Signals
+
+```gdscript
+signal buy_requested(upgrade_id: String)
+```
+
+### Variables
+
+```gdscript
+var upgrade_definition: VertexUpgradeDefinition
+```
+
+### Functions
+
+```gdscript
+func setup(upgrade: VertexUpgradeDefinition) -> void
+func refresh() -> void
+func _get_detail_text() -> String
+func _get_requirement_text() -> String
+func _get_effects_text() -> String
+func _format_effect(effect_iter: VertexUpgradeEffect) -> String
 ```
 
 ---
 
-### Milestone 4B — Data-driven Vertex Upgrades
+## 8.11 `options_page.gd`
 
-Completed:
-
-* Added VertexUpgradeDefinition.
-* Added VertexUpgradeEffect.
-* Added VertexUpgradeDatabase.
-* Added dynamic Vertex Shop cards.
-* Removed one-off hardcoded Vertex Shop UI.
-* Added dependency-based upgrade visibility.
-* Added support for hidden upgrades.
-* Added generic effect handling.
-
-Current tested effects:
-
-```text
-UNLOCK_PASSIVE_GENERATOR
-GLOBAL_STAT_MULTIPLIER
-```
-
----
-
-### Milestone 4B.1 — Dependent Vertex Upgrade Test
-
-Completed:
-
-* Added `sharpened_origin`.
-* Made it depend on `unlock_first_generator`.
-* Made it hidden until dependency is met.
-* Added permanent `square_base_value` multiplier.
-* Verified that square payout increases after purchase.
-
-This proved:
-
-```text
-Vertex upgrade dependencies work.
-Hidden upgrades work.
-Permanent stat multiplier effects work.
-Dynamic Vertex Shop refresh works.
-```
-
----
-
-### Milestone 4C — Data-driven Passive Generators
-
-Completed:
-
-* Added PassiveGeneratorDefinition.
-* Added PassiveGeneratorInstance.
-* Added PassiveGeneratorDatabase.
-* Refactored PassiveSystem to own multiple generator instances.
-* Replaced hardcoded `first_generator`.
-* Added dynamic PassiveGeneratorCard UI.
-* Left passive panel now renders unlocked generators dynamically.
-
----
-
-### Milestone 4C.1 — Second Passive Generator Test
-
-Completed:
-
-* Added `value_harvester`.
-* Added Vertex upgrade to unlock it.
-* Made it depend on `unlock_first_generator`.
-* Gave it different targeting behavior.
-* Verified multiple passive generators work at the same time.
-
-This proved:
-
-```text
-Multiple passive generator resources load correctly.
-Multiple passive cards render correctly.
-Different targeting modes work.
-Vertex upgrades can unlock arbitrary passive generators by ID.
-```
-
----
-
-### Milestone 5 — Save, Load, Export, Import, Hard Reset
-
-Completed:
-
-* Added SaveSystem.
-* Added disk save/load.
-* Added save data versioning.
-* Added export save string.
-* Added import save string.
-* Added hard reset.
-* Added Options page save controls.
-* Added serialization for:
-
-  * GameState;
-  * SquareData;
-  * TraitInstance;
-  * PassiveSystem;
-  * PassiveGeneratorInstance.
-* Added forced save on prestige.
-* Confirmed current save/load flow works.
-
-Current save policy:
-
-```text
-Prestige force-saves.
-Manual Save exists.
-Export/import exists.
-Hard reset exists.
-Upgrade purchases do not currently force-save.
-Autosave timer is planned but not implemented yet.
-```
-
----
-
-## 13. Known Technical Debt / Next Work
-
-### 13.1 Configurable autosave
-
-Add to Options:
-
-```text
-Autosave enabled
-Autosave interval value
-Autosave interval unit or seconds
-```
-
-Suggested implementation:
-
-```text
-SaveSystem owns timer.
-Options page edits SaveSystem settings.
-SaveSystem settings are included in save data or separate user settings.
-```
-
-Important:
-
-Autosave should not run every frame and should not trigger during import/hard reset operations.
-
----
-
-### 13.2 Options page should become its own script
-
-Currently, main UI logic is still too centralized in `main.gd`.
-
-Move Options logic into:
+Path:
 
 ```text
 res://scripts/ui/options_page.gd
 ```
 
-Eventually:
-
-```text
-GridPage.gd
-VertexShopPage.gd
-OptionsPage.gd
-PassivePanel.gd
-SquareDetailsPanel.gd
-```
-
----
-
-### 13.3 Confirmation for hard reset
-
-Current hard reset is immediate.
-
-Future behavior should be safer:
-
-```text
-Click HARD RESET
-Show confirmation
-Require second confirmation
-Then reset
-```
-
-Possible implementation:
-
-```text
-ConfirmationDialog
-or double-click within 5 seconds
-or type RESET
-```
-
----
-
-### 13.4 Save migrations
-
-Save versioning exists, but migration logic is not yet implemented.
-
-Future:
+Class:
 
 ```gdscript
-if version == 1:
-    migrate_v1_to_v2()
+class_name OptionsPage
 ```
 
-This will matter when save schema changes.
+### Purpose
 
----
+Owns options UI.
 
-### 13.5 Better Vertex Shop tree UI
+Current responsibilities:
 
-Current Vertex Shop is card-based and dependency-aware but not visually tree-shaped.
+* Manual save.
+* Export save.
+* Import save.
+* Hard reset.
+* Autosave enabled/disabled.
+* Autosave interval.
 
-Future:
-
-```text
-node graph
-dependency lines
-tier columns
-locked hidden branches
-category filters
-```
-
-Current data already supports this through `required_upgrade_ids`.
-
----
-
-### 13.6 Passive generator balance
-
-Current passive values are prototype values.
-
-Need balancing later:
-
-```text
-cost curves
-interval scaling
-extraction scaling
-max level
-self-prestige behavior
-interaction with permanent multipliers
-```
-
----
-
-### 13.7 Passive self-prestige
-
-Fields already exist:
+### Signals
 
 ```gdscript
-self_prestige_level
-can_self_prestige
-self_prestige_is_permanent
-self_prestige_unlock_level
+signal save_imported()
+signal hard_reset_completed()
 ```
 
-But actual self-prestige behavior is not implemented.
+Future responsibility:
 
-Need decide:
+* Theme selector.
+
+---
+
+## 8.12 `achievements_page.gd`
+
+Path:
 
 ```text
-Does self-prestige persist across normal prestige?
-Does it reset the generator level?
-What does it boost?
-Does it cost anything?
+res://scripts/ui/achievements_page.gd
+```
+
+Class:
+
+```gdscript
+class_name AchievementsPage
+```
+
+### Purpose
+
+Displays all achievements.
+
+### Variables
+
+```gdscript
+@onready var achievement_list: VBoxContainer
+var achievement_card_scene: PackedScene
+var achievement_cards: Dictionary
+```
+
+### Functions
+
+```gdscript
+func refresh() -> void
+func _rebuild_list() -> void
 ```
 
 ---
 
-### 13.8 Save timing policy
+## 8.13 `achievement_card.gd`
 
-Current policy is intentional:
+Path:
 
 ```text
-Forced save on prestige only.
-Manual save available.
+res://scripts/ui/achievement_card.gd
 ```
 
-Need add:
+Class:
 
-```text
-configurable autosave timer
+```gdscript
+class_name AchievementCard
 ```
 
-Open question:
+### Purpose
+
+Displays one achievement.
+
+Shows:
+
+* Name.
+* Description.
+* Unlock state.
+* Progress.
+* Reward.
+
+---
+
+## 8.14 Theme UI Helpers
+
+### `themed_panel.gd`
+
+Path:
 
 ```text
-Should Vertex upgrade purchases force-save because they are permanent?
+res://scripts/ui/theme/themed_panel.gd
 ```
 
-Current answer:
+Reusable themed `PanelContainer`.
+
+---
+
+### `themed_background.gd`
+
+Path:
 
 ```text
-No, not for now.
-Manual save and autosave should cover it.
+res://scripts/ui/theme/themed_background.gd
+```
+
+Applies background theme to root background panel.
+
+---
+
+### `theme_button_helper.gd`
+
+Path:
+
+```text
+res://scripts/ui/theme/theme_button_helper.gd
+```
+
+Applies button theme styles.
+
+---
+
+### `theme_text_helper.gd`
+
+Path:
+
+```text
+res://scripts/ui/theme/theme_text_helper.gd
+```
+
+Applies text colors to Labels/RichTextLabels.
+
+---
+
+### `theme_layout_helper.gd`
+
+Path:
+
+```text
+res://scripts/ui/theme/theme_layout_helper.gd
+```
+
+Applies margins and separations from ThemeSystem.
+
+---
+
+# 9. Current Known UI Issues
+
+The UI is currently functional but visually heavy.
+
+Known issues:
+
+```text
+Cards are too tall.
+Panels feel too massive.
+Passive cards can show horizontal scrolling.
+Run upgrade cards are too verbose.
+Square details title can grow vertically.
+Center grid needs more visual focus.
+Side panels should feel lighter.
+Top bar needs polish.
+```
+
+Next recommended UI task:
+
+```text
+UI-5 — Reduce dashboard visual density
+```
+
+Scope:
+
+```text
+Compact passive cards.
+Compact run upgrade cards.
+Reduce theme spacing.
+Reduce card padding.
+Fix title shrink/clip behavior.
+Remove horizontal scrollbars.
+Make grid visually dominant.
 ```
 
 ---
 
-### 13.9 More square stats in UI
+# 10. Commit Messages
 
-Square details should eventually show more derived stats clearly:
-
-```text
-Base value
-Permanent multiplier
-Trait multiplier
-Current manual payout
-Passive targeting priority
-Lifetime passive clicks
-Lifetime manual clicks
-```
-
----
-
-### 13.10 Save integrity / validation
-
-Import currently validates basic structure.
-
-Future improvements:
-
-```text
-checksum
-save version warning
-corrupted save recovery
-backup save file
-import preview before applying
-```
-
----
-
-## 14. Current Commit Suggestions
-
-Recent completed commits should roughly correspond to:
+Recent / relevant commits:
 
 ```bash
-git commit -m "Add run-based passive generator progression"
-git commit -m "Add data-driven vertex upgrades and shop cards"
-git commit -m "Add dependent vertex upgrade for square value multiplier"
-git commit -m "Add data-driven passive generators"
-git commit -m "Add second passive generator resource"
-git commit -m "Add save load export import and hard reset"
+git commit -m "Add trait luck rarity weighting"
+git commit -m "Add trait luck vertex upgrade"
+git commit -m "Decouple grid expansion from prestige"
+git commit -m "Add run-based square upgrades"
+git commit -m "Add UI theme system foundation"
+git commit -m "Apply theme to cards and buttons"
+git commit -m "Refine themed UI spacing"
+git commit -m "Restructure main dashboard layout"
 ```
 
-Current documentation update commit:
+Suggested next commit:
 
 ```bash
-git add docs/TECHNICAL_OVERVIEW.md
-git commit -m "Update technical overview documentation"
-git push
+git commit -m "Update technical documentation"
 ```
 
----
+Then next UI pass:
 
-## 15. Development Direction
-
-Immediate likely next steps:
-
-1. Add configurable autosave timer.
-2. Extract Options page logic out of `main.gd`.
-3. Extract Vertex Shop page logic out of `main.gd`.
-4. Extract Passive Panel logic out of `main.gd`.
-5. Add hard reset confirmation.
-6. Add more Vertex upgrades.
-7. Add more passive generators.
-8. Add basic achievements page.
-9. Improve number formatting.
-10. Begin balancing the early game loop.
-
-The project is now past the initial prototype stage. The important systems are moving toward reusable, data-driven architecture:
-
-```text
-Traits = data-driven
-Vertex upgrades = data-driven
-Passive generators = data-driven
-Save/load = versioned and exportable
-UI = starting to become component-based
+```bash
+git commit -m "Reduce dashboard visual density"
 ```
-
-The next architectural priority is reducing `main.gd` responsibility by moving page-specific logic into dedicated scripts.
