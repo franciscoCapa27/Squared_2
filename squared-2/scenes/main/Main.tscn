@@ -252,7 +252,7 @@ alignment = 1
 
 [node name="GridArea" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=391020136]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 360)
+custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 size_flags_vertical = 3
 
