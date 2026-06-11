@@ -250,7 +250,13 @@ layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=638752931]
+[node name="GridArea" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=391020136]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 360)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/GridArea" unique_id=638752931]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4

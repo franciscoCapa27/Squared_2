@@ -89,3 +89,17 @@ func set_square_data(p_square_data: SquareData) -> void:
 	var square_data := GameState.get_square(square_id)
 	square_data = p_square_data
 	_apply_square_visuals()
+	
+func apply_responsive_visual_size(square_size: float) -> void:
+	if square_size < 24.0:
+		text = ""
+		add_theme_font_size_override("font_size", 8)
+	elif square_size < 48.0:
+		text = ""
+		add_theme_font_size_override("font_size", 10)
+	elif square_size < 72.0:
+		text = "■"
+		add_theme_font_size_override("font_size", 16)
+	else:
+		text = "■"
+		add_theme_font_size_override("font_size", 24)	

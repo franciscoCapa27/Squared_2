@@ -3,9 +3,10 @@
 [ext_resource type="Script" uid="uid://bqbtgkrt27fb4" path="res://scripts/squares/square_button.gd" id="1_3cowg"]
 
 [node name="SquareButton" type="Button" unique_id=1322109516]
-custom_minimum_size = Vector2(112, 112)
 offset_right = 8.0
 offset_bottom = 8.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 tooltip_text = "Square
 "
 theme_override_font_sizes/font_size = 64
