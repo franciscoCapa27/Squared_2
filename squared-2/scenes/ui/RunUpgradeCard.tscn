@@ -5,6 +5,7 @@
 [node name="RunUpgradeCard" type="PanelContainer" unique_id=1711378834]
 offset_right = 40.0
 offset_bottom = 40.0
+size_flags_vertical = 0
 script = ExtResource("1_i0pfe")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1764577585]
@@ -16,22 +17,22 @@ layout_mode = 2
 [node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1578494593]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
 
 [node name="CategoryLevelLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1822474060]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
 
 [node name="DescriptionLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1982718839]
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-fit_content = true
 
 [node name="DetailLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1944793933]
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-fit_content = true
 
 [node name="BuyButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1216677951]
 unique_name_in_owner = true

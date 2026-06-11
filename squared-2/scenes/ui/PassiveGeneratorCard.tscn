@@ -5,6 +5,7 @@
 [node name="PassiveGeneratorCard" type="PanelContainer" unique_id=1731951840]
 offset_right = 40.0
 offset_bottom = 40.0
+size_flags_vertical = 0
 script = ExtResource("1_w8yjn")
 
 [node name="CardMargin" type="MarginContainer" parent="." unique_id=1646056221]
@@ -24,7 +25,7 @@ layout_mode = 2
 
 [node name="StatusLabel" type="RichTextLabel" parent="CardMargin/CardVBox" unique_id=349251385]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 140)
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 bbcode_enabled = true
 

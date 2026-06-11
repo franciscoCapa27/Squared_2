@@ -32,6 +32,7 @@ mouse_filter = 2
 script = ExtResource("2_ostsq")
 
 [node name="RootMargin" type="MarginContainer" parent="." unique_id=1265092952]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -43,45 +44,90 @@ theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 24
 
-[node name="MainVbox" type="VBoxContainer" parent="RootMargin" unique_id=445687191]
+[node name="MainVBox" type="VBoxContainer" parent="RootMargin" unique_id=445687191]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 16
 
-[node name="TopBar" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=496216841]
+[node name="TopBar" type="PanelContainer" parent="RootMargin/MainVBox" unique_id=1749339111]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
-theme_override_constants/separation = 24
 
-[node name="SquaresLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=728880357]
+[node name="PrestigeLabel" type="Label" parent="RootMargin/MainVBox/TopBar" unique_id=1866388019]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 18
+text = "Prestiges: 0"
+
+[node name="TopBarMargin" type="MarginContainer" parent="RootMargin/MainVBox/TopBar" unique_id=1312549975]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TopBarHBox" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin" unique_id=1981544265]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="ResourceCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1461184511]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_constants/separation = 16
+
+[node name="SquaresLabel" type="Label" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/ResourceCluster" unique_id=728880357]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Squares: 0"
 
-[node name="VerticesLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=799992694]
+[node name="VerticesLabel" type="Label" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/ResourceCluster" unique_id=799992694]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 18
 text = "Vertices: 0"
 
-[node name="PrestigeLabel" type="Label" parent="RootMargin/MainVbox/TopBar" unique_id=1866388019]
+[node name="VertexShopTabButton" type="Button" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/ResourceCluster" unique_id=672470492]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_font_sizes/font_size = 18
-text = "Prestiges: 0"
+size_flags_vertical = 4
+text = "Vertex Shop"
 
-[node name="CenterTabs" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=1739420909]
+[node name="StoryPanel" type="PanelContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1817194394]
 layout_mode = 2
-size_flags_vertical = 0
-mouse_filter = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="StoryMargin" type="MarginContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/StoryPanel" unique_id=1959784936]
+layout_mode = 2
+
+[node name="StoryLabel" type="Label" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/StoryPanel/StoryMargin" unique_id=151831416]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_vertical = 8
+text = "There is a square."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="NavigationCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1420093174]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
 theme_override_constants/separation = 8
 
-[node name="GridTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=412881383]
+[node name="GridTabButton" type="Button" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/NavigationCluster" unique_id=412881383]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
@@ -89,15 +135,12 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Grid"
 
-[node name="VertexShopTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=672470492]
+[node name="StatsTabButton" type="Button" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/NavigationCluster" unique_id=1733933740]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-text = "Vertices"
+text = "Stats"
 
-[node name="OptionsTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=446283557]
+[node name="OptionsTabButton" type="Button" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/NavigationCluster" unique_id=446283557]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
@@ -105,7 +148,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Options"
 
-[node name="AchievementsTabButton" type="Button" parent="RootMargin/MainVbox/CenterTabs" unique_id=985705785]
+[node name="AchievementsTabButton" type="Button" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/NavigationCluster" unique_id=985705785]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(120, 36)
 layout_mode = 2
@@ -113,46 +156,79 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Achievements"
 
-[node name="Content" type="HBoxContainer" parent="RootMargin/MainVbox" unique_id=192197899]
+[node name="BodyHBox" type="HBoxContainer" parent="RootMargin/MainVBox" unique_id=1265242494]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 2
-theme_override_constants/separation = 16
 
-[node name="PassivePanel" type="PanelContainer" parent="RootMargin/MainVbox/Content" unique_id=812047721]
+[node name="LeftPanel" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox" unique_id=873211068]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
-size_flags_horizontal = 0
+theme_override_constants/separation = 16
+
+[node name="PassivePanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel" unique_id=812047721]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_vertical = 3
 mouse_filter = 2
 script = ExtResource("2_gyg6b")
 
-[node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/PassivePanel" unique_id=245565415]
+[node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="PassiveVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin" unique_id=494201095]
+[node name="PassiveVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin" unique_id=494201095]
 layout_mode = 2
 
-[node name="PassiveTitle" type="Label" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622]
+[node name="PassiveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622]
 layout_mode = 2
 text = "Passives"
 
-[node name="PassiveGeneratorList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1387505987]
-unique_name_in_owner = true
+[node name="PassiveScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1645222271]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="PassiveGeneratorList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox/PassiveScroll" unique_id=1387505987]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="CenterPageRoot" type="Control" parent="RootMargin/MainVbox/Content" unique_id=1585931205]
+[node name="AchievementSummaryPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel" unique_id=425114931]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="AchievementSummaryMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel" unique_id=1882200813]
+layout_mode = 2
+
+[node name="AchievementSummaryVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin" unique_id=1792072269]
+layout_mode = 2
+
+[node name="AchievementSummaryTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=1959977698]
+layout_mode = 2
+text = "Achievements"
+
+[node name="AchievementSummaryLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=1107125221]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 / 0"
+
+[node name="AchievementSummaryButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=2144275133]
+unique_name_in_owner = true
+layout_mode = 2
+text = "View Achievements"
+
+[node name="CenterPageRoot" type="Control" parent="RootMargin/MainVBox/BodyHBox" unique_id=1585931205]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GridPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1054179572]
+[node name="GridPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1054179572]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -162,18 +238,19 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_1rhdn")
 
-[node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage" unique_id=847906112]
+[node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=847906112]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="GridVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter" unique_id=355446560]
+[node name="GridVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter" unique_id=355446560]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 12
 alignment = 1
 
-[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=638752931]
+[node name="GridRoot" type="GridContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=638752931]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -182,27 +259,51 @@ mouse_filter = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
 
-[node name="UpgradeGridButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=225480493]
+[node name="UpgradeGridButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=225480493]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 0)
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="PrestigeSpacer" type="Control" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=697564281]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-
-[node name="PrestigeButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=126762251]
+[node name="PrestigePanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=721662999]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 48)
+custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+
+[node name="PrestigeMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel" unique_id=1318115022]
+layout_mode = 2
+
+[node name="PrestigeHBox" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin" unique_id=1862153416]
+layout_mode = 2
+
+[node name="PrestigeTextVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=1706788438]
+layout_mode = 2
+
+[node name="PrestigeTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=118207868]
+layout_mode = 2
+text = "Prestige"
+
+[node name="PrestigeDescription" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=1988103486]
+layout_mode = 2
+text = "Reset your run to gain permanent bonuses."
+
+[node name="PrestigeDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=246128059]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Gain Vertices • Roll 1 Trait • Reset run upgrades & passives"
+
+[node name="PrestigeButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=126762251]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_horizontal = 8
 size_flags_vertical = 8
 disabled = true
 text = "Prestige"
 
-[node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=1217666360]
+[node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -212,17 +313,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_dc040")
 
-[node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage" unique_id=1648899683]
+[node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage" unique_id=1648899683]
 layout_mode = 2
 
-[node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
+[node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
 layout_mode = 2
 
-[node name="VertexShopTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
+[node name="VertexShopTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
 layout_mode = 2
 text = "Vertex Shop"
 
-[node name="VertexShopDescription" type="RichTextLabel" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=734586641]
+[node name="VertexShopDescription" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=734586641]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 8
@@ -230,18 +331,18 @@ bbcode_enabled = true
 text = "Spend Vertices on permanent systems."
 fit_content = true
 
-[node name="VertexUpgradesScroll" type="ScrollContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1910849744]
+[node name="VertexUpgradesScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1910849744]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
+[node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="OptionsPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=996618759]
+[node name="OptionsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=996618759]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -251,33 +352,33 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_nha0i")
 
-[node name="OptionsMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage" unique_id=2003489546]
+[node name="OptionsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage" unique_id=2003489546]
 layout_mode = 2
 
-[node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
+[node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
 layout_mode = 2
 
-[node name="OptionsTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
+[node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
 layout_mode = 2
 text = "Options"
 
-[node name="AutosaveTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
+[node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
 layout_mode = 2
 text = "Autosave"
 
-[node name="AutosaveEnabledCheckBox" type="CheckBox" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=983546635]
+[node name="AutosaveEnabledCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=983546635]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Enable Autosave"
 
-[node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
+[node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
 layout_mode = 2
 
-[node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
+[node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
 layout_mode = 2
 text = "Interval seconds:"
 
-[node name="AutosaveIntervalSpinBox" type="SpinBox" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=993040792]
+[node name="AutosaveIntervalSpinBox" type="SpinBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=993040792]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 5.0
@@ -285,44 +386,44 @@ max_value = 3600.0
 step = 5.0
 value = 60.0
 
-[node name="SaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
+[node name="SaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Save Game"
 
-[node name="ExportSaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=352066836]
+[node name="ExportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=352066836]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Export Save"
 
-[node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
+[node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 placeholder_text = "Exported save string appears here."
 
-[node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
+[node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 placeholder_text = "Paste save string here."
 
-[node name="ImportSaveButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=782817519]
+[node name="ImportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=782817519]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Import Save"
 
-[node name="HardResetButton" type="Button" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
+[node name="HardResetButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
 unique_name_in_owner = true
 layout_mode = 2
 text = "HARD RESET"
 
-[node name="OptionsStatusLabel" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1495484838]
+[node name="OptionsStatusLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1495484838]
 unique_name_in_owner = true
 layout_mode = 2
 text = " "
 
-[node name="AchievementsPage" type="PanelContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot" unique_id=763072064]
+[node name="AchievementsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=763072064]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -332,42 +433,59 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("6_ko0rf")
 
-[node name="AchievementsMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage" unique_id=37372204]
+[node name="AchievementsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage" unique_id=37372204]
 layout_mode = 2
 
-[node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
+[node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
 layout_mode = 2
 
-[node name="AchievementsTitle" type="Label" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1908525422]
+[node name="AchievementsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1908525422]
 layout_mode = 2
 text = "Achievements"
 
-[node name="AchievementsDescription" type="RichTextLabel" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=2042927522]
+[node name="AchievementsDescription" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=2042927522]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Permanent accomplishments with small gameplay rewards."
 
-[node name="AchievementListScroll" type="ScrollContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=160560265]
+[node name="AchievementListScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=160560265]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="AchievementList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
+[node name="AchievementList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RightPanel" type="VBoxContainer" parent="RootMargin/MainVbox/Content" unique_id=772359619]
+[node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="StatsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage" unique_id=1731496513]
 layout_mode = 2
+
+[node name="StatsLabel" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin" unique_id=152981671]
+layout_mode = 2
+bbcode_enabled = true
+text = "Stats page placeholder.
+Run stats, lifetime stats, and detailed square data will live here."
+
+[node name="RightPanel" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox" unique_id=772359619]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_horizontal = 4
 theme_override_constants/separation = 12
 
-[node name="SquareDetailsPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content/RightPanel" unique_id=872099950]
+[node name="SquareDetailsPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=872099950]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
-size_flags_horizontal = 8
 mouse_filter = 2
 script = ExtResource("6_sjxhf")
 
-[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel" unique_id=1432494938]
+[node name="SideMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel" unique_id=1432494938]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -376,20 +494,21 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin" unique_id=354830038]
+[node name="SideVbox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin" unique_id=354830038]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
+[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Selected Square"
+autowrap_mode = 3
 
-[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVbox/Content/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
@@ -397,44 +516,34 @@ size_flags_vertical = 3
 bbcode_enabled = true
 text = "No square selected."
 
-[node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVbox/Content/RightPanel" unique_id=682771557]
+[node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=682771557]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 script = ExtResource("8_ko0rf")
 
-[node name="RunUpgradesMargin" type="MarginContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel" unique_id=61473642]
+[node name="RunUpgradesMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel" unique_id=61473642]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RunUpgradesVBox" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin" unique_id=70099436]
+[node name="RunUpgradesVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin" unique_id=70099436]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RunUpgradesTitle" type="Label" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904]
+[node name="RunUpgradesTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904]
 layout_mode = 2
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 text = "Upgrades
 "
 
-[node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
+[node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="RunUpgradeList" type="VBoxContainer" parent="RootMargin/MainVbox/Content/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradeScroll" unique_id=1606221242]
+[node name="RunUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradeScroll" unique_id=1606221242]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 8
-
-[node name="StoryLabel" type="Label" parent="RootMargin/MainVbox" unique_id=151831416]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-size_flags_vertical = 8
-text = "There is a square."
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
