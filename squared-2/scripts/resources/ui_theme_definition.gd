@@ -52,3 +52,15 @@ class_name UIThemeDefinition
 @export_range(0, 64, 1) var inner_margin: int = 16
 @export_range(0, 64, 1) var grid_gap: int = 14
 @export_range(0, 128, 1) var prestige_gap: int = 32
+
+@export_group("Typography")
+@export_range(8, 40, 1) var font_size_resource: int = 16
+@export_range(8, 40, 1) var font_size_page_title: int = 18
+@export_range(8, 40, 1) var font_size_panel_title: int = 15
+@export_range(8, 40, 1) var font_size_card_title: int = 14
+@export_range(8, 40, 1) var font_size_body: int = 13
+@export_range(8, 40, 1) var font_size_detail: int = 12
+@export_range(8, 40, 1) var font_size_button: int = 13
+@export_range(8, 40, 1) var font_size_tiny: int = 10
+
+@export_range(0.7, 1.2, 0.01) var compact_text_scale: float = 0.88

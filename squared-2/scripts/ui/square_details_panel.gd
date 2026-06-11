@@ -19,15 +19,8 @@ func _apply_theme() -> void:
 	ThemeLayoutHelper.apply_margin(side_margin, "inner_margin")
 	ThemeLayoutHelper.apply_box_separation(side_v_box, "section_gap")
 
-	selected_square_title.add_theme_color_override(
-		"font_color",
-		ThemeSystem.get_color("text_primary")
-	)
-
-	selected_square_details.add_theme_color_override(
-		"default_color",
-		ThemeSystem.get_color("text_secondary")
-	)
+	ThemeTextHelper.apply_panel_title(selected_square_title)
+	ThemeTextHelper.apply_body_rich_text(selected_square_details)
 
 
 func _on_theme_changed() -> void:
@@ -49,7 +42,11 @@ func refresh() -> void:
 		clear()
 		return
 
-	selected_square_title.text = square_data.display_name
+	ThemeTextHelper.apply_auto_shrinking_title(
+		selected_square_title,
+		square_data.display_name,
+		"panel_title"
+	)
 	selected_square_details.text = _build_square_details_text(square_data)
 
 

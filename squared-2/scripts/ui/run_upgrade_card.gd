@@ -21,10 +21,10 @@ func _ready() -> void:
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
-	ThemeTextHelper.apply_primary_label(title_label)
-	ThemeTextHelper.apply_muted_label(category_level_label)
-	ThemeTextHelper.apply_secondary_rich_text(description_label)
-	ThemeTextHelper.apply_secondary_rich_text(detail_label)
+	ThemeTextHelper.apply_card_title(title_label)
+	ThemeTextHelper.apply_detail_label(category_level_label)
+	ThemeTextHelper.apply_body_rich_text(description_label)
+	ThemeTextHelper.apply_detail_rich_text(detail_label)
 
 	ThemeButtonHelper.apply_button_theme(buy_button)
 

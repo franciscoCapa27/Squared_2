@@ -240,3 +240,35 @@ func get_spacing(spacing_id: String) -> int:
 		_:
 			push_warning("Unknown theme spacing id: %s" % spacing_id)
 			return 0
+func get_font_size(font_size_id: String) -> int:
+	if active_theme == null:
+		return 14
+
+	match font_size_id:
+		"resource":
+			return active_theme.font_size_resource
+		"page_title":
+			return active_theme.font_size_page_title
+		"panel_title":
+			return active_theme.font_size_panel_title
+		"card_title":
+			return active_theme.font_size_card_title
+		"body":
+			return active_theme.font_size_body
+		"detail":
+			return active_theme.font_size_detail
+		"button":
+			return active_theme.font_size_button
+		"tiny":
+			return active_theme.font_size_tiny
+		_:
+			push_warning("Unknown theme font size id: %s" % font_size_id)
+			return active_theme.font_size_body
+
+
+func get_compact_font_size(font_size_id: String) -> int:
+	if active_theme == null:
+		return get_font_size(font_size_id)
+
+	var base_size: int = get_font_size(font_size_id)
+	return max(8, int(round(float(base_size) * active_theme.compact_text_scale)))

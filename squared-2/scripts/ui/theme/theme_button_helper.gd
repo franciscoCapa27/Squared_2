@@ -15,3 +15,5 @@ static func apply_button_theme(button: Button) -> void:
 	button.add_theme_color_override("font_hover_color", ThemeSystem.get_color("text_primary"))
 	button.add_theme_color_override("font_pressed_color", ThemeSystem.get_color("text_primary"))
 	button.add_theme_color_override("font_disabled_color", ThemeSystem.get_color("text_muted"))
+
+	ThemeTextHelper.apply_button_label(button)

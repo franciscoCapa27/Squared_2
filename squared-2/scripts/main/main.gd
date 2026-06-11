@@ -80,12 +80,12 @@ func _apply_theme() -> void:
 	ThemeButtonHelper.apply_button_theme(achievements_tab_button)
 	ThemeButtonHelper.apply_button_theme(achievement_summary_button)
 
-	ThemeTextHelper.apply_primary_label(squares_label)
-	ThemeTextHelper.apply_primary_label(vertices_label)
-	ThemeTextHelper.apply_muted_label(prestige_label)
-	ThemeTextHelper.apply_secondary_label(story_label)
-	ThemeTextHelper.apply_secondary_label(prestige_details)
-	ThemeTextHelper.apply_secondary_label(achievement_summary_label)
+	ThemeTextHelper.apply_resource_label(squares_label)
+	ThemeTextHelper.apply_resource_label(vertices_label)
+	ThemeTextHelper.apply_detail_label(prestige_label)
+	ThemeTextHelper.apply_body_label(story_label)
+	ThemeTextHelper.apply_body_label(prestige_details)
+	ThemeTextHelper.apply_body_label(achievement_summary_label)
 
 
 func _on_theme_changed() -> void:
