@@ -4,6 +4,10 @@ class_name PassivePanel
 signal passive_generator_upgraded(generator_id: String)
 
 @onready var passive_generator_list: VBoxContainer = %PassiveGeneratorList
+@onready var passive_title: Label = %PassiveTitle
+@onready var passive_margin: MarginContainer = %PassiveMargin
+@onready var passive_v_box: VBoxContainer = %PassiveVBox
+
 
 var passive_generator_card_scene: PackedScene = preload("res://scenes/ui/PassiveGeneratorCard.tscn")
 var passive_generator_cards: Dictionary = {}
@@ -11,7 +15,11 @@ var passive_generator_cards: Dictionary = {}
 
 func _ready() -> void:
 	PassiveSystem.passive_state_changed.connect(_on_passive_state_changed)
+	
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	_apply_theme()
 	refresh()
+	
 
 
 func refresh() -> void:
@@ -76,3 +84,18 @@ func _on_passive_generator_upgrade_requested(generator_id: String) -> void:
 
 func _on_passive_state_changed() -> void:
 	refresh()
+
+func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+
+	ThemeLayoutHelper.apply_margin(passive_margin, "inner_margin")
+	ThemeLayoutHelper.apply_box_separation(passive_v_box, "card_gap")
+
+	ThemeTextHelper.apply_panel_title(passive_title)
+
+	passive_title.clip_text = true
+	passive_title.autowrap_mode = TextServer.AUTOWRAP_OFF
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()

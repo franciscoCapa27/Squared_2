@@ -2,11 +2,12 @@ extends Control
 
 @onready var squares_label: Label = %SquaresLabel
 @onready var vertices_label: Label = %VerticesLabel
-@onready var prestige_label: Label = %PrestigeLabel
 @onready var prestige_button: Button = %PrestigeButton
 @onready var prestige_title: Label = %PrestigeTitle
 @onready var prestige_description: Label = %PrestigeDescription
 @onready var story_label: Label = %StoryLabel
+@onready var story_panel: PanelContainer = %StoryPanel
+@onready var story_margin: MarginContainer = %StoryMargin
 
 @onready var grid_tab_button: Button = %GridTabButton
 @onready var vertex_shop_tab_button: Button = %VertexShopTabButton
@@ -84,20 +85,20 @@ func _apply_theme() -> void:
 
 	ThemeTextHelper.apply_resource_label(squares_label)
 	ThemeTextHelper.apply_resource_label(vertices_label)
-	ThemeTextHelper.apply_detail_label(prestige_label)
 	ThemeTextHelper.apply_body_label(story_label)
 	ThemeTextHelper.apply_panel_title(prestige_title)
 	ThemeTextHelper.apply_body_label(prestige_description)
 	ThemeTextHelper.apply_detail_label(prestige_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
-
+	story_panel.add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+	ThemeLayoutHelper.apply_margin(story_margin, "inner_margin")
+	ThemeTextHelper.apply_detail_label(story_label)
 
 func _on_theme_changed() -> void:
 	_apply_theme()
 func _connect_global_signals() -> void:
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.vertices_changed.connect(_on_vertices_changed)
-	EventBus.prestige_changed.connect(_on_prestige_changed)
 	EventBus.story_message.connect(_on_story_message)
 
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
@@ -165,7 +166,6 @@ func _refresh_all_ui() -> void:
 func _refresh_labels() -> void:
 	_on_squares_changed(GameState.squares)
 	_on_vertices_changed(GameState.vertices)
-	_on_prestige_changed(GameState.prestige_count)
 
 
 func _refresh_vertex_shop() -> void:
@@ -239,9 +239,7 @@ func _on_vertices_changed(value: int) -> void:
 	_refresh_prestige_panel()
 
 
-func _on_prestige_changed(value: int) -> void:
-	prestige_label.text = "Prestiges: %s" % NumberFormatter.integer_amount(value)
-	_refresh_prestige_panel()
+
 
 
 func _on_story_message(message: String) -> void:

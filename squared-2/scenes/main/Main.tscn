@@ -56,14 +56,6 @@ layout_mode = 2
 size_flags_vertical = 0
 mouse_filter = 2
 
-[node name="PrestigeLabel" type="Label" parent="RootMargin/MainVBox/TopBar" unique_id=1866388019]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_font_sizes/font_size = 18
-text = "Prestiges: 0"
-
 [node name="TopBarMargin" type="MarginContainer" parent="RootMargin/MainVBox/TopBar" unique_id=1312549975]
 unique_name_in_owner = true
 layout_mode = 2
@@ -75,6 +67,7 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="ResourceCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1461184511]
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
@@ -103,25 +96,29 @@ size_flags_vertical = 4
 text = "Vertex Shop"
 
 [node name="StoryPanel" type="PanelContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1817194394]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 44)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 
 [node name="StoryMargin" type="MarginContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/StoryPanel" unique_id=1959784936]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="StoryLabel" type="Label" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/StoryPanel/StoryMargin" unique_id=151831416]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-size_flags_vertical = 8
 text = "There is a square."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+clip_text = true
 
 [node name="NavigationCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1420093174]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
@@ -176,6 +173,7 @@ mouse_filter = 2
 script = ExtResource("2_gyg6b")
 
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_top = 16
@@ -183,9 +181,11 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
 [node name="PassiveVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin" unique_id=494201095]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="PassiveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Passives"
 
@@ -228,7 +228,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="GridPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1054179572]
+[node name="GridPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=4803564]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -240,7 +240,9 @@ script = ExtResource("3_1rhdn")
 
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=847906112]
 unique_name_in_owner = true
-layout_mode = 2
+layout_mode = 0
+offset_right = 624.0
+offset_bottom = 616.0
 size_flags_vertical = 3
 mouse_filter = 2
 
