@@ -18,9 +18,12 @@ func _apply_theme() -> void:
 
 	ThemeLayoutHelper.apply_margin(side_margin, "inner_margin")
 	ThemeLayoutHelper.apply_box_separation(side_v_box, "section_gap")
-
-	ThemeTextHelper.apply_panel_title(selected_square_title)
-	ThemeTextHelper.apply_body_rich_text(selected_square_details)
+	ThemeTextHelper.apply_auto_shrinking_title(
+		selected_square_title,
+		selected_square_title.text,
+		"panel_title"
+	)
+	ThemeTextHelper.apply_detail_rich_text(selected_square_details)
 
 
 func _on_theme_changed() -> void:

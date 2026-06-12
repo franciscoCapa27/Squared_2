@@ -20,7 +20,7 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
 	ThemeTextHelper.apply_primary_label(title_label)
-	ThemeTextHelper.apply_secondary_rich_text(status_label)
+	ThemeTextHelper.apply_detail_rich_text(status_label)
 	ThemeButtonHelper.apply_button_theme(upgrade_button)
 
 

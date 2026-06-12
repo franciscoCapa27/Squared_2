@@ -4,11 +4,11 @@ class_name GridPage
 signal square_selected(square_id: String)
 signal grid_upgrade_requested()
 
-const MAX_GRID_AREA_SIZE := 520.0
-const MIN_SQUARE_SIZE := 12.0
-const MAX_SQUARE_SIZE := 104.0
-const MIN_GRID_GAP := 2
-const MAX_GRID_GAP := 14
+const MAX_GRID_AREA_SIZE := 430.0
+const MIN_SQUARE_SIZE := 8.0
+const MAX_SQUARE_SIZE := 82.0
+const MIN_GRID_GAP := 1
+const MAX_GRID_GAP := 10
 
 @onready var grid_root: GridContainer = %GridRoot
 @onready var upgrade_grid_button: Button = %UpgradeGridButton
@@ -59,6 +59,13 @@ func _apply_grid_sizing() -> void:
 
 	square_size = clamp(square_size, MIN_SQUARE_SIZE, MAX_SQUARE_SIZE)
 
+	var final_grid_pixel_size: float = square_size * float(grid_size) + total_gap_size
+
+	grid_root.custom_minimum_size = Vector2(
+		final_grid_pixel_size,
+		final_grid_pixel_size
+	)
+
 	grid_root.add_theme_constant_override("h_separation", gap)
 	grid_root.add_theme_constant_override("v_separation", gap)
 
@@ -68,19 +75,23 @@ func _apply_grid_sizing() -> void:
 		if square_button == null:
 			continue
 
-		square_button.custom_minimum_size = Vector2(square_size, square_size)
-		square_button.size = Vector2(square_size, square_size)
+		var button_size := Vector2(square_size, square_size)
+		square_button.custom_minimum_size = button_size
+		square_button.size = button_size
 		square_button.apply_responsive_visual_size(square_size)
 
 func _calculate_grid_gap(grid_size: int) -> int:
-	if grid_size <= 3:
-		return MAX_GRID_GAP
+	if grid_size <= 2:
+		return 10
 
-	if grid_size <= 6:
+	if grid_size <= 4:
 		return 8
 
+	if grid_size <= 6:
+		return 6
+
 	if grid_size <= 12:
-		return 4
+		return 3
 
 	return MIN_GRID_GAP
 		
@@ -113,6 +124,7 @@ func rebuild() -> void:
 		square_buttons_by_id[square_data.id] = square_button
 
 	_apply_grid_sizing()
+	call_deferred("_apply_grid_sizing")
 	_refresh_upgrade_button()
 
 func refresh_buttons() -> void:

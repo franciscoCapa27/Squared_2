@@ -23,10 +23,10 @@ func _apply_theme() -> void:
 
 	ThemeTextHelper.apply_card_title(title_label)
 	ThemeTextHelper.apply_detail_label(category_level_label)
-	ThemeTextHelper.apply_body_rich_text(description_label)
+	ThemeTextHelper.apply_detail_rich_text(description_label)
 	ThemeTextHelper.apply_detail_rich_text(detail_label)
-
 	ThemeButtonHelper.apply_button_theme(buy_button)
+
 
 
 func _on_theme_changed() -> void:

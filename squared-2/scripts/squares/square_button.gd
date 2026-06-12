@@ -91,15 +91,15 @@ func set_square_data(p_square_data: SquareData) -> void:
 	_apply_square_visuals()
 	
 func apply_responsive_visual_size(square_size: float) -> void:
-	if square_size < 24.0:
+	if square_size < 28.0:
 		text = ""
 		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
-	elif square_size < 48.0:
+	elif square_size < 52.0:
 		text = ""
 		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
 	elif square_size < 72.0:
 		text = "■"
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("detail"))
+		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
 	else:
 		text = "■"
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("body"))
+		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("detail"))

@@ -4,6 +4,8 @@ extends Control
 @onready var vertices_label: Label = %VerticesLabel
 @onready var prestige_label: Label = %PrestigeLabel
 @onready var prestige_button: Button = %PrestigeButton
+@onready var prestige_title: Label = %PrestigeTitle
+@onready var prestige_description: Label = %PrestigeDescription
 @onready var story_label: Label = %StoryLabel
 
 @onready var grid_tab_button: Button = %GridTabButton
@@ -84,7 +86,9 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_resource_label(vertices_label)
 	ThemeTextHelper.apply_detail_label(prestige_label)
 	ThemeTextHelper.apply_body_label(story_label)
-	ThemeTextHelper.apply_body_label(prestige_details)
+	ThemeTextHelper.apply_panel_title(prestige_title)
+	ThemeTextHelper.apply_body_label(prestige_description)
+	ThemeTextHelper.apply_detail_label(prestige_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
 
 
