@@ -177,6 +177,9 @@ unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("4_3km4f")
 target = NodePath("..")
+fade_duration_seconds = 0.65
+slide_offset = Vector2(0, 16)
+hidden_scale = Vector2(0.98, 0.98)
 
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
 unique_name_in_owner = true
