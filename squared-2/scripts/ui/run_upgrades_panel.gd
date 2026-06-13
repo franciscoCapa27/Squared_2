@@ -2,18 +2,20 @@ extends PanelContainer
 class_name RunUpgradesPanel
 
 @onready var run_upgrade_list: VBoxContainer = %RunUpgradeList
-
-var run_upgrade_card_scene: PackedScene = preload("res://scenes/ui/RunUpgradeCard.tscn")
-var run_upgrade_cards: Dictionary = {}
-
 @onready var run_upgrades_margin: MarginContainer = %RunUpgradesMargin
 @onready var run_upgrades_v_box: VBoxContainer = %RunUpgradesVBox
 
+var run_upgrade_card_scene: PackedScene = preload("res://scenes/ui/RunUpgradeCard.tscn")
+var run_upgrade_cards: Dictionary = {}
+var visible_upgrade_ids: Array[String] = []
+
 
 func _ready() -> void:
+	visible_upgrade_ids = []
+
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	_apply_theme()
-	
+
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.prestige_changed.connect(_on_prestige_changed)
 	EventBus.grid_changed.connect(_on_grid_changed)
@@ -24,6 +26,7 @@ func _ready() -> void:
 
 	refresh()
 
+
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
@@ -33,6 +36,15 @@ func _apply_theme() -> void:
 
 func _on_theme_changed() -> void:
 	_apply_theme()
+
+	for upgrade_id: String in run_upgrade_cards.keys():
+		var card: RunUpgradeCard = run_upgrade_cards.get(upgrade_id) as RunUpgradeCard
+
+		if card == null:
+			continue
+
+		card.refresh()
+
 
 func refresh() -> void:
 	_rebuild_if_needed()
@@ -47,21 +59,30 @@ func refresh() -> void:
 
 
 func _rebuild_if_needed() -> void:
-	var visible_upgrades: Array[RunUpgradeDefinition] = _get_visible_upgrades()
+	var new_visible_upgrade_ids: Array[String] = _get_visible_upgrade_ids()
 
-	if visible_upgrades.size() != run_upgrade_cards.size():
-		_rebuild_list()
+	if visible_upgrade_ids == null:
+		visible_upgrade_ids = []
+
+	if _arrays_are_equal(visible_upgrade_ids, new_visible_upgrade_ids):
+		return
+
+	_rebuild_list(new_visible_upgrade_ids)
 
 
-func _rebuild_list() -> void:
+func _rebuild_list(new_visible_upgrade_ids: Array[String]) -> void:
 	for child: Node in run_upgrade_list.get_children():
 		child.queue_free()
 
 	run_upgrade_cards.clear()
+	visible_upgrade_ids = new_visible_upgrade_ids
 
-	var visible_upgrades: Array[RunUpgradeDefinition] = _get_visible_upgrades()
+	for upgrade_id: String in visible_upgrade_ids:
+		var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
 
-	for upgrade: RunUpgradeDefinition in visible_upgrades:
+		if upgrade == null:
+			continue
+
 		var card: RunUpgradeCard = run_upgrade_card_scene.instantiate() as RunUpgradeCard
 		run_upgrade_list.add_child(card)
 
@@ -71,19 +92,39 @@ func _rebuild_list() -> void:
 		run_upgrade_cards[upgrade.id] = card
 
 
-func _get_visible_upgrades() -> Array[RunUpgradeDefinition]:
-	var visible_upgrades: Array[RunUpgradeDefinition] = []
+func _get_visible_upgrade_ids() -> Array[String]:
+	var result: Array[String] = []
 
 	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
-		if not upgrade.is_visible_by_default:
+		if upgrade == null:
 			continue
 
-		if upgrade.hidden_until_unlocked and not RunUpgradeSystem.is_run_upgrade_unlocked(upgrade.id):
+		if not RunUpgradeSystem.should_show_run_upgrade(upgrade.id):
 			continue
 
-		visible_upgrades.append(upgrade)
+		result.append(upgrade.id)
 
-	return visible_upgrades
+	return result
+
+
+func _arrays_are_equal(left: Variant, right: Variant) -> bool:
+	if not left is Array:
+		return false
+
+	if not right is Array:
+		return false
+
+	var left_array: Array = left as Array
+	var right_array: Array = right as Array
+
+	if left_array.size() != right_array.size():
+		return false
+
+	for index: int in left_array.size():
+		if str(left_array[index]) != str(right_array[index]):
+			return false
+
+	return true
 
 
 func _on_buy_requested(upgrade_id: String) -> void:

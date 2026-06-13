@@ -3,6 +3,8 @@ extends Node
 signal run_upgrades_changed()
 signal run_upgrade_bought(upgrade_id: String)
 
+const RUN_UPGRADE_VISIBILITY_COST_RATIO := 0.60
+
 var run_upgrade_levels: Dictionary = {}
 var run_stat_multipliers: Dictionary = {}
 var run_stat_additions: Dictionary = {}
@@ -93,6 +95,46 @@ func buy_run_upgrade(upgrade_id: String) -> bool:
 
 	return true
 
+func should_show_run_upgrade(upgrade_id: String) -> bool:
+	var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
+
+	if upgrade == null:
+		return false
+
+	if not is_run_upgrade_unlocked(upgrade_id):
+		return false
+
+	if is_run_upgrade_maxed(upgrade_id):
+		return false
+
+	var current_level: int = get_run_upgrade_level(upgrade_id)
+	var next_cost: float = upgrade.get_cost_for_next_level(current_level)
+	var visibility_cost: float = next_cost * RUN_UPGRADE_VISIBILITY_COST_RATIO
+
+	return GameState.squares >= visibility_cost
+
+
+func is_run_upgrade_maxed(upgrade_id: String) -> bool:
+	var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
+
+	if upgrade == null:
+		return true
+
+	if upgrade.max_level <= 0:
+		return false
+
+	return get_run_upgrade_level(upgrade_id) >= upgrade.max_level
+
+
+func has_any_visible_run_upgrade() -> bool:
+	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
+		if upgrade == null:
+			continue
+
+		if should_show_run_upgrade(upgrade.id):
+			return true
+
+	return false
 
 func reset_run_state_on_prestige() -> void:
 	run_upgrade_levels.clear()

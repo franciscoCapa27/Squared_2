@@ -172,15 +172,6 @@ size_flags_vertical = 3
 mouse_filter = 2
 script = ExtResource("2_gyg6b")
 
-[node name="PassiveFeatureVisibility" type="Control" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=61481412 node_paths=PackedStringArray("target")]
-unique_name_in_owner = true
-layout_mode = 2
-script = ExtResource("4_3km4f")
-target = NodePath("..")
-fade_duration_seconds = 0.65
-slide_offset = Vector2(0, 16)
-hidden_scale = Vector2(0.98, 0.98)
-
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
 unique_name_in_owner = true
 layout_mode = 2
@@ -246,6 +237,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_1rhdn")
+
+[node name="GridUpgradeFeatureVisibility" type="Node" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=1786835516 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../GridCenter/GridVBox/UpgradeGridButton")
 
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=847906112]
 unique_name_in_owner = true
@@ -574,3 +570,35 @@ layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_constants/separation = 8
+
+[node name="FeatureVisibilityControllers" type="Node" parent="." unique_id=776468498]
+
+[node name="PassiveFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=877771115 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel")
+
+[node name="VertexShopFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=1663286050 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/ResourceCluster/VertexShopTabButton")
+
+[node name="PrestigeFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=1016824750 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel")
+
+[node name="RunUpgradesFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=76750194 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel")
+
+[node name="SquareDetailsFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=1620643443 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel")
+
+[node name="AchievementSummaryFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=898244319 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+script = ExtResource("4_3km4f")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel")

@@ -20,7 +20,6 @@ extends Control
 @onready var achievements_page: AchievementsPage = %AchievementsPage
 
 @onready var passive_panel: PassivePanel = %PassivePanel
-@onready var passive_feature_visibility: FeaturePanelVisibility = %PassiveFeatureVisibility
 @onready var square_details_panel: SquareDetailsPanel = %SquareDetailsPanel
 
 @onready var run_upgrades_panel: RunUpgradesPanel = %RunUpgradesPanel
@@ -43,6 +42,12 @@ extends Control
 @onready var achievement_summary_label: Label = %AchievementSummaryLabel
 @onready var achievement_summary_button: Button = %AchievementSummaryButton
 
+@onready var passive_feature_visibility: FeaturePanelVisibility = %PassiveFeatureVisibility
+@onready var vertex_shop_feature_visibility: FeaturePanelVisibility = %VertexShopFeatureVisibility
+@onready var prestige_feature_visibility: FeaturePanelVisibility = %PrestigeFeatureVisibility
+@onready var run_upgrades_feature_visibility: FeaturePanelVisibility = %RunUpgradesFeatureVisibility
+@onready var square_details_feature_visibility: FeaturePanelVisibility = %SquareDetailsFeatureVisibility
+@onready var achievement_summary_feature_visibility: FeaturePanelVisibility = %AchievementSummaryFeatureVisibility
 
 func _ready() -> void:
 	_connect_global_signals()
@@ -169,9 +174,27 @@ func _refresh_all_ui() -> void:
 	_refresh_feature_visibility(false)
 
 func _refresh_feature_visibility(animated: bool = true) -> void:
-	var has_passives: bool = PassiveSystem.has_any_unlocked_generator()
-	passive_feature_visibility.set_feature_visible(has_passives, animated)
+	var show_passives: bool = FeatureVisibilityRules.should_show_passive_panel()
+	var show_vertex_shop: bool = FeatureVisibilityRules.should_show_vertex_shop_access()
+	var show_prestige: bool = FeatureVisibilityRules.should_show_prestige_panel()
+	var show_run_upgrades: bool = FeatureVisibilityRules.should_show_run_upgrades_panel()
+	var show_square_details: bool = FeatureVisibilityRules.should_show_square_details_panel(
+		square_details_panel.selected_square_id
+	)
+	var show_achievement_summary: bool = FeatureVisibilityRules.should_show_achievement_summary_panel()
 
+	passive_feature_visibility.set_feature_visible(show_passives, animated)
+	vertex_shop_feature_visibility.set_feature_visible(show_vertex_shop, animated)
+	prestige_feature_visibility.set_feature_visible(show_prestige, animated)
+	run_upgrades_feature_visibility.set_feature_visible(show_run_upgrades, animated)
+	square_details_feature_visibility.set_feature_visible(show_square_details, animated)
+	achievement_summary_feature_visibility.set_feature_visible(show_achievement_summary, animated)
+
+	grid_page.refresh_feature_visibility(animated)
+
+	if not show_vertex_shop and vertex_shop_page.visible:
+		_show_center_page("grid")
+	
 func _refresh_labels() -> void:
 	_on_squares_changed(GameState.squares)
 	_on_vertices_changed(GameState.vertices)
@@ -240,12 +263,14 @@ func _on_squares_changed(value: float) -> void:
 
 	_refresh_prestige_panel()
 	_refresh_passive_panel()
+	_refresh_feature_visibility(true)
 
 
 func _on_vertices_changed(value: int) -> void:
 	vertices_label.text = "Vertices: %s" % NumberFormatter.integer_amount(value)
 	_refresh_vertex_shop()
 	_refresh_prestige_panel()
+	_refresh_feature_visibility(true)
 
 
 
@@ -286,6 +311,7 @@ func _on_prestige_pressed() -> void:
 
 func _on_grid_square_selected(square_id: String) -> void:
 	square_details_panel.show_square(square_id)
+	_refresh_feature_visibility(true)
 
 func _on_grid_upgrade_requested() -> void:
 	var upgraded: bool = GameState.upgrade_grid()
@@ -314,6 +340,7 @@ func _on_passive_generator_upgraded(_generator_id: String) -> void:
 	_refresh_passive_panel()
 	square_details_panel.refresh()
 	run_upgrades_panel.refresh()
+	_refresh_feature_visibility(true)
 
 
 func _on_options_save_imported() -> void:
@@ -323,6 +350,7 @@ func _on_options_save_imported() -> void:
 func _on_options_hard_reset_completed() -> void:
 	square_details_panel.clear()
 	_refresh_all_ui()
+	_refresh_feature_visibility(false)
 	
 
 
@@ -340,6 +368,7 @@ func _on_achievements_changed() -> void:
 	grid_page.refresh_buttons()
 	run_upgrades_panel.refresh()
 	_refresh_achievement_summary()
+	_refresh_feature_visibility(true)
 
 
 func _on_save_loaded() -> void:

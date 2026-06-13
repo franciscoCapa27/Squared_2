@@ -14,6 +14,7 @@ const MAX_GRID_GAP := 10
 @onready var upgrade_grid_button: Button = %UpgradeGridButton
 @onready var grid_v_box: VBoxContainer = %GridVBox
 @onready var grid_area: Control = %GridArea
+@onready var grid_upgrade_feature_visibility: FeaturePanelVisibility = %GridUpgradeFeatureVisibility
 
 var square_button_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var square_buttons_by_id: Dictionary = {}
@@ -80,6 +81,10 @@ func _apply_grid_sizing() -> void:
 		square_button.size = button_size
 		square_button.apply_responsive_visual_size(square_size)
 
+func refresh_feature_visibility(animated: bool = true) -> void:
+	var should_show: bool = FeatureVisibilityRules.should_show_grid_upgrade_button()
+	grid_upgrade_feature_visibility.set_feature_visible(should_show, animated)
+
 func _calculate_grid_gap(grid_size: int) -> int:
 	if grid_size <= 2:
 		return 10
@@ -126,6 +131,7 @@ func rebuild() -> void:
 	_apply_grid_sizing()
 	call_deferred("_apply_grid_sizing")
 	_refresh_upgrade_button()
+	refresh_feature_visibility(false)
 
 func refresh_buttons() -> void:
 	for square_id: String in square_buttons_by_id.keys():
@@ -162,6 +168,7 @@ func _refresh_upgrade_button() -> void:
 		_get_rarity_unlock_text(next_grid_size),
 		NumberFormatter.cost(cost)
 	]
+	refresh_feature_visibility(true)
 
 
 func _get_rarity_unlock_text(next_grid_size: int) -> String:
@@ -183,6 +190,7 @@ func _get_rarity_unlock_text(next_grid_size: int) -> String:
 func _on_square_button_clicked(square_id: String) -> void:
 	GameState.click_square(square_id)
 	square_selected.emit(square_id)
+	
 
 
 func _on_upgrade_grid_button_pressed() -> void:
@@ -191,3 +199,4 @@ func _on_upgrade_grid_button_pressed() -> void:
 
 func _on_squares_changed(_value: float) -> void:
 	_refresh_upgrade_button()
+	refresh_feature_visibility(false)
