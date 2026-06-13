@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://3kgpybmgkguk" path="res://scripts/ui/theme/themed_background.gd" id="2_ostsq"]
 [ext_resource type="Script" uid="uid://bxj37wgxednl7" path="res://scripts/ui/grid_page.gd" id="3_1rhdn"]
 [ext_resource type="Script" uid="uid://dtcxo6g4t8ui" path="res://scripts/ui/vertex_shop_page.gd" id="3_dc040"]
+[ext_resource type="Script" uid="uid://bju4bhmxsxlgp" path="res://scripts/ui/feature_panel_visibility.gd" id="4_3km4f"]
 [ext_resource type="Script" uid="uid://8mmn8xlnp7rn" path="res://scripts/ui/achievements_page.gd" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
@@ -171,6 +172,12 @@ size_flags_vertical = 3
 mouse_filter = 2
 script = ExtResource("2_gyg6b")
 
+[node name="PassiveFeatureVisibility" type="Control" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=61481412 node_paths=PackedStringArray("target")]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("4_3km4f")
+target = NodePath("..")
+
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
 unique_name_in_owner = true
 layout_mode = 2
@@ -239,9 +246,18 @@ script = ExtResource("3_1rhdn")
 
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=847906112]
 unique_name_in_owner = true
-layout_mode = 0
-offset_right = 624.0
-offset_bottom = 616.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -312.0
+offset_top = -308.0
+offset_right = 312.0
+offset_bottom = 308.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
@@ -482,7 +498,7 @@ Run stats, lifetime stats, and detailed square data will live here."
 
 [node name="RightPanel" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox" unique_id=772359619]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(260, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 12

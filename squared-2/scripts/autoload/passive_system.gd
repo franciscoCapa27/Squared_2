@@ -207,7 +207,17 @@ func _select_lowest_respawn_square() -> SquareData:
 			best_square = square_data
 
 	return best_square
+	
 
+func has_any_unlocked_generator() -> bool:
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		if generator_instance == null:
+			continue
+
+		if generator_instance.is_unlocked:
+			return true
+
+	return false
 
 func to_save_dict() -> Dictionary:
 	var generator_save_data: Dictionary = {}

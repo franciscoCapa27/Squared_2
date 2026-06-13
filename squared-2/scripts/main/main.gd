@@ -20,6 +20,7 @@ extends Control
 @onready var achievements_page: AchievementsPage = %AchievementsPage
 
 @onready var passive_panel: PassivePanel = %PassivePanel
+@onready var passive_feature_visibility: FeaturePanelVisibility = %PassiveFeatureVisibility
 @onready var square_details_panel: SquareDetailsPanel = %SquareDetailsPanel
 
 @onready var run_upgrades_panel: RunUpgradesPanel = %RunUpgradesPanel
@@ -142,6 +143,8 @@ func _initialize_new_game_ui() -> void:
 	achievements_page.refresh()
 	square_details_panel.clear()
 	run_upgrades_panel.refresh()
+	
+	_refresh_feature_visibility(false)
 
 
 # ------------------------------------------------------------------------------
@@ -162,6 +165,11 @@ func _refresh_all_ui() -> void:
 	square_details_panel.refresh()
 	run_upgrades_panel.refresh()
 
+	_refresh_feature_visibility(false)
+
+func _refresh_feature_visibility(animated: bool = true) -> void:
+	var has_passives: bool = PassiveSystem.has_any_unlocked_generator()
+	passive_feature_visibility.set_feature_visible(has_passives, animated)
 
 func _refresh_labels() -> void:
 	_on_squares_changed(GameState.squares)
@@ -295,6 +303,8 @@ func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
 	_refresh_passive_panel()
 	grid_page.refresh_buttons()
 	square_details_panel.refresh()
+	run_upgrades_panel.refresh()
+	_refresh_feature_visibility(true)
 
 
 func _on_passive_generator_upgraded(_generator_id: String) -> void:
@@ -310,6 +320,7 @@ func _on_options_save_imported() -> void:
 func _on_options_hard_reset_completed() -> void:
 	square_details_panel.clear()
 	_refresh_all_ui()
+	
 
 
 # ------------------------------------------------------------------------------
