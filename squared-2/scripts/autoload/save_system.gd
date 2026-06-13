@@ -88,6 +88,7 @@ func hard_reset() -> void:
 
 	GameState.reset_to_new_game()
 	PassiveSystem.reset_to_new_game()
+	VertexUpgradeSystem.reset_to_new_game()
 	AchievementSystem.reset_to_new_game()
 	RunUpgradeSystem.reset_to_new_game()
 
@@ -152,6 +153,7 @@ func _build_save_data() -> Dictionary:
 		},
 		"game_state": GameState.to_save_dict(),
 		"passive_system": PassiveSystem.to_save_dict(),
+		"vertex_upgrade_system": VertexUpgradeSystem.to_save_dict(),
 		"achievement_system": AchievementSystem.to_save_dict(),
 		"run_upgrade_system": RunUpgradeSystem.to_save_dict()
 	}
@@ -173,11 +175,13 @@ func _apply_save_data(save_data: Dictionary) -> void:
 
 	var game_state_data: Dictionary = save_data.get("game_state", {})
 	var passive_system_data: Dictionary = save_data.get("passive_system", {})
+	var vertex_upgrade_system_data: Dictionary = save_data.get("vertex_upgrade_system", {})
 	var achievement_system_data: Dictionary = save_data.get("achievement_system", {})
 	var run_upgrade_system_data: Dictionary = save_data.get("run_upgrade_system", {})
 	
 	GameState.from_save_dict(game_state_data)
 	PassiveSystem.from_save_dict(passive_system_data)
+	VertexUpgradeSystem.from_save_dict(vertex_upgrade_system_data)
 	AchievementSystem.from_save_dict(achievement_system_data)
 	RunUpgradeSystem.from_save_dict(run_upgrade_system_data)
 

@@ -136,7 +136,7 @@ func _get_condition_current_value(achievement: AchievementDefinition) -> float:
 		AchievementDefinition.ConditionType.VERTICES_EARNED:
 			return float(_get_total_vertex_upgrade_currency_earned_approximation())
 		AchievementDefinition.ConditionType.VERTEX_UPGRADE_PURCHASED:
-			return 1.0 if GameState.has_vertex_upgrade(achievement.target_id) else 0.0
+			return 1.0 if VertexUpgradeSystem.has_vertex_upgrade(achievement.target_id) else 0.0
 		AchievementDefinition.ConditionType.PASSIVE_GENERATOR_UNLOCKED:
 			return _get_passive_generator_unlocked_value(achievement.target_id)
 		AchievementDefinition.ConditionType.PASSIVE_GENERATOR_LEVEL:
@@ -265,13 +265,13 @@ func _get_passive_generator_level_value(generator_id: String) -> float:
 func _get_total_vertex_upgrade_currency_earned_approximation() -> int:
 	var spent_vertices: int = 0
 
-	for upgrade_id: String in GameState.unlocked_vertex_upgrades.keys():
+	for upgrade_id: String in VertexUpgradeSystem.unlocked_vertex_upgrades.keys():
 		var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
 
 		if upgrade == null:
 			continue
 
-		var purchase_count: int = GameState.get_vertex_upgrade_purchase_count(upgrade_id)
+		var purchase_count: int = VertexUpgradeSystem.get_vertex_upgrade_purchase_count(upgrade_id)
 		spent_vertices += upgrade.cost_vertices * purchase_count
 
 	return GameState.vertices + spent_vertices

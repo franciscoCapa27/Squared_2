@@ -33,7 +33,7 @@ func is_met() -> bool:
 		ConditionType.PASSIVE_GENERATOR_LEVEL:
 			return _is_passive_generator_level_met()
 		ConditionType.VERTEX_UPGRADE_PURCHASED:
-			return GameState.has_vertex_upgrade(target_id)
+			return VertexUpgradeSystem.has_vertex_upgrade(target_id)
 		ConditionType.TOTAL_MANUAL_CLICKS:
 			return float(_get_total_manual_clicks()) >= threshold
 		ConditionType.TOTAL_PASSIVE_CLICKS:

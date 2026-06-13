@@ -43,7 +43,7 @@ func _rebuild_vertex_upgrade_list() -> void:
 
 
 func _on_vertex_upgrade_buy_requested(upgrade_id: String) -> void:
-	var bought: bool = GameState.buy_vertex_upgrade(upgrade_id)
+	var bought: bool = VertexUpgradeSystem.buy_vertex_upgrade(upgrade_id)
 
 	if not bought:
 		refresh()

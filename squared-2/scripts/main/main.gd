@@ -106,6 +106,7 @@ func _connect_global_signals() -> void:
 	AchievementSystem.achievements_changed.connect(_on_achievements_changed)
 	SaveSystem.save_loaded.connect(_on_save_loaded)
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	VertexUpgradeSystem.vertex_upgrades_changed.connect(_on_vertex_upgrades_changed)
 
 
 
@@ -299,14 +300,16 @@ func _on_grid_upgrade_requested() -> void:
 # ------------------------------------------------------------------------------
 
 func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
+	_on_vertex_upgrades_changed()
+
+func _on_vertex_upgrades_changed() -> void:
 	_refresh_vertex_shop()
 	_refresh_passive_panel()
 	grid_page.refresh_buttons()
 	square_details_panel.refresh()
 	run_upgrades_panel.refresh()
 	_refresh_feature_visibility(true)
-
-
+	
 func _on_passive_generator_upgraded(_generator_id: String) -> void:
 	_refresh_passive_panel()
 	square_details_panel.refresh()

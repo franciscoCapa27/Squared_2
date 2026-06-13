@@ -40,9 +40,9 @@ func refresh() -> void:
 	if upgrade_definition == null:
 		return
 
-	var purchase_count: int = GameState.get_vertex_upgrade_purchase_count(upgrade_definition.id)
+	var purchase_count: int = VertexUpgradeSystem.get_vertex_upgrade_purchase_count(upgrade_definition.id)
 	var is_purchased: bool = purchase_count > 0 and not upgrade_definition.is_repeatable
-	var can_buy: bool = GameState.can_buy_vertex_upgrade(upgrade_definition.id)
+	var can_buy: bool = VertexUpgradeSystem.can_buy_vertex_upgrade(upgrade_definition.id)
 
 	title_label.text = upgrade_definition.display_name
 	category_cost_label.text = "%s • Cost: %s Vertices" % [
@@ -92,7 +92,7 @@ func _get_requirement_text() -> String:
 		])
 
 	for required_id: String in upgrade_definition.required_upgrade_ids:
-		if GameState.has_vertex_upgrade(required_id):
+		if VertexUpgradeSystem.has_vertex_upgrade(required_id):
 			lines.append("Requires %s: met" % _format_upgrade_name(required_id))
 		else:
 			lines.append("Requires %s: missing" % _format_upgrade_name(required_id))
