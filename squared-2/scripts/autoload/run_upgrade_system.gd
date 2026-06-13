@@ -8,7 +8,7 @@ const RUN_UPGRADE_VISIBILITY_COST_RATIO := 0.60
 var run_upgrade_levels: Dictionary = {}
 var run_stat_multipliers: Dictionary = {}
 var run_stat_additions: Dictionary = {}
-
+var discovered_visible_run_upgrades: Dictionary = {}
 
 func get_run_stat_multiplier(stat_id: String) -> float:
 	return float(run_stat_multipliers.get(stat_id, 1.0))
@@ -74,26 +74,68 @@ func buy_run_upgrade(upgrade_id: String) -> bool:
 		return false
 
 	var current_level: int = get_run_upgrade_level(upgrade_id)
-	var cost: float = upgrade.get_cost_for_next_level(current_level)
+	var next_cost: float = upgrade.get_cost_for_next_level(current_level)
 
-	if not GameState.spend_squares(cost):
-		return false
+	# Important:
+	# Record the level before spending Squares.
+	# spend_squares() emits squares_changed immediately, and UI visibility depends on level > 0.
+	run_upgrade_levels[upgrade_id] = current_level + 1
 
 	_apply_run_upgrade_effects(upgrade)
 
-	run_upgrade_levels[upgrade.id] = current_level + 1
+	var spent: bool = GameState.spend_squares(next_cost)
 
-	EventBus.story_message.emit(
-		"%s reached Level %s." % [
-			upgrade.display_name,
-			NumberFormatter.integer_amount(current_level + 1)
-		]
-	)
+	if not spent:
+		# Defensive rollback. This should not happen because can_buy_run_upgrade()
+		# already checked affordability, but keep it safe.
+		run_upgrade_levels[upgrade_id] = current_level
+		_recalculate_run_stats()
+		return false
 
-	run_upgrade_bought.emit(upgrade.id)
+	run_upgrade_bought.emit(upgrade_id)
 	run_upgrades_changed.emit()
 
 	return true
+func _recalculate_run_stats() -> void:
+	run_stat_multipliers.clear()
+	run_stat_additions.clear()
+
+	for upgrade_id: String in run_upgrade_levels.keys():
+		var level: int = get_run_upgrade_level(upgrade_id)
+
+		if level <= 0:
+			continue
+
+		var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
+
+		if upgrade == null:
+			continue
+
+		for index: int in level:
+			_apply_run_upgrade_effects(upgrade)
+func refresh_visible_run_upgrade_discoveries() -> void:
+	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
+		if upgrade == null:
+			continue
+
+		if not is_run_upgrade_unlocked(upgrade.id):
+			continue
+
+		if is_run_upgrade_maxed(upgrade.id):
+			continue
+
+		var current_level: int = get_run_upgrade_level(upgrade.id)
+
+		if current_level > 0:
+			discovered_visible_run_upgrades[upgrade.id] = true
+			continue
+
+		var next_cost: float = upgrade.get_cost_for_next_level(current_level)
+		var visibility_cost: float = next_cost * RUN_UPGRADE_VISIBILITY_COST_RATIO
+
+		if GameState.squares >= visibility_cost:
+			discovered_visible_run_upgrades[upgrade.id] = true
+
 
 func should_show_run_upgrade(upgrade_id: String) -> bool:
 	var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
@@ -107,12 +149,26 @@ func should_show_run_upgrade(upgrade_id: String) -> bool:
 	if is_run_upgrade_maxed(upgrade_id):
 		return false
 
-	var current_level: int = get_run_upgrade_level(upgrade_id)
-	var next_cost: float = upgrade.get_cost_for_next_level(current_level)
-	var visibility_cost: float = next_cost * RUN_UPGRADE_VISIBILITY_COST_RATIO
+	if get_run_upgrade_level(upgrade_id) > 0:
+		return true
 
-	return GameState.squares >= visibility_cost
+	return bool(discovered_visible_run_upgrades.get(upgrade_id, false))
 
+
+func has_any_visible_run_upgrade() -> bool:
+	refresh_visible_run_upgrade_discoveries()
+
+	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
+		if upgrade == null:
+			continue
+
+		if should_show_run_upgrade(upgrade.id):
+			return true
+
+	return false
+
+func _mark_run_upgrade_as_discovered(upgrade_id: String) -> void:
+	discovered_visible_run_upgrades[upgrade_id] = true
 
 func is_run_upgrade_maxed(upgrade_id: String) -> bool:
 	var upgrade: RunUpgradeDefinition = RunUpgradeDatabase.get_upgrade(upgrade_id)
@@ -126,20 +182,12 @@ func is_run_upgrade_maxed(upgrade_id: String) -> bool:
 	return get_run_upgrade_level(upgrade_id) >= upgrade.max_level
 
 
-func has_any_visible_run_upgrade() -> bool:
-	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
-		if upgrade == null:
-			continue
-
-		if should_show_run_upgrade(upgrade.id):
-			return true
-
-	return false
 
 func reset_run_state_on_prestige() -> void:
 	run_upgrade_levels.clear()
 	run_stat_multipliers.clear()
 	run_stat_additions.clear()
+	discovered_visible_run_upgrades.clear()
 
 	run_upgrades_changed.emit()
 
@@ -152,7 +200,8 @@ func to_save_dict() -> Dictionary:
 	return {
 		"run_upgrade_levels": run_upgrade_levels,
 		"run_stat_multipliers": run_stat_multipliers,
-		"run_stat_additions": run_stat_additions
+		"run_stat_additions": run_stat_additions,
+		"discovered_visible_run_upgrades": discovered_visible_run_upgrades,
 	}
 
 
@@ -160,7 +209,7 @@ func from_save_dict(data: Dictionary) -> void:
 	run_upgrade_levels = _dictionary_from_variant(data.get("run_upgrade_levels", {}))
 	run_stat_multipliers = _dictionary_from_variant(data.get("run_stat_multipliers", {}))
 	run_stat_additions = _dictionary_from_variant(data.get("run_stat_additions", {}))
-
+	discovered_visible_run_upgrades = _dictionary_from_variant(data.get("discovered_visible_run_upgrades", {}))
 	run_upgrades_changed.emit()
 
 

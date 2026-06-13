@@ -17,7 +17,7 @@ var permanent_tags: Array[String] = []
 var temporary_tags: Array[String] = []
 var status_effects: Array[String] = []
 
-var base_value: float = 10000.0
+var base_value: float = 1.0
 var base_respawn_time: float = 1.0
 var base_manual_multiplier: float = 1.0
 var base_passive_multiplier: float = 0.2

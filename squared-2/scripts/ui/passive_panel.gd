@@ -60,8 +60,10 @@ func _rebuild_passive_generator_list() -> void:
 		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		passive_generator_list.add_child(empty_label)
 		return
-
+	PassiveSystem.refresh_visible_generator_discoveries()
 	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
+		if not PassiveSystem.should_show_generator(generator_instance.definition.id):
+			continue
 		var card: PassiveGeneratorCard = passive_generator_card_scene.instantiate() as PassiveGeneratorCard
 		passive_generator_list.add_child(card)
 

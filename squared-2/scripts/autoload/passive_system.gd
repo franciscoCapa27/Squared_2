@@ -1,10 +1,11 @@
 extends Node
-
+const PASSIVE_VISIBILITY_COST_RATIO := 0.60
 signal passive_state_changed()
 signal passive_pulsed(generator_id: String, square_id: String, payout: float)
 
 var generators_by_id: Dictionary = {}
 var generator_order: Array[String] = []
+var discovered_visible_generators: Dictionary = {}
 
 func _ready() -> void:
 	_initialize_generators()
@@ -24,6 +25,7 @@ func _process(delta: float) -> void:
 	passive_state_changed.emit()
 
 func _initialize_generators() -> void:
+	discovered_visible_generators.clear()
 	generators_by_id.clear()
 	generator_order.clear()
 
@@ -78,7 +80,7 @@ func reset_run_state_on_prestige() -> void:
 	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
 		if generator_instance.is_unlocked:
 			generator_instance.reset_run_state()
-
+	discovered_visible_generators.clear()
 	passive_state_changed.emit()
 
 func can_upgrade_generator(generator_id: String) -> bool:
@@ -88,6 +90,58 @@ func can_upgrade_generator(generator_id: String) -> bool:
 		return false
 
 	return generator_instance.can_level_up(GameState.squares)
+func refresh_visible_generator_discoveries() -> void:
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		if generator_instance == null:
+			continue
+
+		if generator_instance.definition == null:
+			continue
+
+		if not generator_instance.is_unlocked:
+			continue
+
+		if generator_instance.level > 0:
+			discovered_visible_generators[generator_instance.definition.id] = true
+			continue
+
+		var next_cost: float = generator_instance.get_next_level_cost()
+		var visibility_cost: float = next_cost * PASSIVE_VISIBILITY_COST_RATIO
+
+		if GameState.squares >= visibility_cost:
+			discovered_visible_generators[generator_instance.definition.id] = true
+
+
+func should_show_generator(generator_id: String) -> bool:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+	if generator_instance == null:
+		return false
+
+	if not generator_instance.is_unlocked:
+		return false
+
+	if generator_instance.level > 0:
+		return true
+
+	return bool(discovered_visible_generators.get(generator_id, false))
+
+
+func has_any_visible_generator() -> bool:
+	refresh_visible_generator_discoveries()
+
+	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
+		if generator_instance == null:
+			continue
+
+		if generator_instance.definition == null:
+			continue
+
+		if should_show_generator(generator_instance.definition.id):
+			return true
+
+	return false
+
 
 func upgrade_generator(generator_id: String) -> bool:
 	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
@@ -96,12 +150,6 @@ func upgrade_generator(generator_id: String) -> bool:
 		return false
 
 	if not generator_instance.can_level_up(GameState.squares):
-		return false
-
-	var cost: int = generator_instance.get_next_level_cost()
-	var spent: bool = GameState.spend_squares(float(cost))
-
-	if not spent:
 		return false
 
 	var upgraded: bool = generator_instance.level_up()
@@ -117,6 +165,13 @@ func upgrade_generator(generator_id: String) -> bool:
 					generator_instance.level
 				]
 			)
+	var cost: int = generator_instance.get_next_level_cost()
+	var spent: bool = GameState.spend_squares(float(cost))
+
+	if not spent:
+		return false
+
+	
 
 	passive_state_changed.emit()
 	return upgraded
@@ -231,14 +286,17 @@ func to_save_dict() -> Dictionary:
 		generator_save_data[generator_id] = generator_instance.to_save_dict()
 
 	return {
-		"generators": generator_save_data
+		"generators": generator_save_data,
+		"discovered_visible_generators": discovered_visible_generators,
+		
+		
 	}
 
 func from_save_dict(data: Dictionary) -> void:
 	_initialize_generators()
 
 	var generator_save_data: Dictionary = data.get("generators", {})
-
+	discovered_visible_generators = data.get("discovered_visible_generators", {})
 	for generator_id: String in generator_save_data.keys():
 		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
 

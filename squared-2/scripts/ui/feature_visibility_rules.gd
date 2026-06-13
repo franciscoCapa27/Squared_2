@@ -1,9 +1,10 @@
 extends RefCounted
 class_name FeatureVisibilityRules
 
+const GRID_UPGRADE_VISIBILITY_COST_RATIO := 0.60
 
 static func should_show_passive_panel() -> bool:
-	return PassiveSystem.has_any_unlocked_generator()
+	return PassiveSystem.has_any_visible_generator()
 
 
 static func should_show_vertex_shop_access() -> bool:
@@ -28,6 +29,5 @@ static func should_show_achievement_summary_panel() -> bool:
 
 static func should_show_grid_upgrade_button() -> bool:
 	return GameState.grid_size < GameState.MAX_GRID_SIZE and (
-		GameState.squares >= GameState.get_grid_upgrade_cost()
-		or GameState.grid_size > GameState.INITIAL_GRID_SIZE
+		GameState.squares >= GameState.get_grid_upgrade_cost() * GRID_UPGRADE_VISIBILITY_COST_RATIO
 	)

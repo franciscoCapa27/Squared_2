@@ -8,6 +8,7 @@ class_name RunUpgradesPanel
 var run_upgrade_card_scene: PackedScene = preload("res://scenes/ui/RunUpgradeCard.tscn")
 var run_upgrade_cards: Dictionary = {}
 var visible_upgrade_ids: Array[String] = []
+var refresh_is_queued: bool = false
 
 
 func _ready() -> void:
@@ -36,17 +37,12 @@ func _apply_theme() -> void:
 
 func _on_theme_changed() -> void:
 	_apply_theme()
-
-	for upgrade_id: String in run_upgrade_cards.keys():
-		var card: RunUpgradeCard = run_upgrade_cards.get(upgrade_id) as RunUpgradeCard
-
-		if card == null:
-			continue
-
-		card.refresh()
+	_queue_refresh()
 
 
 func refresh() -> void:
+	refresh_is_queued = false
+
 	_rebuild_if_needed()
 
 	for upgrade_id: String in run_upgrade_cards.keys():
@@ -58,11 +54,16 @@ func refresh() -> void:
 		card.refresh()
 
 
+func _queue_refresh() -> void:
+	if refresh_is_queued:
+		return
+
+	refresh_is_queued = true
+	call_deferred("refresh")
+
+
 func _rebuild_if_needed() -> void:
 	var new_visible_upgrade_ids: Array[String] = _get_visible_upgrade_ids()
-
-	if visible_upgrade_ids == null:
-		visible_upgrade_ids = []
 
 	if _arrays_are_equal(visible_upgrade_ids, new_visible_upgrade_ids):
 		return
@@ -94,6 +95,8 @@ func _rebuild_list(new_visible_upgrade_ids: Array[String]) -> void:
 
 func _get_visible_upgrade_ids() -> Array[String]:
 	var result: Array[String] = []
+
+	RunUpgradeSystem.refresh_visible_run_upgrade_discoveries()
 
 	for upgrade: RunUpgradeDefinition in RunUpgradeDatabase.get_all_upgrades():
 		if upgrade == null:
@@ -133,28 +136,28 @@ func _on_buy_requested(upgrade_id: String) -> void:
 	if not bought:
 		return
 
-	refresh()
+	_queue_refresh()
 
 
 func _on_squares_changed(_value: float) -> void:
-	refresh()
+	_queue_refresh()
 
 
 func _on_prestige_changed(_value: int) -> void:
-	refresh()
+	_queue_refresh()
 
 
 func _on_grid_changed() -> void:
-	refresh()
+	_queue_refresh()
 
 
 func _on_achievements_changed() -> void:
-	refresh()
+	_queue_refresh()
 
 
 func _on_passive_state_changed() -> void:
-	refresh()
+	_queue_refresh()
 
 
 func _on_run_upgrades_changed() -> void:
-	refresh()
+	_queue_refresh()
