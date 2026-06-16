@@ -11,7 +11,6 @@ env:
   GODOT_PROJECT_DIR: squared-2
   GODOT_VERSION: 4.6.1
   GODOT_EXPORT_PRESET: Web
-  EXPORT_PATH: build/web/index.html
 
   ITCH_USERNAME: mixedtoast
   ITCH_GAME: squared2
@@ -51,23 +50,51 @@ jobs:
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: godot --version
 
-      - name: Create export directory
+      - name: Verify source used by CI
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
-        run: mkdir -p build/web
+        run: |
+          echo "Commit: ${GITHUB_SHA}"
+          echo "Checking story strings in scripts..."
+          grep -R "There is only one square\|CI DEPLOY TEST\|There is a square" scripts || true
+
+      - name: Clean previous CI build output
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
+        run: |
+          rm -rf build/web
+          mkdir -p build/web
 
       - name: Import project
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: godot --headless --import --quit
 
-      - name: Export Web build
+      - name: Export Web build with cache-busted filenames
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
-        run: godot --headless --export-release "$GODOT_EXPORT_PRESET" "$EXPORT_PATH"
+        run: |
+          SHA_SHORT="${GITHUB_SHA::7}"
+          EXPORT_HTML="build/web/squared2_${SHA_SHORT}.html"
+
+          echo "Exporting to: ${EXPORT_HTML}"
+          godot --headless --export-release "$GODOT_EXPORT_PRESET" "$EXPORT_HTML"
+
+          echo "Renaming exported HTML entrypoint to index.html for itch.io"
+          mv "$EXPORT_HTML" build/web/index.html
+
+      - name: Write build info
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
+        run: |
+          echo "commit=${GITHUB_SHA}" > build/web/build_info.txt
+          echo "built_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> build/web/build_info.txt
+          echo "godot_version=${GODOT_VERSION}" >> build/web/build_info.txt
+          cat build/web/build_info.txt
 
       - name: Verify build output
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: |
           test -f build/web/index.html
+          test -f build/web/build_info.txt
           ls -la build/web
+          echo "Checking exported HTML references:"
+          grep -n "squared2_${GITHUB_SHA::7}" build/web/index.html || true
 
       - name: Setup butler
         uses: remarkablegames/setup-butler@v1
