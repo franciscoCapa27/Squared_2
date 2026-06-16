@@ -5,8 +5,10 @@ const ACHIEVEMENT_ROOT_PATH := "res://data/achievements"
 var achievements_by_id: Dictionary = {}
 var all_achievements: Array[AchievementDefinition] = []
 
+
 func _ready() -> void:
 	load_achievements()
+
 
 func load_achievements() -> void:
 	achievements_by_id.clear()
@@ -23,6 +25,7 @@ func load_achievements() -> void:
 	)
 
 	print("Loaded %s achievements." % all_achievements.size())
+
 
 func _load_achievements_recursive(path: String) -> void:
 	var dir: DirAccess = DirAccess.open(path)
@@ -43,12 +46,41 @@ func _load_achievements_recursive(path: String) -> void:
 
 		if dir.current_is_dir():
 			_load_achievements_recursive(full_path)
-		elif file_name.ends_with(".tres") or file_name.ends_with(".res"):
-			_load_achievement_resource(full_path)
+		else:
+			var resource_path: String = _get_resource_path_from_scanned_file(path, file_name)
+
+			if resource_path != "":
+				_load_achievement_resource(resource_path)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
+
+
+func _get_resource_path_from_scanned_file(folder_path: String, file_name: String) -> String:
+	var resource_file_name: String = _get_resource_file_name(file_name)
+
+	if resource_file_name == "":
+		return ""
+
+	return folder_path.path_join(resource_file_name)
+
+
+func _get_resource_file_name(file_name: String) -> String:
+	if file_name.ends_with(".tres"):
+		return file_name
+
+	if file_name.ends_with(".res"):
+		return file_name
+
+	if file_name.ends_with(".tres.remap"):
+		return file_name.trim_suffix(".remap")
+
+	if file_name.ends_with(".res.remap"):
+		return file_name.trim_suffix(".remap")
+
+	return ""
+
 
 func _load_achievement_resource(path: String) -> void:
 	var resource: Resource = load(path)
@@ -64,7 +96,7 @@ func _load_achievement_resource(path: String) -> void:
 	var achievement: AchievementDefinition = resource as AchievementDefinition
 
 	if not achievement.is_valid_definition():
-		push_warning("Achievement has empty id: %s" % path)
+		push_warning("Achievement has invalid definition: %s" % path)
 		return
 
 	if achievements_by_id.has(achievement.id):
@@ -74,8 +106,10 @@ func _load_achievement_resource(path: String) -> void:
 	achievements_by_id[achievement.id] = achievement
 	all_achievements.append(achievement)
 
+
 func get_achievement(achievement_id: String) -> AchievementDefinition:
 	return achievements_by_id.get(achievement_id)
+
 
 func get_all_achievements() -> Array[AchievementDefinition]:
 	return all_achievements

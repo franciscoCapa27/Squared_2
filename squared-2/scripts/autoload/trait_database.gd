@@ -26,6 +26,7 @@ func load_traits() -> void:
 func get_trait(trait_id: String) -> TraitDefinition:
 	return traits_by_id.get(trait_id) as TraitDefinition
 
+
 func get_random_trait(current_grid_size: int) -> TraitDefinition:
 	var rarity_weights: Dictionary = get_rarity_weights_for_grid(current_grid_size)
 	var selected_rarity: int = _roll_rarity(current_grid_size)
@@ -63,6 +64,7 @@ func get_random_trait(current_grid_size: int) -> TraitDefinition:
 
 	return selected_trait
 
+
 func _get_trait_id_list(traits: Array[TraitDefinition]) -> Array[String]:
 	var ids: Array[String] = []
 
@@ -91,6 +93,7 @@ func _get_rarity_debug_name(rarity: int) -> String:
 			return "Cosmic"
 		_:
 			return "Unknown"
+
 
 func get_eligible_traits(current_grid_size: int) -> Array[TraitDefinition]:
 	return _get_eligible_traits(current_grid_size)
@@ -122,12 +125,40 @@ func _load_traits_recursive(path: String) -> void:
 
 		if dir.current_is_dir():
 			_load_traits_recursive(full_path)
-		elif file_name.ends_with(".tres") or file_name.ends_with(".res"):
-			_load_trait_resource(full_path)
+		else:
+			var resource_path: String = _get_resource_path_from_scanned_file(path, file_name)
+
+			if resource_path != "":
+				_load_trait_resource(resource_path)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
+
+
+func _get_resource_path_from_scanned_file(folder_path: String, file_name: String) -> String:
+	var resource_file_name: String = _get_resource_file_name(file_name)
+
+	if resource_file_name == "":
+		return ""
+
+	return folder_path.path_join(resource_file_name)
+
+
+func _get_resource_file_name(file_name: String) -> String:
+	if file_name.ends_with(".tres"):
+		return file_name
+
+	if file_name.ends_with(".res"):
+		return file_name
+
+	if file_name.ends_with(".tres.remap"):
+		return file_name.trim_suffix(".remap")
+
+	if file_name.ends_with(".res.remap"):
+		return file_name.trim_suffix(".remap")
+
+	return ""
 
 
 func _load_trait_resource(path: String) -> void:

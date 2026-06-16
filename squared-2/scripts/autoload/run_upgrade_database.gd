@@ -54,12 +54,40 @@ func _load_run_upgrades_recursive(path: String) -> void:
 
 		if dir.current_is_dir():
 			_load_run_upgrades_recursive(full_path)
-		elif file_name.ends_with(".tres") or file_name.ends_with(".res"):
-			_load_run_upgrade_resource(full_path)
+		else:
+			var resource_path: String = _get_resource_path_from_scanned_file(path, file_name)
+
+			if resource_path != "":
+				_load_run_upgrade_resource(resource_path)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
+
+
+func _get_resource_path_from_scanned_file(folder_path: String, file_name: String) -> String:
+	var resource_file_name: String = _get_resource_file_name(file_name)
+
+	if resource_file_name == "":
+		return ""
+
+	return folder_path.path_join(resource_file_name)
+
+
+func _get_resource_file_name(file_name: String) -> String:
+	if file_name.ends_with(".tres"):
+		return file_name
+
+	if file_name.ends_with(".res"):
+		return file_name
+
+	if file_name.ends_with(".tres.remap"):
+		return file_name.trim_suffix(".remap")
+
+	if file_name.ends_with(".res.remap"):
+		return file_name.trim_suffix(".remap")
+
+	return ""
 
 
 func _load_run_upgrade_resource(path: String) -> void:
@@ -76,7 +104,7 @@ func _load_run_upgrade_resource(path: String) -> void:
 	var upgrade: RunUpgradeDefinition = resource as RunUpgradeDefinition
 
 	if not upgrade.is_valid_definition():
-		push_warning("Run upgrade has empty id: %s" % path)
+		push_warning("Run upgrade has invalid definition: %s" % path)
 		return
 
 	if upgrades_by_id.has(upgrade.id):

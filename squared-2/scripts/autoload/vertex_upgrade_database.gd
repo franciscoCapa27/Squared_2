@@ -5,8 +5,10 @@ const UPGRADE_ROOT_PATH := "res://data/vertex_upgrades"
 var upgrades_by_id: Dictionary = {}
 var all_upgrades: Array[VertexUpgradeDefinition] = []
 
+
 func _ready() -> void:
 	load_upgrades()
+
 
 func load_upgrades() -> void:
 	upgrades_by_id.clear()
@@ -23,6 +25,7 @@ func load_upgrades() -> void:
 	)
 
 	print("Loaded %s vertex upgrades." % all_upgrades.size())
+
 
 func _load_upgrades_recursive(path: String) -> void:
 	var dir: DirAccess = DirAccess.open(path)
@@ -43,12 +46,41 @@ func _load_upgrades_recursive(path: String) -> void:
 
 		if dir.current_is_dir():
 			_load_upgrades_recursive(full_path)
-		elif file_name.ends_with(".tres") or file_name.ends_with(".res"):
-			_load_upgrade_resource(full_path)
+		else:
+			var resource_path: String = _get_resource_path_from_scanned_file(path, file_name)
+
+			if resource_path != "":
+				_load_upgrade_resource(resource_path)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
+
+
+func _get_resource_path_from_scanned_file(folder_path: String, file_name: String) -> String:
+	var resource_file_name: String = _get_resource_file_name(file_name)
+
+	if resource_file_name == "":
+		return ""
+
+	return folder_path.path_join(resource_file_name)
+
+
+func _get_resource_file_name(file_name: String) -> String:
+	if file_name.ends_with(".tres"):
+		return file_name
+
+	if file_name.ends_with(".res"):
+		return file_name
+
+	if file_name.ends_with(".tres.remap"):
+		return file_name.trim_suffix(".remap")
+
+	if file_name.ends_with(".res.remap"):
+		return file_name.trim_suffix(".remap")
+
+	return ""
+
 
 func _load_upgrade_resource(path: String) -> void:
 	var resource: Resource = load(path)
@@ -74,8 +106,10 @@ func _load_upgrade_resource(path: String) -> void:
 	upgrades_by_id[upgrade.id] = upgrade
 	all_upgrades.append(upgrade)
 
+
 func get_upgrade(upgrade_id: String) -> VertexUpgradeDefinition:
 	return upgrades_by_id.get(upgrade_id)
+
 
 func get_visible_upgrades() -> Array[VertexUpgradeDefinition]:
 	var visible_upgrades: Array[VertexUpgradeDefinition] = []

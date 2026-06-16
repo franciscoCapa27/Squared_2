@@ -5,8 +5,10 @@ const GENERATOR_ROOT_PATH := "res://data/passive_generators"
 var generators_by_id: Dictionary = {}
 var all_generators: Array[PassiveGeneratorDefinition] = []
 
+
 func _ready() -> void:
 	load_generators()
+
 
 func load_generators() -> void:
 	generators_by_id.clear()
@@ -23,6 +25,7 @@ func load_generators() -> void:
 	)
 
 	print("Loaded %s passive generators." % all_generators.size())
+
 
 func _load_generators_recursive(path: String) -> void:
 	var dir: DirAccess = DirAccess.open(path)
@@ -43,12 +46,41 @@ func _load_generators_recursive(path: String) -> void:
 
 		if dir.current_is_dir():
 			_load_generators_recursive(full_path)
-		elif file_name.ends_with(".tres") or file_name.ends_with(".res"):
-			_load_generator_resource(full_path)
+		else:
+			var resource_path: String = _get_resource_path_from_scanned_file(path, file_name)
+
+			if resource_path != "":
+				_load_generator_resource(resource_path)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
+
+
+func _get_resource_path_from_scanned_file(folder_path: String, file_name: String) -> String:
+	var resource_file_name: String = _get_resource_file_name(file_name)
+
+	if resource_file_name == "":
+		return ""
+
+	return folder_path.path_join(resource_file_name)
+
+
+func _get_resource_file_name(file_name: String) -> String:
+	if file_name.ends_with(".tres"):
+		return file_name
+
+	if file_name.ends_with(".res"):
+		return file_name
+
+	if file_name.ends_with(".tres.remap"):
+		return file_name.trim_suffix(".remap")
+
+	if file_name.ends_with(".res.remap"):
+		return file_name.trim_suffix(".remap")
+
+	return ""
+
 
 func _load_generator_resource(path: String) -> void:
 	var resource: Resource = load(path)
@@ -64,7 +96,7 @@ func _load_generator_resource(path: String) -> void:
 	var generator_definition: PassiveGeneratorDefinition = resource as PassiveGeneratorDefinition
 
 	if not generator_definition.is_valid_definition():
-		push_warning("Passive generator has empty id: %s" % path)
+		push_warning("Passive generator has invalid definition: %s" % path)
 		return
 
 	if generators_by_id.has(generator_definition.id):
@@ -74,8 +106,10 @@ func _load_generator_resource(path: String) -> void:
 	generators_by_id[generator_definition.id] = generator_definition
 	all_generators.append(generator_definition)
 
+
 func get_generator(generator_id: String) -> PassiveGeneratorDefinition:
-	return generators_by_id.get(generator_id)
+	return generators_by_id.get(generator_id) as PassiveGeneratorDefinition
+
 
 func get_all_generators() -> Array[PassiveGeneratorDefinition]:
 	return all_generators
