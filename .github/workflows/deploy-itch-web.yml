@@ -70,7 +70,7 @@ jobs:
       - name: Export Web build with cache-busted filenames
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: |
-          SHA_SHORT="${GITHUB_SHA::7}"
+          SHA_SHORT="$(echo "$GITHUB_SHA" | cut -c1-7)"
           EXPORT_HTML="build/web/squared2_${SHA_SHORT}.html"
 
           echo "Exporting to: ${EXPORT_HTML}"
@@ -90,11 +90,12 @@ jobs:
       - name: Verify build output
         working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: |
+          SHA_SHORT="$(echo "$GITHUB_SHA" | cut -c1-7)"  
           test -f build/web/index.html
           test -f build/web/build_info.txt
           ls -la build/web
           echo "Checking exported HTML references:"
-          grep -n "squared2_${GITHUB_SHA::7}" build/web/index.html || true
+          grep -n "squared2_${SHA_SHORT}" build/web/index.html || true
 
       - name: Setup butler
         uses: remarkablegames/setup-butler@v1
