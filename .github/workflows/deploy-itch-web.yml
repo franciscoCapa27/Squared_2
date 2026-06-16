@@ -9,6 +9,7 @@ on:
 
 env:
   GODOT_PROJECT_DIR: squared-2
+  GODOT_VERSION: 4.6.1
   GODOT_EXPORT_PRESET: Web
   EXPORT_PATH: build/web/index.html
 
@@ -26,6 +27,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Install runtime dependencies
+        run: |
+          apt-get update
+          apt-get install -y wget unzip libfontconfig1
+
+      - name: Install Godot export templates
+        run: |
+          mkdir -p "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
+          wget -O /tmp/godot_export_templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}-stable/Godot_v${GODOT_VERSION}-stable_export_templates.tpz"
+          unzip -q /tmp/godot_export_templates.tpz -d /tmp/godot_export_templates
+          cp /tmp/godot_export_templates/templates/* "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable/"
+          ls -la "$HOME/.local/share/godot/export_templates/${GODOT_VERSION}.stable"
 
       - name: Show repo structure
         run: |
