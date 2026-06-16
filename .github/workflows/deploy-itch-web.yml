@@ -1,0 +1,52 @@
+name: Deploy Web Build to itch.io
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+env:
+  GODOT_EXPORT_PRESET: Web
+  EXPORT_PATH: build/web/index.html
+
+  ITCH_USERNAME: mixedtoast
+  ITCH_GAME: squared2
+
+jobs:
+  export-and-deploy:
+    name: Export and deploy Web build
+    runs-on: ubuntu-latest
+
+    container:
+      image: barichello/godot-ci:4.6.1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Godot version
+        run: godot --version
+
+      - name: Create export directory
+        run: mkdir -p build/web
+
+      - name: Import project
+        run: godot --headless --import --quit
+
+      - name: Export Web build
+        run: godot --headless --export-release "$GODOT_EXPORT_PRESET" "$EXPORT_PATH"
+
+      - name: Verify build output
+        run: |
+          test -f build/web/index.html
+          ls -la build/web
+
+      - name: Setup butler
+        uses: remarkablegames/setup-butler@v1
+
+      - name: Deploy to itch.io
+        env:
+          BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
+        run: butler push build/web "$ITCH_USERNAME/$ITCH_GAME:web"
