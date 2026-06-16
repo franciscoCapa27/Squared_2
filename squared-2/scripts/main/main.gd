@@ -8,6 +8,8 @@ extends Control
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
+var has_discovered_prestige_panel: bool = false
+
 
 @onready var grid_tab_button: Button = %GridTabButton
 @onready var vertex_shop_tab_button: Button = %VertexShopTabButton
@@ -149,7 +151,7 @@ func _initialize_new_game_ui() -> void:
 	achievements_page.refresh()
 	square_details_panel.clear()
 	run_upgrades_panel.refresh()
-	
+	has_discovered_prestige_panel = false
 	_refresh_feature_visibility(false)
 
 
@@ -183,9 +185,12 @@ func _refresh_feature_visibility(animated: bool = true) -> void:
 	)
 	var show_achievement_summary: bool = FeatureVisibilityRules.should_show_achievement_summary_panel()
 
+	if show_prestige:
+		has_discovered_prestige_panel = true
+
 	passive_feature_visibility.set_feature_visible(show_passives, animated)
 	vertex_shop_feature_visibility.set_feature_visible(show_vertex_shop, animated)
-	prestige_feature_visibility.set_feature_visible(show_prestige, animated)
+	prestige_feature_visibility.set_feature_visible(has_discovered_prestige_panel, animated)
 	run_upgrades_feature_visibility.set_feature_visible(show_run_upgrades, animated)
 	square_details_feature_visibility.set_feature_visible(show_square_details, animated)
 	achievement_summary_feature_visibility.set_feature_visible(show_achievement_summary, animated)
@@ -320,7 +325,9 @@ func _on_grid_upgrade_requested() -> void:
 		return
 
 	square_details_panel.clear()
+	grid_page.reset_feature_visibility_state()
 	_refresh_labels()
+	_refresh_feature_visibility(true)
 # ------------------------------------------------------------------------------
 # Page Events
 # ------------------------------------------------------------------------------
@@ -348,9 +355,9 @@ func _on_options_save_imported() -> void:
 
 
 func _on_options_hard_reset_completed() -> void:
+	has_discovered_prestige_panel = false
 	square_details_panel.clear()
 	_refresh_all_ui()
-	_refresh_feature_visibility(false)
 	
 
 

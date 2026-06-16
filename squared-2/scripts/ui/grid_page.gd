@@ -18,7 +18,8 @@ const MAX_GRID_GAP := 10
 
 var square_button_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
 var square_buttons_by_id: Dictionary = {}
-
+var has_discovered_current_grid_upgrade: bool = false
+var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
 
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
@@ -82,9 +83,34 @@ func _apply_grid_sizing() -> void:
 		square_button.apply_responsive_visual_size(square_size)
 
 func refresh_feature_visibility(animated: bool = true) -> void:
-	var should_show: bool = FeatureVisibilityRules.should_show_grid_upgrade_button()
-	grid_upgrade_feature_visibility.set_feature_visible(should_show, animated)
+	if GameState.grid_size >= GameState.MAX_GRID_SIZE:
+		has_discovered_current_grid_upgrade = false
+		discovered_grid_size = GameState.grid_size
+		grid_upgrade_feature_visibility.set_feature_visible(false, animated)
+		return
 
+	if discovered_grid_size != GameState.grid_size:
+		has_discovered_current_grid_upgrade = false
+		discovered_grid_size = GameState.grid_size
+
+	var should_discover: bool = FeatureVisibilityRules.should_show_grid_upgrade_button()
+
+	if should_discover:
+		has_discovered_current_grid_upgrade = true
+
+	grid_upgrade_feature_visibility.set_feature_visible(
+		has_discovered_current_grid_upgrade,
+		animated
+	)
+	
+func reset_feature_visibility_state() -> void:
+	has_discovered_current_grid_upgrade = false
+	discovered_grid_size = GameState.grid_size
+
+	if grid_upgrade_feature_visibility != null:
+		grid_upgrade_feature_visibility.set_feature_visible(false, false)
+	
+	
 func _calculate_grid_gap(grid_size: int) -> int:
 	if grid_size <= 2:
 		return 10
