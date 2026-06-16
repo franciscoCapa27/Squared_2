@@ -336,7 +336,7 @@ func reset_to_new_game() -> void:
 	_create_initial_grid()
 	_emit_full_state_changed()
 
-	EventBus.story_message.emit("There is a square.")
+	EventBus.story_message.emit("There is only one square.")
 
 
 # ------------------------------------------------------------------------------
