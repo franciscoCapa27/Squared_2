@@ -59,7 +59,7 @@ func _ready() -> void:
 	_apply_theme()
 
 	_show_center_page("grid")
-	_on_story_message("There is a square.")
+	_on_story_message("There is only one square.")
 
 	var loaded: bool = SaveSystem.load_game()
 
