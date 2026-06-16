@@ -8,6 +8,7 @@ on:
   workflow_dispatch:
 
 env:
+  GODOT_PROJECT_DIR: squared-2
   GODOT_EXPORT_PRESET: Web
   EXPORT_PATH: build/web/index.html
 
@@ -26,19 +27,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Show repo structure
+        run: |
+          pwd
+          ls -la
+          ls -la "$GODOT_PROJECT_DIR"
+
       - name: Show Godot version
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: godot --version
 
       - name: Create export directory
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: mkdir -p build/web
 
       - name: Import project
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: godot --headless --import --quit
 
       - name: Export Web build
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: godot --headless --export-release "$GODOT_EXPORT_PRESET" "$EXPORT_PATH"
 
       - name: Verify build output
+        working-directory: ${{ env.GODOT_PROJECT_DIR }}
         run: |
           test -f build/web/index.html
           ls -la build/web
@@ -49,4 +61,4 @@ jobs:
       - name: Deploy to itch.io
         env:
           BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
-        run: butler push build/web "$ITCH_USERNAME/$ITCH_GAME:web"
+        run: butler push "$GODOT_PROJECT_DIR/build/web" "$ITCH_USERNAME/$ITCH_GAME:web"
