@@ -54,7 +54,13 @@ func _verify_prestige_applies_trait_and_resets_run_layer() -> void:
 		"Origin square has run manual clicks before prestige."
 	)
 
+	var required_before: float = GameState.get_prestige_required_squares()
+	_assert_equal(10.0, required_before, "Base prestige requirement is 10 Squares.")
+
 	GameState.prestige(false)
+
+	var required_after: float = GameState.get_prestige_required_squares()
+	_assert_true(required_after > 10.0, "Prestige requirement increases after first prestige.")
 
 	_assert_equal(1, GameState.prestige_count, "First prestige increments prestige count.")
 	_assert_equal(1, GameState.vertices, "First prestige grants at least one Vertex.")
