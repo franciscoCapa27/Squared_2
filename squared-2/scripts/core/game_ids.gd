@@ -13,7 +13,8 @@ const PASSIVE_VALUE_HARVESTER := "value_harvester"
 
 # Vertex upgrade IDs.
 const UPGRADE_UNLOCK_FIRST_GENERATOR := "unlock_first_generator"
-const UPGRADE_UNLOCK_VALUE_HARVESTER := "unlock_value_harvester"
+const UPGRADE_UNLOCK_VALUE_HARVESTER := "unlock_value_harvest"
+const UPGRADE_GEOMETRIC_INTUITION := "geometric_intuition"
 const UPGRADE_SHARPENED_ORIGIN := "sharpened_origin"
 
 # Achievement IDs.
