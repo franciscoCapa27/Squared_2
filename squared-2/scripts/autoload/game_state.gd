@@ -5,13 +5,18 @@ const DEBUG_PERMANENT_STATS := false
 const INITIAL_GRID_SIZE := 1
 const INITIAL_SQUARE_ID := "A1"
 
-const PRESTIGE_REQUIRED_SQUARES := 10.0
 const VERTEX_GAIN_DIVISOR := 100.0
 
 const MAX_GRID_SIZE := 6
 const GRID_UPGRADE_BASE_COST := 25.0
 const GRID_UPGRADE_COST_MULTIPLIER := 6.0
 const FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT := 1
+
+# -------------------------
+# Prestige scaling constants
+# -------------------------
+const PRESTIGE_COST_BASE := 10.0
+const PRESTIGE_COST_PER_PRESTIGE := 5.0
 
 var squares: float = 0.0
 var vertices: int = 0
@@ -96,8 +101,12 @@ func spend_vertices(amount: int) -> bool:
 # Prestige
 # ------------------------------------------------------------------------------
 
+func get_prestige_required_squares() -> float:
+	return PRESTIGE_COST_BASE + prestige_count * PRESTIGE_COST_PER_PRESTIGE
+
+
 func can_prestige() -> bool:
-	return squares >= PRESTIGE_REQUIRED_SQUARES
+	return squares >= get_prestige_required_squares()
 
 
 func calculate_vertices_gain() -> int:
@@ -112,7 +121,8 @@ func prestige(save_after_prestige: bool = true) -> void:
 
 	vertices += gained_vertices
 	prestige_count += 1
-	squares = 0.0
+
+	spend_squares(get_prestige_required_squares())
 
 	PassiveSystem.reset_run_state_on_prestige()
 	RunUpgradeSystem.reset_run_state_on_prestige()
