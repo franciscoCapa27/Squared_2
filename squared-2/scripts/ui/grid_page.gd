@@ -183,34 +183,34 @@ func _refresh_upgrade_button() -> void:
 	var next_grid_size: int = GameState.get_next_grid_size()
 	var cost: float = GameState.get_grid_upgrade_cost()
 
-	upgrade_grid_button.text = "Expand Grid to %sx%s — %s Squares" % [
+	upgrade_grid_button.text = "Open %sx%s Grid — %s Squares" % [
 		next_grid_size,
 		next_grid_size,
 		NumberFormatter.cost(cost)
 	]
 
 	upgrade_grid_button.disabled = not GameState.can_upgrade_grid()
-	upgrade_grid_button.tooltip_text = "Unlocks %s Trait rolls. Cost: %s Squares" % [
-		_get_rarity_unlock_text(next_grid_size),
+	upgrade_grid_button.tooltip_text = "%s Cost: %s Squares" % [
+		_get_grid_upgrade_hint_text(next_grid_size),
 		NumberFormatter.cost(cost)
 	]
 	refresh_feature_visibility(true)
 
 
-func _get_rarity_unlock_text(next_grid_size: int) -> String:
+func _get_grid_upgrade_hint_text(next_grid_size: int) -> String:
 	match next_grid_size:
 		2:
-			return "Uncommon"
+			return "More squares. Stranger Traits may begin to answer."
 		3:
-			return "Rare"
+			return "The grid deepens again. Rarer patterns may wake."
 		4:
-			return "Epic"
+			return "The shape grows wider, and stranger histories can form."
 		5:
-			return "Legendary"
+			return "The board is nearly a constellation of choices."
 		6:
-			return "Cosmic"
+			return "The largest known grid waits beyond this price."
 		_:
-			return "higher-rarity"
+			return "A larger grid opens more possibilities."
 
 
 func _on_square_button_clicked(square_id: String) -> void:
