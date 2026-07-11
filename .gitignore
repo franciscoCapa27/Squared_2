@@ -28,6 +28,8 @@ build/
 # Repo-specific agent skills
 !.agents/skills/squared2-git-flow/
 !.agents/skills/squared2-git-flow/**
+!.agents/skills/squared2-godot-dev/
+!.agents/skills/squared2-godot-dev/**
 
 # Local agent tooling state
 skills-lock.json

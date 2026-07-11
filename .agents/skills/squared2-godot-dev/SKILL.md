@@ -1,0 +1,108 @@
+---
+name: squared2-godot-dev
+description: Use for Squared² Godot development tasks in this repository: gameplay systems, GDScript, scenes, UI, `.tres` content, economy tuning, traits, prestige, passive generators, achievements, save/load, Godot export/deploy concerns, or planning implementation issues. Applies the project's resource-driven architecture, minimal cosmic UI direction, incremental-game pacing, and safety checks.
+---
+
+# Squared² Godot Dev
+
+## Start Here
+
+- Use `.agents/skills/squared2-git-flow/SKILL.md` for issues, branches, labels, PRs, releases, and deploy impact.
+- Read `squared_2_game_design_document.md` before changing gameplay feel, economy, progression, naming, or tone.
+- Read `docs/TECHNICAL_OVERVIEW.md` before changing systems, autoloads, save/load, or resource contracts.
+- Inspect nearby scripts/scenes/resources before editing. Prefer existing patterns over new abstractions.
+
+## Project Shape
+
+- Godot project root: `squared-2/`
+- Main scene: `squared-2/scenes/main/Main.tscn`
+- Core scripts: `squared-2/scripts/core/`
+- Autoload systems: `squared-2/scripts/autoload/`
+- Resource definitions: `squared-2/scripts/resources/`
+- Content resources: `squared-2/data/`
+- UI scripts: `squared-2/scripts/ui/`
+- Square interaction: `squared-2/scripts/squares/`
+- Calculators/formatters: `squared-2/scripts/systems/`
+
+## Design Intent
+
+Preserve the core fantasy:
+
+- A single square in the void becomes a personal geometric universe.
+- Prestige should be fast, especially early.
+- Permanent square identity matters. Traits should make squares feel remembered.
+- Active and idle play should both feel viable.
+- Tone should be lonely, ethereal, geometric, cosmic, quiet, minimal, mysterious, and gradually alive.
+
+Avoid turning the UI into a generic dashboard or loud mobile-idle game. The experience can become richer, but should keep its quiet abstract identity.
+
+## Architecture Rules
+
+- Keep content resource-driven when practical. Add traits, upgrades, generators, achievements, and themes as `.tres` resources backed by existing definition classes.
+- Keep run-layer state separate from permanent-layer state.
+- Route cross-system updates through `EventBus` or existing system signals instead of direct UI-to-system tangles.
+- Respect autoload responsibilities:
+  - `GameState`: currencies, grid, prestige, permanent square state.
+  - `PassiveSystem`: passive generators and pulses.
+  - `RunUpgradeSystem`: run-limited upgrade levels and run stats.
+  - `VertexUpgradeSystem`: permanent vertex upgrades.
+  - `AchievementSystem`: achievement checks and rewards.
+  - `SaveSystem`: serialization, autosave, import/export, hard reset.
+- Add new effect types only when existing resource effect components cannot express the behavior cleanly.
+- Avoid broad refactors while adding content or tuning values.
+
+## GDScript And Godot Conventions
+
+- Follow the current typed GDScript style: explicit types, `class_name` where already used, and small helper methods.
+- Prefer Godot signals and scene/resource APIs over ad hoc global lookups.
+- Do not edit `.godot/` editor cache files as part of normal work.
+- Be careful with `.uid` files: preserve them when editing existing scripts/resources; only create new ones through Godot/editor import flows when needed.
+- For `.tres` changes, preserve Godot resource syntax and existing exported field names.
+- Keep comments rare and useful; explain non-obvious game rules or save compatibility concerns.
+
+## UI Direction
+
+- Keep the UI minimal, readable, and workmanlike, but not sterile.
+- Improve feedback where it clarifies the loop: square click, respawn, prestige readiness, trait gained, passive pulse, unlocks, and save/import state.
+- Keep feature visibility progressive. Do not show every panel before the player has context.
+- Reuse `ThemeSystem`, `ThemeTextHelper`, `ThemeButtonHelper`, and `ThemeLayoutHelper` instead of styling one-off controls.
+- Avoid large decorative UI unless it supports the geometric/cosmic tone and real gameplay readability.
+
+## Economy And Content
+
+- Treat first-session pacing as sacred: the first prestige should arrive within a few minutes.
+- Tune active clicks, run upgrades, passive generators, prestige threshold, vertex gain, and grid costs together.
+- When adding content, prefer a small coherent pack over one isolated resource.
+- Give each new content item a clear role: faster play, bigger payouts, passive support, trait identity, grid progression, or quality of life.
+- Watch for multiplicative stacking. Note expected early/mid impact in PRs when changing economy values.
+
+## Save/Load Safety
+
+- Be conservative with saved field names and save schema changes.
+- If adding persistent data, update `to_save_dict()` and `from_save_dict()` together.
+- Provide defaults for older saves.
+- Test or reason through hard reset, save import/export, and prestige reset behavior for any persistent state change.
+
+## Verification
+
+Use the lightest verification that meaningfully covers the change:
+
+- For docs/skills/gitignore changes: read files back and check `git status`.
+- For content resources: inspect loaded database patterns and verify IDs, requirements, costs, and field names.
+- For gameplay systems: run Godot headless import/export checks when available, or document why they were not run.
+- For save changes: verify new-game, load with missing fields, export/import, and hard reset paths.
+- For UI changes: inspect scene/script wiring and, when possible, run the project or capture screenshots.
+
+Always report verification in the PR body. If Godot is unavailable locally, say so plainly and include static checks performed.
+
+## Planning Issues
+
+Good Squared² development issues should include:
+
+- Player-facing goal.
+- System/content files likely touched.
+- Acceptance criteria tied to the core loop.
+- Verification plan.
+- Deploy impact.
+
+Prefer issues that are small enough to merge independently: one bug fix, one content pack, one UI feedback improvement, or one architecture seam.
