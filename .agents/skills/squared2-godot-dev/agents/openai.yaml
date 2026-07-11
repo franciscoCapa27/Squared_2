@@ -1,0 +1,4 @@
+interface:
+  display_name: "Squared² Godot Dev"
+  short_description: "Develop the Squared² Godot game consistently."
+  default_prompt: "Use the Squared² Godot Dev skill when planning or implementing gameplay, UI, content, save, economy, or architecture changes in this Godot project."
