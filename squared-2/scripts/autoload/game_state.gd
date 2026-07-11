@@ -11,6 +11,7 @@ const VERTEX_GAIN_DIVISOR := 100.0
 const MAX_GRID_SIZE := 6
 const GRID_UPGRADE_BASE_COST := 25.0
 const GRID_UPGRADE_COST_MULTIPLIER := 6.0
+const FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT := 1
 
 var squares: float = 0.0
 var vertices: int = 0
@@ -103,7 +104,7 @@ func calculate_vertices_gain() -> int:
 	return int(floor(sqrt(squares / VERTEX_GAIN_DIVISOR)))
 
 
-func prestige() -> void:
+func prestige(save_after_prestige: bool = true) -> void:
 	if not can_prestige():
 		return
 
@@ -115,13 +116,16 @@ func prestige() -> void:
 
 	PassiveSystem.reset_run_state_on_prestige()
 	RunUpgradeSystem.reset_run_state_on_prestige()
+	_reset_square_run_state_on_prestige()
 
-	_apply_random_trait_to_random_square(grid_size)
+	var trait_message: String = _apply_random_trait_to_random_square(grid_size)
 
 	_emit_core_state_changed()
 	EventBus.grid_changed.emit()
+	EventBus.story_message.emit(_get_prestige_story_message(gained_vertices, trait_message))
 
-	SaveSystem.save_game()
+	if save_after_prestige:
+		SaveSystem.save_game()
 
 
 # ------------------------------------------------------------------------------
@@ -174,6 +178,10 @@ func get_next_grid_size() -> int:
 	return min(grid_size + 1, MAX_GRID_SIZE)
 
 
+func should_soft_push_grid_upgrade() -> bool:
+	return grid_size == INITIAL_GRID_SIZE and prestige_count >= FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT
+
+
 func upgrade_grid() -> bool:
 	if not can_upgrade_grid():
 		return false
@@ -189,7 +197,7 @@ func upgrade_grid() -> bool:
 	EventBus.grid_upgraded.emit(grid_size)
 	EventBus.grid_changed.emit()
 	EventBus.story_message.emit(
-		"The grid expands to %sx%s." % [
+		"The grid opens into %sx%s. More squares answer the click." % [
 			grid_size,
 			grid_size
 		]
@@ -201,20 +209,20 @@ func upgrade_grid() -> bool:
 # Traits
 # ------------------------------------------------------------------------------
 
-func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> void:
+func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 	if square_ids.is_empty():
-		return
+		return ""
 
 	var trait_definition: TraitDefinition = TraitDatabase.get_random_trait(trait_roll_grid_size)
 
 	if trait_definition == null:
-		return
+		return ""
 
 	var target_square_id: String = square_ids.pick_random() as String
 	var target_square: SquareData = get_square(target_square_id)
 
 	if target_square == null:
-		return
+		return ""
 
 	var trait_instance: TraitInstance = TraitInstance.new(
 		trait_definition,
@@ -224,12 +232,35 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> void:
 
 	target_square.add_trait(trait_instance)
 
-	EventBus.story_message.emit(
-		"%s gained the %s Trait." % [
-			target_square.display_name,
-			trait_definition.display_name
-		]
-	)
+	return "%s gained the %s Trait" % [
+		target_square.display_name,
+		trait_definition.display_name
+	]
+
+
+func _reset_square_run_state_on_prestige() -> void:
+	for square_id: String in square_ids:
+		var square_data: SquareData = get_square(square_id)
+
+		if square_data == null:
+			continue
+
+		square_data.reset_run_state_on_prestige()
+
+
+func _get_prestige_story_message(gained_vertices: int, trait_message: String) -> String:
+	var parts: Array[String] = [
+		"Prestige complete",
+		"+%s Vertices" % NumberFormatter.integer_amount(gained_vertices)
+	]
+
+	if trait_message.strip_edges() != "":
+		parts.append("%s permanently" % trait_message)
+
+	if should_soft_push_grid_upgrade():
+		parts.append("The first square can keep changing, but the 2x2 grid is beginning to call")
+
+	return ". ".join(parts) + "."
 
 # ------------------------------------------------------------------------------
 # Permanent Stats
