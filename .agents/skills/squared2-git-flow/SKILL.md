@@ -33,6 +33,19 @@ feature/codex_agent/docs-25-technical-overview
 feature/codex_agent/refactor-30-save-system-boundaries
 ```
 
+When a branch is for a specific GitHub issue, create it through GitHub's native linked-branch relationship when available. Prefer creating the native linked branch before pushing local commits, using the issue ID, repository ID, current base-branch commit OID, and the exact branch name. Then check out or push the local branch to that linked ref.
+
+For GitHub GraphQL, use the `createLinkedBranch` mutation with:
+
+```text
+issueId
+repositoryId
+oid
+name
+```
+
+The branch name must still follow the Codex branch format above.
+
 Release branch format:
 
 ```text
@@ -82,7 +95,7 @@ main
 Every Codex-created PR should include:
 
 - Summary of changes.
-- Linked issue, when one exists.
+- Linked issue, when one exists. For PRs targeting `develop`, prefer `Refs #N` in commit messages and PR bodies, then close the issue only after the PR is merged and verified. Do not rely on GitHub auto-closing issues from `develop` PRs.
 - Labels that classify release impact, type, area, and priority.
 - Verification performed, including commands run or why testing was not possible.
 - Deploy impact, especially whether the PR can reach `main`.
@@ -163,6 +176,18 @@ Suggested issue format:
 
 Apply labels at creation time when possible.
 
+## Issue Closure
+
+Codex should not expect the user to manually close implementation tickets that Codex completed.
+
+Use this policy:
+
+- For feature, bugfix, chore, docs, and refactor work targeting `develop`, leave the issue open while the PR is open. After the PR is merged into `develop`, verify the merge and close the issue with a short comment referencing the PR.
+- For release branches targeting `main`, do not close the already-completed feature tickets again. Release issues, if any, close only after the release PR merges to `main`.
+- For hotfix branches targeting `main`, close the hotfix issue after verifying the PR merged to `main`, then create or recommend the back-merge PR to `develop`.
+- If a PR is closed without merge, rejected, or superseded, leave the issue open and comment with the current state instead of closing it.
+- If the user explicitly asks to keep an issue open after merge, follow the user's instruction and comment why it remains open.
+
 ## Safety Checks
 
 Before creating a branch or PR:
@@ -172,6 +197,7 @@ Before creating a branch or PR:
 3. Start normal work from up-to-date `develop`.
 4. Start hotfix work from up-to-date `main`.
 5. Confirm PR target matches the branch purpose.
+6. For issue-specific branches, confirm the branch is natively linked to the issue when GitHub supports linked branches.
 
 Before touching deployment workflow:
 
