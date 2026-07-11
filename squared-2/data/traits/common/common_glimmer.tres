@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_glimmer"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_glimmer"]
+
+[sub_resource type="Resource" id="Resource_glimmer_value"]
+script = ExtResource("1_glimmer")
+target_stat = "square_value"
+value = 1.18
+use_value_range = true
+value_min = 1.08
+value_max = 1.18
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_glimmer")
+id = "common_glimmer"
+display_name = "Common Glimmer"
+family_id = "glimmer"
+family_display_name = "Glimmer"
+description = "Glimmer squares shine a little brighter: +8% to +18% Squares from this square."
+tags = Array[String](["value", "light", "glimmer"])
+weight = 0.85
+effect_components = Array[ExtResource("1_glimmer")]([SubResource("Resource_glimmer_value")])
+name_prefixes = Array[String](["Glimmering"])
+visual_base_color_weight = Color(0.65882355, 0.8901961, 1, 1)
+visual_accent_color_weight = Color(1, 0.9843137, 0.58431375, 1)
+visual_glow_weight = 2
+visual_edge_complexity_weight = 1
+metadata/_custom_type_script = "uid://crmybp42r8q3a"

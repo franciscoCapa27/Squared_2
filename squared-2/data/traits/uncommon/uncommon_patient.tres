@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_upatient"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_upatient"]
+
+[sub_resource type="Resource" id="Resource_upatient_respawn"]
+script = ExtResource("1_upatient")
+target_stat = "respawn_time"
+value = 1.28
+use_value_range = true
+value_min = 1.15
+value_max = 1.28
+roll_key = "respawn_time_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[sub_resource type="Resource" id="Resource_upatient_value"]
+script = ExtResource("1_upatient")
+target_stat = "square_value"
+value = 1.68
+use_value_range = true
+value_min = 1.38
+value_max = 1.68
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_upatient")
+id = "uncommon_patient"
+display_name = "Uncommon Patient"
+family_id = "patient"
+family_display_name = "Patient"
+description = "A deeper Patient square: +38% to +68% Squares, but +15% to +28% respawn time."
+rarity = 1
+tags = Array[String](["value", "slow", "patient"])
+weight = 0.7
+min_grid_tier = 2
+effect_components = Array[ExtResource("1_upatient")]([SubResource("Resource_upatient_respawn"), SubResource("Resource_upatient_value")])
+name_prefixes = Array[String](["Patient"])
+name_suffixes = Array[String](["of the Long Wait"])
+visual_base_color_weight = Color(0.69411767, 0.78431374, 1, 1)
+visual_accent_color_weight = Color(0.9372549, 0.9372549, 1, 1)
+visual_glow_weight = 2
+visual_edge_complexity_weight = 3
+metadata/_custom_type_script = "uid://crmybp42r8q3a"
