@@ -95,6 +95,7 @@ func _on_fade_in_finished() -> void:
 	target.visible = true
 	target.modulate.a = 1.0
 	target.mouse_filter = Control.MOUSE_FILTER_STOP
+	_highlight_newly_visible()
 
 
 func _on_fade_out_finished() -> void:
@@ -104,3 +105,12 @@ func _on_fade_out_finished() -> void:
 	target.visible = false
 	target.modulate.a = 0.0
 	target.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _highlight_newly_visible() -> void:
+	if target == null:
+		return
+	var ht := create_tween()
+	ht.set_trans(Tween.TRANS_SINE)
+	ht.tween_property(target, "modulate", Color(1.0, 0.85, 0.3, 1.0), 0.15)
+	ht.tween_property(target, "modulate", Color.WHITE, 0.15)
