@@ -6,21 +6,21 @@
 [sub_resource type="Resource" id="Resource_upatient_respawn"]
 script = ExtResource("1_upatient")
 target_stat = "respawn_time"
-value = 1.28
+value = 1.825
 use_value_range = true
-value_min = 1.15
-value_max = 1.28
+value_min = 1.65
+value_max = 2.0
 roll_key = "respawn_time_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
-[sub_resource type="Resource" id="Resource_upatient_vertex"]
+[sub_resource type="Resource" id="Resource_upatient_value"]
 script = ExtResource("1_upatient")
-target_stat = "vertex_gain"
-value = 1.45
+target_stat = "square_value"
+value = 2.3
 use_value_range = true
-value_min = 1.25
-value_max = 1.45
-roll_key = "vertex_gain_multiplier"
+value_min = 2.0
+value_max = 2.6
+roll_key = "square_value_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
 [resource]
@@ -29,11 +29,11 @@ id = "uncommon_patient"
 display_name = "Uncommon Patient"
 family_id = "patient"
 family_display_name = "Patient"
-description = "Patient squares yield even more Vertex when clicked, but take even longer to reappear: +25% to +45% Vertex, +15% to +28% respawn time."
-tags = Array[String](["vertex","slow","patient"])
+description = "A deeper Patient square waits dramatically longer, then pays out in a heavy burst: +100% to +160% Squares, but +65% to +100% respawn time."
+tags = Array[String](["value","slow","burst","patient"])
 weight = 0.7
 min_grid_tier = 2
-effect_components = Array[ExtResource("1_upatient")]([SubResource("Resource_upatient_respawn"), SubResource("Resource_upatient_vertex")])
+effect_components = Array[ExtResource("1_upatient")]([SubResource("Resource_upatient_respawn"), SubResource("Resource_upatient_value")])
 name_prefixes = Array[String](["Patient"])
 name_suffixes = Array[String](["of the Long Wait"])
 visual_base_color_weight = Color(0.69411767, 0.78431374, 1, 1)
