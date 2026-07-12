@@ -74,14 +74,23 @@ number_in_list() {
 }
 
 pick_next_issue() {
-  local open_pr_refs candidates issue
-  open_pr_refs="$(open_pr_issue_numbers)"
+	local open_pr_refs candidates issue
+	open_pr_refs="$(open_pr_issue_numbers)"
 
-  candidates="$(gh issue list \
-      --state open \
-      --limit 100 \
-      --json number,title,labels \
-      --jq '[.[] | select(([.labels[].name] | any(. == "status: blocked" or . == "blocked")) | not)] | sort_by(.number) | .[].number')"
+	candidates="$(gh issue list \
+			--state open \
+			--limit 100 \
+			--json number,title,labels \
+			--jq '
+				[
+					.[] |
+					select(.title | startswith("Spec:") | not) |
+					select(([.labels[].name] | any(. == "ready-for-agent"))) |
+					select(([.labels[].name] | any(. == "status: blocked" or . == "blocked")) | not)
+				] |
+				sort_by(.number) |
+				.[].number
+			')"
 
   while read -r issue; do
     [[ -z "$issue" ]] && continue
