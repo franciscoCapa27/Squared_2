@@ -8,6 +8,13 @@ const DEBUG_VERTEX_UPGRADES := false
 var unlocked_vertex_upgrades: Dictionary = {}
 
 
+func _upgrade_contains_unlock_passive_effect(upgrade: VertexUpgradeDefinition) -> bool:
+	for effect_iter: VertexUpgradeEffect in upgrade.effects:
+		if effect_iter != null and effect_iter.effect_type == VertexUpgradeEffect.EffectType.UNLOCK_PASSIVE_GENERATOR:
+			return true
+	return false
+
+
 func has_vertex_upgrade(upgrade_id: String) -> bool:
 	return get_vertex_upgrade_purchase_count(upgrade_id) > 0
 
@@ -25,6 +32,10 @@ func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
 	var upgrade: VertexUpgradeDefinition = VertexUpgradeDatabase.get_upgrade(upgrade_id)
 
 	if upgrade == null:
+		return false
+
+	# Block upgrades that unlock a passive generator while the grid is still 1×1.
+	if _upgrade_contains_unlock_passive_effect(upgrade) and GameState.grid_size < 2:
 		return false
 
 	if GameState.vertices < upgrade.cost_vertices:
