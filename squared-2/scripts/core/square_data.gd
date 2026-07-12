@@ -1,20 +1,6 @@
 extends RefCounted
 class_name SquareData
 
-const PREFIX_POOL := {
-	"quick": ["Sharp", "Swift", "Keen"],
-	"dense": ["Heavy", "Deep", "Compact"],
-	"glimmer": ["Glimmering", "Bright", "Luminous"],
-	"patient": ["Patient", "Slow", "Still"],
-}
-
-const SUFFIX_POOL := {
-	"quick": ["of Haste", "of Motion", "of the First Click"],
-	"dense": ["of Weight", "of Mass", "of the Core"],
-	"glimmer": ["of First Light", "of Sparks", "of Wonder"],
-	"patient": ["of the Long Wait", "of Stored Time", "of the Quiet Pulse"],
-}
-
 var id: String = ""
 var coordinate: String = ""
 var display_name: String = ""
@@ -402,12 +388,11 @@ func _get_family_prefix_word(family_key: String, family_info: Dictionary) -> Str
 		if pool.size() > 0:
 			var idx: int = clampi(count - 1, 0, pool.size() - 1)
 			return pool[idx]
-
-	var fallback: Array = PREFIX_POOL.get(family_key, [])
-	if fallback.size() > 0:
-		var idx: int = clampi(count - 1, 0, fallback.size() - 1)
-		return fallback[idx]
-
+		# Fallback: use the family's display name if present.
+		var family_display := def.family_display_name.strip_edges()
+		if family_display != "":
+			return family_display
+	# Ultimate safety fallback.
 	return family_key
 
 func _get_family_suffix_word(family_key: String, family_info: Dictionary) -> String:
@@ -418,12 +403,11 @@ func _get_family_suffix_word(family_key: String, family_info: Dictionary) -> Str
 		if pool.size() > 0:
 			var idx: int = clampi(count - 1, 0, pool.size() - 1)
 			return pool[idx]
-
-	var fallback: Array = SUFFIX_POOL.get(family_key, [])
-	if fallback.size() > 0:
-		var idx: int = clampi(count - 1, 0, fallback.size() - 1)
-		return fallback[idx]
-
+		# Fallback: create a suffix from the family's display name.
+		var family_display := def.family_display_name.strip_edges()
+		if family_display != "":
+			return "of " + family_display
+	# Ultimate safety fallback.
 	return "of " + family_key
 
 func get_trait_stack_counts() -> Dictionary:
