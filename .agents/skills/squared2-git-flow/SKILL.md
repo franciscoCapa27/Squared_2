@@ -82,6 +82,24 @@ main
   -> PR back to develop
 ```
 
+Aider/DeepSeek overnight sessions may use an intermediate session branch:
+
+```text
+session/aider/YYYY-MM-DD-short-slug
+```
+
+Session mode rules:
+
+- Create the session branch from fresh `origin/develop`.
+- Individual ticket branches still use `feature/codex_agent/<type>-<issue-number>-<short-slug>`.
+- In session mode, individual ticket PRs target the session branch, not `develop`.
+- The wrapper may auto-merge ticket PRs into the session branch only.
+- The wrapper must never auto-merge into `develop`, `main`, `release/*`, or `hotfix/*`.
+- After a ticket PR merges into the session branch, the wrapper may close that ticket and unblock dependents whose native blockers are all closed.
+- At the end of the session, open one PR from the session branch into `develop` for user or Codex review.
+- The final session PR into `develop` is the review boundary. Do not treat session branch merges as production-ready.
+- Session branches do not deploy. `main` remains the only automatic production deploy branch.
+
 Hotfix flow:
 
 ```text
@@ -208,6 +226,7 @@ Codex should not expect the user to manually close implementation tickets that C
 Use this policy:
 
 - For feature, bugfix, chore, docs, and refactor work targeting `develop`, leave the issue open while the PR is open. After the PR is merged into `develop`, verify the merge and close the issue with a short comment referencing the PR.
+- For Aider session branches, close the issue after the ticket PR merges into the session branch, then rely on the final session PR for integration review into `develop`.
 - For release branches targeting `main`, do not close the already-completed feature tickets again. Release issues, if any, close only after the release PR merges to `main`.
 - For hotfix branches targeting `main`, close the hotfix issue after verifying the PR merged to `main`, then create or recommend the back-merge PR to `develop`.
 - If a PR is closed without merge, rejected, or superseded, leave the issue open and comment with the current state instead of closing it.

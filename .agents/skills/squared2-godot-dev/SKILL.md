@@ -54,6 +54,7 @@ Avoid turning the UI into a generic dashboard or loud mobile-idle game. The expe
 ## GDScript And Godot Conventions
 
 - Follow the current typed GDScript style: explicit types, `class_name` where already used, and small helper methods.
+- Treat Godot/GDScript reserved words as forbidden identifiers. In Godot 4.x, do not use `trait` as a variable name; use `trait_iter` for `TraitInstance` loop variables.
 - Prefer Godot signals and scene/resource APIs over ad hoc global lookups.
 - Do not edit `.godot/` editor cache files as part of normal work.
 - Be careful with `.uid` files: preserve them when editing existing scripts/resources; only create new ones through Godot/editor import flows when needed.
@@ -111,3 +112,14 @@ Good Squared² development issues should include:
 Prefer issues that are small enough to merge independently: one bug fix, one content pack, one UI feedback improvement, or one architecture seam.
 
 Before marking a ticket `ready-for-agent`, ask: "Could a cheap executor implement this without making a game-design decision?" If not, keep the ticket in Codex/user design until the mechanic and constraints are explicit.
+
+## Aider/DeepSeek Executor Prompt Notes
+
+When `run_ticket.sh` delegates to Aider/DeepSeek, it should remind the executor:
+
+- Aider is an executor, not the game designer; follow the ticket exactly.
+- Avoid reserved keywords as local variable names, especially `trait`.
+- Prefer `trait_iter`, `square_data`, `trait_definition`, and other existing local naming patterns.
+- Keep content resource-driven. If existing `.tres` fields such as `name_prefixes`, `name_suffixes`, visual weights, costs, or effect components can express the change, prefer those over hardcoded dictionaries.
+- Do not invent new stats, currencies, effect types, systems, or resource fields unless the ticket explicitly asks for that architecture.
+- Do not add committed verifier scripts by default; report static checks and leave real validation to Godot playtesting.
