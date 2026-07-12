@@ -214,6 +214,7 @@ func _rebuild_tags() -> void:
 func _rebuild_visual_profile() -> void:
 	var profile := VisualProfile.new()
 
+	# Start with per‑trait material contributions.
 	profile.edge_complexity = min(10, traits.size())
 
 	var rarity_score := 0
@@ -238,10 +239,57 @@ func _rebuild_visual_profile() -> void:
 	profile.edge_complexity = clamp(profile.edge_complexity, 0, 10)
 	profile.distortion_level = clamp(profile.distortion_level, 0, 10)
 
+	# --------------------------------------------------------------------
+	# Family‑material identity overlay (issue #68).
+	# --------------------------------------------------------------------
+	var family_groups := {}
+	for trait_iter in traits:
+		if trait_iter.definition == null:
+			continue
+		var fid: String = trait_iter.definition.family_id.strip_edges()
+		if fid == "":
+			continue
+
+		var info: Dictionary = family_groups.get(fid, {"stack": 0, "max_rarity": -1})
+		info.stack += 1
+		var r: int = int(trait_iter.definition.rarity)
+		if r > info.max_rarity:
+			info.max_rarity = r
+		family_groups[fid] = info
+
+	var primary_family := ""
+	var best_stack := -1
+	for fid in family_groups:
+		if family_groups[fid].stack > best_stack:
+			best_stack = family_groups[fid].stack
+			primary_family = fid
+
+	var fam_stack := 0
+	var fam_rarity := 0
+	if family_groups.has(primary_family):
+		fam_stack = family_groups[primary_family].stack
+		fam_rarity = family_groups[primary_family].max_rarity
+
+	var family_profile := VisualProfile.get_family_profile(primary_family, fam_stack, fam_rarity)
+
+	profile.base_color = family_profile.base_color
+	profile.accent_color = family_profile.accent_color
+
+	profile.glow_level = clampi(profile.glow_level + family_profile.glow_level, 0, 10)
+	profile.edge_complexity = clampi(profile.edge_complexity + family_profile.edge_complexity, 0, 10)
+	profile.gloss_level = clampi(profile.gloss_level + family_profile.gloss_level, 0, 10)
+	profile.distortion_level = clampi(profile.distortion_level + family_profile.distortion_level, 0, 10)
+
+	if family_profile.pulse_style != "none":
+		profile.pulse_style = family_profile.pulse_style
+	if family_profile.particle_style != "none":
+		profile.particle_style = family_profile.particle_style
+	if family_profile.pattern_style != "none":
+		profile.pattern_style = family_profile.pattern_style
+
 	profile.dominant_tag = _get_most_common_tag(tag_counts, 0)
 	profile.secondary_tag = _get_most_common_tag(tag_counts, 1)
-	profile.base_color = _get_color_for_dominant_tag(profile.dominant_tag)
-	profile.accent_color = _get_color_for_dominant_tag(profile.secondary_tag)
+
 	visual_profile = profile
 	
 func _get_color_for_dominant_tag(tag: String) -> Color:
@@ -258,6 +306,17 @@ func _get_color_for_dominant_tag(tag: String) -> Color:
 			return Color(0.85, 0.65, 1.0, 1.0)
 		"corruption":
 			return Color(0.65, 1.0, 0.65, 1.0)
+		# --------------------------------------------------------------------
+		# Family‑tag colours (issue #68).
+		# --------------------------------------------------------------------
+		"quick":
+			return Color(0.2, 0.6, 1.0, 1.0)       # bright electric blue
+		"dense":
+			return Color(0.9, 0.4, 0.15, 1.0)     # warm heavy orange‑brown
+		"glimmer":
+			return Color(1.0, 0.85, 0.4, 1.0)     # luminous gold
+		"patient":
+			return Color(0.5, 0.5, 1.0, 1.0)      # soft purple‑blue
 		_:
 			if traits.size() > 0:
 				return Color(0.85, 0.85, 1.0, 1.0)
