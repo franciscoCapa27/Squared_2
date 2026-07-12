@@ -96,6 +96,7 @@ Every Codex-created PR should include:
 
 - Summary of changes.
 - Linked issue, when one exists. For PRs targeting `develop`, prefer `Refs #N` in commit messages and PR bodies, then close the issue only after the PR is merged and verified. Do not rely on GitHub auto-closing issues from `develop` PRs.
+- Linked issue, when one exists.
 - Labels that classify release impact, type, area, and priority.
 - Verification performed, including commands run or why testing was not possible.
 - Deploy impact, especially whether the PR can reach `main`.
@@ -190,6 +191,8 @@ Suggested issue format:
 ## Likely Files
 
 ## Do Not Touch
+
+## Scope
 
 ## Acceptance Criteria
 
