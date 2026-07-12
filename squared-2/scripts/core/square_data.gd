@@ -1,6 +1,20 @@
 extends RefCounted
 class_name SquareData
 
+const PREFIX_POOL := {
+	"quick": ["Sharp", "Swift", "Keen"],
+	"dense": ["Heavy", "Deep", "Compact"],
+	"glimmer": ["Glimmering", "Bright", "Luminous"],
+	"patient": ["Patient", "Slow", "Still"],
+}
+
+const SUFFIX_POOL := {
+	"quick": ["of Haste", "of Motion", "of the First Click"],
+	"dense": ["of Weight", "of Mass", "of the Core"],
+	"glimmer": ["of First Light", "of Sparks", "of Wonder"],
+	"patient": ["of the Long Wait", "of Stored Time", "of the Quiet Pulse"],
+}
+
 var id: String = ""
 var coordinate: String = ""
 var display_name: String = ""
@@ -90,7 +104,8 @@ func generate_square_name() -> String:
 			family_data[family_key] = {
 				"stack_count": 0,
 				"max_rarity": -1,
-				"latest_index": -1
+				"latest_index": -1,
+				"first_definition": null,
 			}
 
 		var info: Dictionary = family_data[family_key]
@@ -100,6 +115,9 @@ func generate_square_name() -> String:
 			info.max_rarity = rarity
 		if i > info.latest_index:
 			info.latest_index = i
+
+		if info.get("first_definition", null) == null and trait_iter.definition != null:
+			info["first_definition"] = trait_iter.definition
 
 	if family_data.is_empty():
 		return "Square %s" % coordinate
@@ -122,28 +140,9 @@ func generate_square_name() -> String:
 			return a < b
 	)
 
-	var prefix_pool: Dictionary = {
-		"quick": ["Sharp", "Swift", "Keen"],
-		"dense": ["Heavy", "Deep", "Compact"],
-		"glimmer": ["Glimmering", "Bright", "Luminous"],
-		"patient": ["Patient", "Slow", "Still"],
-	}
-
-	var suffix_pool: Dictionary = {
-		"quick": ["of Haste", "of Motion", "of the First Click"],
-		"dense": ["of Weight", "of Mass", "of the Core"],
-		"glimmer": ["of First Light", "of Sparks", "of Wonder"],
-		"patient": ["of the Long Wait", "of Stored Time", "of the Quiet Pulse"],
-	}
-
 	var prefix_family: String = family_keys[0]
-	var prefix_stack: int = family_data[prefix_family].stack_count
-	var prefix_word: String = prefix_family
-
-	if prefix_pool.has(prefix_family):
-		var pool: Array = prefix_pool[prefix_family]
-		var idx: int = clamp(prefix_stack - 1, 0, pool.size() - 1)
-		prefix_word = pool[idx]
+	var prefix_info: Dictionary = family_data[prefix_family]
+	var prefix_word: String = _get_family_prefix_word(prefix_family, prefix_info)
 
 	var suffix_family: String = ""
 	for key: String in family_keys:
@@ -154,13 +153,8 @@ func generate_square_name() -> String:
 	if suffix_family == "":
 		return "%s Square" % prefix_word
 
-	var suffix_stack: int = family_data[suffix_family].stack_count
-	var suffix_word: String = "of " + suffix_family
-
-	if suffix_pool.has(suffix_family):
-		var pool: Array = suffix_pool[suffix_family]
-		var idx: int = clamp(suffix_stack - 1, 0, pool.size() - 1)
-		suffix_word = pool[idx]
+	var suffix_info: Dictionary = family_data[suffix_family]
+	var suffix_word: String = _get_family_suffix_word(suffix_family, suffix_info)
 
 	return "%s Square %s" % [prefix_word, suffix_word]
 
@@ -340,6 +334,38 @@ func _get_trait_family_key(trait_iter: TraitInstance) -> String:
 		return trait_iter.definition.family_id
 
 	return trait_iter.definition.id
+
+func _get_family_prefix_word(family_key: String, family_info: Dictionary) -> String:
+	var count: int = family_info.stack_count
+	var def: TraitDefinition = family_info.get("first_definition", null)
+	if def != null:
+		var pool: Array = def.name_prefixes
+		if pool.size() > 0:
+			var idx: int = clampi(count - 1, 0, pool.size() - 1)
+			return pool[idx]
+
+	var fallback: Array = PREFIX_POOL.get(family_key, [])
+	if fallback.size() > 0:
+		var idx: int = clampi(count - 1, 0, fallback.size() - 1)
+		return fallback[idx]
+
+	return family_key
+
+func _get_family_suffix_word(family_key: String, family_info: Dictionary) -> String:
+	var count: int = family_info.stack_count
+	var def: TraitDefinition = family_info.get("first_definition", null)
+	if def != null:
+		var pool: Array = def.name_suffixes
+		if pool.size() > 0:
+			var idx: int = clampi(count - 1, 0, pool.size() - 1)
+			return pool[idx]
+
+	var fallback: Array = SUFFIX_POOL.get(family_key, [])
+	if fallback.size() > 0:
+		var idx: int = clampi(count - 1, 0, fallback.size() - 1)
+		return fallback[idx]
+
+	return "of " + family_key
 
 func get_trait_stack_counts() -> Dictionary:
 	var counts: Dictionary = {}
