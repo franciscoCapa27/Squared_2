@@ -16,7 +16,7 @@ const FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT := 1
 # Prestige scaling constants
 # -------------------------
 const PRESTIGE_COST_BASE := 15.0
-const PRESTIGE_COST_PER_PRESTIGE := 10.0
+const PRESTIGE_COST_MULTIPLIER := 1.75
 
 var squares: float = 0.0
 var vertices: int = 0
@@ -102,7 +102,7 @@ func spend_vertices(amount: int) -> bool:
 # ------------------------------------------------------------------------------
 
 func get_prestige_required_squares() -> float:
-	return PRESTIGE_COST_BASE + prestige_count * PRESTIGE_COST_PER_PRESTIGE
+	return ceil(PRESTIGE_COST_BASE * pow(PRESTIGE_COST_MULTIPLIER, float(prestige_count)))
 
 
 func can_prestige() -> bool:
@@ -122,7 +122,7 @@ func prestige(save_after_prestige: bool = true) -> void:
 	vertices += gained_vertices
 	prestige_count += 1
 
-	spend_squares(get_prestige_required_squares())
+	squares = 0.0
 
 	PassiveSystem.reset_run_state_on_prestige()
 	RunUpgradeSystem.reset_run_state_on_prestige()

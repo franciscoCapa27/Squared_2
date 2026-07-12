@@ -309,9 +309,8 @@ func _refresh_prestige_panel() -> void:
 		]
 	else:
 		prestige_button.text = "Prestige"
-		prestige_details.text = "Requires %s Squares • Next reset adds a permanent Trait to a square • Cost +%s per Prestige" % [
-			NumberFormatter.amount(GameState.get_prestige_required_squares()),
-			NumberFormatter.amount(GameState.PRESTIGE_COST_PER_PRESTIGE)
+		prestige_details.text = "Requires %s Squares • Next reset adds a permanent Trait to a square • Cost grows 1.75x per Prestige" % [
+			NumberFormatter.amount(GameState.get_prestige_required_squares())
 		]
 	prestige_description.text = "Reset this run to gain Vertices and roll a random Trait."
 		
