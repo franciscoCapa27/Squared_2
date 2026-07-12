@@ -9,6 +9,9 @@ extends Control
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
 var has_discovered_prestige_panel: bool = false
+var grid_expansion_story_shown: bool = false
+var vertex_shop_story_shown: bool = false
+var passives_story_shown: bool = false
 
 
 @onready var grid_tab_button: Button = %GridTabButton
@@ -152,6 +155,9 @@ func _initialize_new_game_ui() -> void:
 	square_details_panel.clear()
 	run_upgrades_panel.refresh()
 	has_discovered_prestige_panel = false
+	grid_expansion_story_shown = false
+	vertex_shop_story_shown = false
+	passives_story_shown = false
 	_refresh_feature_visibility(false)
 
 
@@ -185,8 +191,17 @@ func _refresh_feature_visibility(animated: bool = true) -> void:
 	)
 	var show_achievement_summary: bool = FeatureVisibilityRules.should_show_achievement_summary_panel()
 
-	if show_prestige:
+	if show_prestige and not has_discovered_prestige_panel:
+		_on_story_message("Prestige is now available — reset your run to gain Vertices and roll a random Trait.")
 		has_discovered_prestige_panel = true
+
+	if show_vertex_shop and not vertex_shop_story_shown:
+		vertex_shop_story_shown = true
+		_on_story_message("The Vertex Shop has opened! Spend vertices on powerful permanent upgrades.")
+
+	if show_passives and not passives_story_shown:
+		passives_story_shown = true
+		_on_story_message("Your board awakens — passive generators produce squares automatically.")
 
 	passive_feature_visibility.set_feature_visible(show_passives, animated)
 	vertex_shop_feature_visibility.set_feature_visible(show_vertex_shop, animated)
@@ -288,16 +303,19 @@ func _refresh_prestige_panel() -> void:
 	var vertices_gain: int = max(1, GameState.calculate_vertices_gain())
 
 	if GameState.can_prestige():
-		prestige_button.text = "Prestige"
-		prestige_details.text = "Gain %s Vertices • Keep 1 permanent Trait • Reset this run" % [
+		prestige_title.text = "Prestige: Gain a random Trait"
+		prestige_button.text = "Prestige & Roll a Trait"
+		prestige_details.text = "Gain %s Vertices • Roll a random Trait • Reset this run" % [
 			NumberFormatter.integer_amount(vertices_gain)
 		]
 	else:
-		prestige_button.text = "Prestige"
-		prestige_details.text = "Requires %s Squares • Next reset keeps 1 Trait on the board • Cost +%s per Prestige" % [
+		prestige_title.text = "Prestige: Gain a random Trait"
+		prestige_button.text = "Prestige (Need more Squares)"
+		prestige_details.text = "Requires %s Squares • Gain a random Trait after reset • Cost +%s per Prestige" % [
 			NumberFormatter.amount(GameState.get_prestige_required_squares()),
 			NumberFormatter.amount(GameState.PRESTIGE_COST_PER_PRESTIGE)
 		]
+	prestige_description.text = "Reset this run to gain Vertices and roll a random Trait."
 		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
@@ -324,6 +342,10 @@ func _on_grid_upgrade_requested() -> void:
 
 	if not upgraded:
 		return
+
+	if not grid_expansion_story_shown:
+		grid_expansion_story_shown = true
+		_on_story_message("The grid expands, making room for more squares — and stranger Traits.")
 
 	square_details_panel.clear()
 	grid_page.reset_feature_visibility_state()
@@ -357,6 +379,9 @@ func _on_options_save_imported() -> void:
 
 func _on_options_hard_reset_completed() -> void:
 	has_discovered_prestige_panel = false
+	grid_expansion_story_shown = false
+	vertex_shop_story_shown = false
+	passives_story_shown = false
 	square_details_panel.clear()
 	_refresh_all_ui()
 	
