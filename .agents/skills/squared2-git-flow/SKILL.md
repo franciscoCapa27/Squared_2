@@ -64,6 +64,7 @@ hotfix/codex_agent/hotfix-31-save-import-crash
 - Feature, bugfix, chore, docs, and refactor branches target `develop`.
 - Release branches are created from `develop` and target `main`.
 - Hotfix branches are created from `main` and target `main`.
+- After a release reaches `main`, create or recommend a sync PR from `main` back to `develop` so release merge history does not drift and future releases avoid conflict-heavy promotion.
 - After a hotfix reaches `main`, create or recommend a back-merge PR from `main` to `develop`.
 
 Use this flow:
@@ -77,6 +78,8 @@ release/vX.Y.Z
   -> PR to main
 main
   -> deploys to itch.io
+main
+  -> PR back to develop
 ```
 
 Hotfix flow:
@@ -226,3 +229,17 @@ Before touching deployment workflow:
 1. Read `.github/workflows/deploy-itch-web.yml`.
 2. Remember that current deploy triggers are `push` to `main` and `workflow_dispatch`.
 3. Avoid adding a `develop` deploy unless the user explicitly asks.
+
+Before opening a release PR:
+
+1. Fetch latest `origin/main` and `origin/develop`.
+2. Confirm the release branch points at the intended `origin/develop` commit.
+3. Compare `origin/main..origin/develop` for the commits that will ship.
+4. Compare `origin/develop...origin/main` for release merge commits already on `main`; if histories have drifted, create or recommend a `main` to `develop` sync PR before the next release.
+
+After a release PR merges to `main`:
+
+1. Verify the merge reached `main`.
+2. Delete or confirm deletion of the release branch.
+3. Create or recommend a `main` to `develop` sync PR before starting more feature work.
+4. Do not close the parent gameplay spec merely because a release shipped; close only implementation or release-tracking issues whose completion was verified.
