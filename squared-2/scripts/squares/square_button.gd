@@ -8,6 +8,9 @@ var is_respawning: bool = false
 var respawn_timer: SceneTreeTimer = null
 var normal_modulate: Color = Color.WHITE
 
+## A tween dedicated to the quick press/compression animation on manual click.
+var press_tween: Tween
+
 func setup(id: String) -> void:
 	square_id = id
 	_apply_square_visuals()
@@ -16,7 +19,7 @@ func setup(id: String) -> void:
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	pressed.connect(_on_pressed)
-	
+
 	_apply_theme()
 
 func _apply_theme() -> void:
@@ -46,6 +49,7 @@ func _on_pressed() -> void:
 	if square_data != null:
 		respawn_time = SquareCalculator.calculate_respawn_time(square_data)
 
+	_play_press_animation()
 	_start_respawn(respawn_time)
 
 func refresh_visuals() -> void:
@@ -61,6 +65,19 @@ func _apply_square_visuals() -> void:
 		return
 
 	normal_modulate = square_data.visual_profile.base_color
+
+func _play_press_animation() -> void:
+	# Kill any previous animation that is still running so the scale state is clean.
+	if press_tween and press_tween.is_valid():
+		press_tween.kill()
+	scale = Vector2.ONE
+
+	press_tween = create_tween().set_parallel(false)
+	# Squash slightly
+	press_tween.tween_property(self, "scale", Vector2(0.92, 0.92), 0.05).set_ease(Tween.EASE_IN)
+	# Spring back
+	press_tween.tween_property(self, "scale", Vector2.ONE, 0.1).set_ease(Tween.EASE_OUT)
+
 
 func _start_respawn(respawn_time: float) -> void:
 	is_respawning = true
