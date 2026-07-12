@@ -303,15 +303,13 @@ func _refresh_prestige_panel() -> void:
 	var vertices_gain: int = max(1, GameState.calculate_vertices_gain())
 
 	if GameState.can_prestige():
-		prestige_title.text = "Prestige: Gain a random Trait"
-		prestige_button.text = "Prestige & Roll a Trait"
-		prestige_details.text = "Gain %s Vertices • Roll a random Trait • Reset this run" % [
+		prestige_button.text = "Prestige"
+		prestige_details.text = "Gain %s Vertices • A square gains a permanent Trait • Reset this run" % [
 			NumberFormatter.integer_amount(vertices_gain)
 		]
 	else:
-		prestige_title.text = "Prestige: Gain a random Trait"
-		prestige_button.text = "Prestige (Need more Squares)"
-		prestige_details.text = "Requires %s Squares • Gain a random Trait after reset • Cost +%s per Prestige" % [
+		prestige_button.text = "Prestige"
+		prestige_details.text = "Requires %s Squares • Next reset adds a permanent Trait to a square • Cost +%s per Prestige" % [
 			NumberFormatter.amount(GameState.get_prestige_required_squares()),
 			NumberFormatter.amount(GameState.PRESTIGE_COST_PER_PRESTIGE)
 		]
