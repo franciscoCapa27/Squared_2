@@ -34,6 +34,7 @@ build/
 # Local agent tooling state
 skills-lock.json
 .aider*
+.worktrees/
 
 # Generated Godot script UIDs from local agent checks
 squared-2/scripts/tests/*.uid
