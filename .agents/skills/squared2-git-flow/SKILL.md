@@ -163,10 +163,34 @@ Prefer one release label, one type label, one or more area labels, and one prior
 
 When creating tickets, keep each issue scoped to one mergeable change. Prefer issue titles that can become branch slugs.
 
+For Aider/DeepSeek execution tickets, be stricter than normal:
+
+- Treat Aider/DeepSeek as an executor, not a creative designer. Codex and the user must decide the mechanic, numbers, target files, and forbidden paths before adding `ready-for-agent`.
+- State the exact intended behavior and the player-facing reason.
+- Include an `Implementation Decision` or `Exact Changes` section for any gameplay/content ticket where design choice is possible.
+- Name the supported stats, resource fields, IDs, and effect types the executor may use.
+- List likely files to edit and files to avoid.
+- Keep each ticket localized enough for one cheap implementation pass.
+- Prefer deterministic content/config edits over broad architecture changes.
+- Explicitly forbid tempting but unsupported ideas, such as new stats, new calculator paths, new effect types, new currencies, or new systems, unless that architecture work is the whole ticket.
+- If a ticket still requires invention, design judgment, or choosing between mechanics, do not label it `ready-for-agent`; keep it for Codex/user design first.
+- Do not ask implementation agents to add verifier/test scripts by default; Squared² gameplay is primarily verified by review and playtesting.
+- Include ordering/blocking notes in the issue body and use `status: blocked` when the wrapper should skip it.
+
 Suggested issue format:
 
 ```markdown
 ## Goal
+
+## Implementation Decision
+
+## Exact Changes
+
+## Scope
+
+## Likely Files
+
+## Do Not Touch
 
 ## Scope
 

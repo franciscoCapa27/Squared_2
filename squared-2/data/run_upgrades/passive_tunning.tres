@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="Resource_2mvrw"]
 script = ExtResource("1_2mvrw")
 target_stat = "run_passive_click_value"
-value = 1.1
+value = 1.25
 metadata/_custom_type_script = "uid://chdrsvo1guraf"
 
 [sub_resource type="Resource" id="Resource_xar5y"]
@@ -24,9 +24,9 @@ display_name = "Passive Tunning"
 description = "Increases passive click value for this run."
 category = 2
 sort_order = 30
-base_cost = 50.0
-cost_multiplier = 1.45
-max_level = 20
+base_cost = 75.0
+cost_multiplier = 1.6
+max_level = 10
 hidden_until_unlocked = true
 unlock_conditions = Array[ExtResource("3_agprp")]([SubResource("Resource_xar5y")])
 effects_per_level = Array[ExtResource("1_2mvrw")]([SubResource("Resource_2mvrw")])

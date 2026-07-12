@@ -100,9 +100,14 @@ Always report verification in the PR body. If Godot is unavailable locally, say 
 Good Squared² development issues should include:
 
 - Player-facing goal.
+- Finalized design decision. Do not leave Aider/DeepSeek to invent mechanics, economy roles, trait identities, stat targets, or UI behavior.
+- Exact changes when possible: resource ids, stat names, value ranges, target scripts/scenes, and copy constraints.
+- Unsupported paths to avoid, especially new stats/effects/systems that the current architecture does not consume.
 - System/content files likely touched.
 - Acceptance criteria tied to the core loop.
 - Verification plan.
 - Deploy impact.
 
 Prefer issues that are small enough to merge independently: one bug fix, one content pack, one UI feedback improvement, or one architecture seam.
+
+Before marking a ticket `ready-for-agent`, ask: "Could a cheap executor implement this without making a game-design decision?" If not, keep the ticket in Codex/user design until the mechanic and constraints are explicit.

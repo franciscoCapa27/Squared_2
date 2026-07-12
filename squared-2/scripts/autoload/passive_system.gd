@@ -11,6 +11,10 @@ func _ready() -> void:
 	_initialize_generators()
 
 func _process(delta: float) -> void:
+	# No passive generation before the player reaches a 2×2 grid.
+	if GameState.grid_size < 2:
+		return
+
 	for generator_id: String in generator_order:
 		var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
 
