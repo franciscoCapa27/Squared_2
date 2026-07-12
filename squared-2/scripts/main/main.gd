@@ -289,12 +289,12 @@ func _refresh_prestige_panel() -> void:
 
 	if GameState.can_prestige():
 		prestige_button.text = "Prestige"
-		prestige_details.text = "Gain %s Vertices • Keep 1 permanent Trait • Reset this run" % [
+		prestige_details.text = "Gain %s Vertices • A square gains a permanent Trait • Reset this run" % [
 			NumberFormatter.integer_amount(vertices_gain)
 		]
 	else:
 		prestige_button.text = "Prestige"
-		prestige_details.text = "Requires %s Squares • Next reset keeps 1 Trait on the board • Cost +%s per Prestige" % [
+		prestige_details.text = "Requires %s Squares • Next reset adds a permanent Trait to a square • Cost +%s per Prestige" % [
 			NumberFormatter.amount(GameState.get_prestige_required_squares()),
 			NumberFormatter.amount(GameState.PRESTIGE_COST_PER_PRESTIGE)
 		]

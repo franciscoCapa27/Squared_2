@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://jdev0mw5y4y1"]
 
-[ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xfj"]
+[ext_resource type="Script" uid="uid://dafych8mmi7mc" path="res://scripts/main/main.gd" id="1_u1xjf"]
 [ext_resource type="Script" uid="uid://blvtlqs2ve4y7" path="res://scripts/ui/passive_panel.gd" id="2_gyg6b"]
 [ext_resource type="Script" uid="uid://bg5n4yaoqsv0k" path="res://scripts/ui/options_page.gd" id="2_nha0i"]
 [ext_resource type="Script" uid="uid://3kgpybmgkguk" path="res://scripts/ui/theme/themed_background.gd" id="2_ostsq"]
@@ -19,7 +19,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1_u1xfj")
+script = ExtResource("1_u1xjf")
 
 [node name="BackgroundPanel" type="Panel" parent="." unique_id=1452120984]
 unique_name_in_owner = true
@@ -315,7 +315,7 @@ text = "Reset your run to gain permanent bonuses."
 [node name="PrestigeDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Gain Vertices • Roll 1 Trait • Reset run upgrades & passives"
+text = "Gain Vertices • A square gains a permanent Trait • Reset this run"
 
 [node name="PrestigeButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=126762251]
 unique_name_in_owner = true
