@@ -51,7 +51,8 @@ slugify() {
     | sed 's/[^a-z0-9]/-/g' \
     | sed 's/-\{2,\}/-/g' \
     | sed 's/^-//;s/-$//' \
-    | cut -c 1-48
+    | cut -c 1-48 \
+    | sed 's/-$//'
 }
 
 open_pr_issue_numbers() {
@@ -201,8 +202,14 @@ run_one_ticket() {
   git checkout develop
   git merge --ff-only origin/develop
   create_or_reuse_linked_branch "$issue" "$branch"
-  git fetch origin "$branch"
-  git checkout -B "$branch" "origin/$branch"
+
+  if remote_branch_exists "$branch"; then
+    git fetch origin "$branch"
+    git checkout -B "$branch" "origin/$branch"
+  else
+    echo "Remote branch was not created yet; creating local branch from origin/develop."
+    git checkout -B "$branch" origin/develop
+  fi
 
   prompt_file="$(mktemp)"
   build_prompt "$issue" "$title" "$body" "$prompt_file"
