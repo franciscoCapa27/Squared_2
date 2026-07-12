@@ -162,12 +162,25 @@ Prefer one release label, one type label, one or more area labels, and one prior
 
 When creating tickets, keep each issue scoped to one mergeable change. Prefer issue titles that can become branch slugs.
 
+For Aider/DeepSeek execution tickets, be stricter than normal:
+
+- State the exact intended behavior and the player-facing reason.
+- List likely files to edit and files to avoid.
+- Keep each ticket localized enough for one cheap implementation pass.
+- Prefer deterministic content/config edits over broad architecture changes.
+- Do not ask implementation agents to add verifier/test scripts by default; Squared² gameplay is primarily verified by review and playtesting.
+- Include ordering/blocking notes in the issue body and use `status: blocked` when the wrapper should skip it.
+
 Suggested issue format:
 
 ```markdown
 ## Goal
 
 ## Scope
+
+## Likely Files
+
+## Do Not Touch
 
 ## Acceptance Criteria
 
