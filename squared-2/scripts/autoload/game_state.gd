@@ -242,6 +242,19 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 
 	target_square.add_trait(trait_instance)
 
+	var rarity_display: String = trait_definition.get("rarity", "").capitalize()
+	var family_display: String = trait_definition.display_name
+	var roman_stack: String = trait_instance.get_display_name()
+	var square_title: String = target_square.display_name
+
+	EventBus.prestige_trait_reveal.emit(
+		target_square_id,
+		family_display,
+		rarity_display,
+		roman_stack,
+		square_title
+	)
+
 	return "%s gained the %s Trait" % [
 		target_square.display_name,
 		trait_definition.display_name
