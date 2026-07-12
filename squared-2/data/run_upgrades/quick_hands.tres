@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="Resource_jbq16"]
 script = ExtResource("1_jbq16")
 target_stat = "run_manual_click_value"
-value = 1.08
+value = 1.2
 metadata/_custom_type_script = "uid://chdrsvo1guraf"
 
 [sub_resource type="Resource" id="Resource_aafcd"]
@@ -23,9 +23,9 @@ display_name = "Quick Hands"
 description = "Increases manual click value for this run."
 category = 1
 sort_order = 20
-base_cost = 15.0
-cost_multiplier = 1.4
-max_level = 20
+base_cost = 12.0
+cost_multiplier = 1.55
+max_level = 8
 unlock_conditions = Array[ExtResource("3_tnnxq")]([SubResource("Resource_aafcd")])
 effects_per_level = Array[ExtResource("1_jbq16")]([SubResource("Resource_jbq16")])
 metadata/_custom_type_script = "uid://mxwbqrrs5rto"
