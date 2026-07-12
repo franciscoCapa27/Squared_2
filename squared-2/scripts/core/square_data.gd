@@ -433,7 +433,74 @@ func get_trait_stack_display_text() -> String:
 		parts.append(display)
 
 	return ", ".join(parts)
+
+
+func get_family_stack_summary() -> String:
+	if traits.is_empty():
+		return "None"
 	
+	var family_groups: Dictionary = {}
+	
+	for trait_iter in traits:
+		if trait_iter.definition == null:
+			continue
+		
+		var family_key := _get_trait_family_key(trait_iter)
+		if family_key == "":
+			continue
+		
+		var info: Dictionary = family_groups.get(family_key, {
+			"stack_count": 0,
+			"max_rarity": -1,
+			"first_definition": null
+		})
+		info.stack_count += 1
+		var rarity_val := int(trait_iter.definition.rarity)
+		if rarity_val > info.max_rarity:
+			info.max_rarity = rarity_val
+		if info.first_definition == null:
+			info.first_definition = trait_iter.definition
+		family_groups[family_key] = info
+	
+	if family_groups.is_empty():
+		return "None"
+	
+	var sorted_families := family_groups.keys()
+	sorted_families.sort_custom(
+		func(a, b):
+			var info_a: Dictionary = family_groups[a]
+			var info_b: Dictionary = family_groups[b]
+			if info_a.max_rarity != info_b.max_rarity:
+				return info_a.max_rarity > info_b.max_rarity
+			if info_a.stack_count != info_b.stack_count:
+				return info_a.stack_count > info_b.stack_count
+			return a < b
+	)
+	
+	var lines: Array[String] = []
+	for family_key: String in sorted_families:
+		var info: Dictionary = family_groups[family_key]
+		var def: TraitDefinition = info.first_definition
+		
+		var family_display: String
+		if def != null and def.family_display_name.strip_edges() != "":
+			family_display = def.family_display_name
+		else:
+			family_display = family_key
+		
+		var roman: String = _to_roman(info.stack_count)
+		var rarity_name: String = ""
+		if info.max_rarity >= 0:
+			rarity_name = TraitDefinition.rarity_name_from_value(info.max_rarity)
+		
+		if rarity_name == "":
+			lines.append("%s %s" % [family_display, roman])
+		else:
+			lines.append("%s %s (%s)" % [family_display, roman, rarity_name])
+	
+	return "\n".join(lines)
+
+
 func _get_primary_title_trait() -> TraitInstance:
 	if traits.is_empty():
 		return null

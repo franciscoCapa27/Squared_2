@@ -69,3 +69,21 @@ func get_rarity_name() -> String:
 			return "Cosmic"
 		_:
 			return "Unknown"
+
+
+static func rarity_name_from_value(value: int) -> String:
+	match value:
+		Rarity.COMMON:
+			return "Common"
+		Rarity.UNCOMMON:
+			return "Uncommon"
+		Rarity.RARE:
+			return "Rare"
+		Rarity.EPIC:
+			return "Epic"
+		Rarity.LEGENDARY:
+			return "Legendary"
+		Rarity.COSMIC:
+			return "Cosmic"
+		_:
+			return "Unknown"
