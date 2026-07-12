@@ -151,6 +151,7 @@ func rebuild() -> void:
 
 		square_button.setup(square_data.id)
 		square_button.set_square_data(square_data)
+		_clean_square_button_text(square_button)
 		square_button.square_clicked.connect(_on_square_button_clicked)
 
 		square_buttons_by_id[square_data.id] = square_button
@@ -169,6 +170,7 @@ func refresh_buttons() -> void:
 			continue
 
 		square_button.set_square_data(square_data)
+		_clean_square_button_text(square_button)
 
 	_refresh_upgrade_button()
 	_apply_grid_sizing()
@@ -290,3 +292,11 @@ func _on_prestige_trait_reveal(target_square_id: String, trait_family: String, t
 	tw.tween_interval(3.0)
 	tw.tween_property(label, "modulate:a", 0.0, 0.8)
 	tw.tween_callback(label.queue_free)
+
+func _clean_square_button_text(button: SquareButton) -> void:
+	if button == null:
+		return
+	button.text = ""
+	for child in button.get_children():
+		if child is Label:
+			child.hide()
