@@ -78,11 +78,11 @@ func generate_square_name() -> String:
 	var family_data: Dictionary = {}
 
 	for i: int in range(traits.size()):
-		var trait: TraitInstance = traits[i]
-		if trait == null or trait.definition == null:
+		var trait_iter: TraitInstance = traits[i]
+		if trait_iter == null or trait_iter.definition == null:
 			continue
 
-		var family_key: String = _get_trait_family_key(trait)
+		var family_key: String = _get_trait_family_key(trait_iter)
 		if family_key == "":
 			continue
 
@@ -95,7 +95,7 @@ func generate_square_name() -> String:
 
 		var info: Dictionary = family_data[family_key]
 		info.stack_count += 1
-		var rarity: int = int(trait.definition.rarity)
+		var rarity: int = int(trait_iter.definition.rarity)
 		if rarity > info.max_rarity:
 			info.max_rarity = rarity
 		if i > info.latest_index:
