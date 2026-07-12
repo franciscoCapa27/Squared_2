@@ -8,15 +8,15 @@ const INITIAL_SQUARE_ID := "A1"
 const VERTEX_GAIN_DIVISOR := 100.0
 
 const MAX_GRID_SIZE := 6
-const GRID_UPGRADE_BASE_COST := 25.0
-const GRID_UPGRADE_COST_MULTIPLIER := 6.0
+const GRID_UPGRADE_BASE_COST := 35.0
+const GRID_UPGRADE_COST_MULTIPLIER := 5.0
 const FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT := 1
 
 # -------------------------
 # Prestige scaling constants
 # -------------------------
-const PRESTIGE_COST_BASE := 10.0
-const PRESTIGE_COST_PER_PRESTIGE := 5.0
+const PRESTIGE_COST_BASE := 15.0
+const PRESTIGE_COST_PER_PRESTIGE := 10.0
 
 var squares: float = 0.0
 var vertices: int = 0
