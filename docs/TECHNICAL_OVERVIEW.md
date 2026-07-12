@@ -599,10 +599,21 @@ Returns all Traits eligible at current grid size.
 ---
 
 ```gdscript
+func get_eligible_traits_for_rarity(
+    rarity: int,
+    current_grid_size: int
+) -> Array[TraitDefinition]
+```
+
+Returns eligible Traits of one rarity at the given grid size.
+
+---
+
+```gdscript
 func get_rarity_weights_for_grid(current_grid_size: int) -> Dictionary
 ```
 
-Returns rarity weights after applying Trait Luck.
+Returns rarity weights after applying current `GameState` Trait Luck.
 
 Example at 2x2:
 
@@ -617,6 +628,47 @@ With +10 Trait Luck:
 Common 75
 Uncommon 25
 ```
+
+---
+
+```gdscript
+func get_rarity_weights_for_grid_with_luck(
+    current_grid_size: int,
+    trait_luck: float
+) -> Dictionary
+```
+
+Returns rarity weights for a specific Trait Luck value. This exists so Trait roll rules can be verified deterministically without mutating `GameState`.
+
+Important rule:
+
+Trait Luck only shifts weights among already-unlocked rarities. It does not make Uncommon possible before 2x2 or Rare possible before 3x3.
+
+---
+
+```gdscript
+func get_roll_candidates_for_rarity(
+    selected_rarity: int,
+    current_grid_size: int
+) -> Array[TraitDefinition]
+```
+
+Returns the candidates for a selected rarity. If no Trait is eligible for the selected rarity, this falls back to all Traits eligible at the current grid size.
+
+This is the explicit fallback path used by prestige Trait rolls.
+
+---
+
+```gdscript
+func get_weighted_trait_for_roll(
+    candidates: Array[TraitDefinition],
+    roll_normalized: float
+) -> TraitDefinition
+```
+
+Selects one Trait from candidates using `TraitDefinition.weight` and a normalized roll value from `0.0` to less than `1.0`.
+
+This is the deterministic form of weighted Trait selection. Random prestige rolls call it with `randf()`.
 
 ---
 
@@ -666,7 +718,7 @@ func _get_eligible_traits_for_rarity(
 ) -> Array[TraitDefinition]
 ```
 
-Returns eligible Traits of a specific rarity.
+Internal implementation for `get_eligible_traits_for_rarity`.
 
 ---
 
@@ -775,10 +827,18 @@ Moves weight from one rarity bucket to another.
 ---
 
 ```gdscript
-func _roll_weighted_trait(candidates: Array[TraitDefinition]) -> TraitDefinition
+godot --headless --path squared-2 --script res://scripts/tests/verify_trait_roll_foundation.gd
 ```
 
-Rolls one Trait from candidates using `TraitDefinition.weight`.
+Runs the deterministic Trait Roll Foundation verification script.
+
+It checks:
+
+* 1x1 never unlocks Uncommon or Rare, even with Trait Luck.
+* 2x2 unlocks Uncommon but not Rare.
+* Trait Luck shifts weight only among already-unlocked rarity buckets.
+* `TraitDefinition.weight` affects deterministic Trait selection.
+* Empty selected-rarity buckets fall back to eligible Traits at the current grid size.
 
 ---
 

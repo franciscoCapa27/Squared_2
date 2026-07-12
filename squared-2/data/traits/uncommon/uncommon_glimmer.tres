@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_uglimmer"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_uglimmer"]
+
+[sub_resource type="Resource" id="Resource_uglimmer_value"]
+script = ExtResource("1_uglimmer")
+target_stat = "square_value"
+value = 1.32
+use_value_range = true
+value_min = 1.18
+value_max = 1.32
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[sub_resource type="Resource" id="Resource_uglimmer_respawn"]
+script = ExtResource("1_uglimmer")
+target_stat = "respawn_time"
+value = 0.92
+use_value_range = true
+value_min = 0.88
+value_max = 0.96
+roll_key = "respawn_time_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_uglimmer")
+id = "uncommon_glimmer"
+display_name = "Uncommon Glimmer"
+family_id = "glimmer"
+family_display_name = "Glimmer"
+description = "A brighter Glimmer square: +18% to +32% Squares and -4% to -12% respawn time."
+rarity = 1
+tags = Array[String](["value", "speed", "light", "glimmer"])
+weight = 0.75
+min_grid_tier = 2
+effect_components = Array[ExtResource("1_uglimmer")]([SubResource("Resource_uglimmer_value"), SubResource("Resource_uglimmer_respawn")])
+name_prefixes = Array[String](["Glimmering"])
+name_suffixes = Array[String](["of First Light"])
+visual_base_color_weight = Color(0.65882355, 0.8901961, 1, 1)
+visual_accent_color_weight = Color(1, 0.9843137, 0.58431375, 1)
+visual_glow_weight = 3
+visual_edge_complexity_weight = 2
+metadata/_custom_type_script = "uid://crmybp42r8q3a"

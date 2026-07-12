@@ -1,7 +1,7 @@
 extends Node
 
 const TRAIT_ROOT_PATH := "res://data/traits"
-const DEBUG_TRAIT_ROLLS := true
+const DEBUG_TRAIT_ROLLS := false
 
 var traits_by_id: Dictionary = {}
 var all_traits: Array[TraitDefinition] = []
@@ -37,19 +37,13 @@ func get_random_trait(current_grid_size: int) -> TraitDefinition:
 		print("Rarity weights: %s" % str(rarity_weights))
 		print("Selected rarity: %s" % _get_rarity_debug_name(selected_rarity))
 
-	var candidates: Array[TraitDefinition] = _get_eligible_traits_for_rarity(
+	var candidates: Array[TraitDefinition] = get_roll_candidates_for_rarity(
 		selected_rarity,
 		current_grid_size
 	)
 
 	if DEBUG_TRAIT_ROLLS:
-		print("Candidates for selected rarity: %s" % str(_get_trait_id_list(candidates)))
-
-	if candidates.is_empty():
-		candidates = _get_eligible_traits(current_grid_size)
-
-		if DEBUG_TRAIT_ROLLS:
-			print("Fallback candidates: %s" % str(_get_trait_id_list(candidates)))
+		print("Roll candidates: %s" % str(_get_trait_id_list(candidates)))
 
 	if candidates.is_empty():
 		if DEBUG_TRAIT_ROLLS:
@@ -57,7 +51,7 @@ func get_random_trait(current_grid_size: int) -> TraitDefinition:
 
 		return null
 
-	var selected_trait: TraitDefinition = _roll_weighted_trait(candidates)
+	var selected_trait: TraitDefinition = get_weighted_trait_for_roll(candidates, randf())
 
 	if DEBUG_TRAIT_ROLLS:
 		print("Selected trait: %s" % selected_trait.id)
@@ -99,11 +93,79 @@ func get_eligible_traits(current_grid_size: int) -> Array[TraitDefinition]:
 	return _get_eligible_traits(current_grid_size)
 
 
+func get_eligible_traits_for_rarity(
+	rarity: int,
+	current_grid_size: int
+) -> Array[TraitDefinition]:
+	return _get_eligible_traits_for_rarity(rarity, current_grid_size)
+
+
 func get_rarity_weights_for_grid(current_grid_size: int) -> Dictionary:
-	var base_weights: Dictionary = _get_base_rarity_weights(current_grid_size)
 	var trait_luck: float = GameState.get_permanent_stat_addition(GameIds.STAT_TRAIT_LUCK)
 
+	return get_rarity_weights_for_grid_with_luck(current_grid_size, trait_luck)
+
+
+func get_rarity_weights_for_grid_with_luck(
+	current_grid_size: int,
+	trait_luck: float
+) -> Dictionary:
+	var base_weights: Dictionary = _get_base_rarity_weights(current_grid_size)
+
 	return _apply_luck_to_rarity_weights(base_weights, trait_luck)
+
+
+func get_roll_candidates_for_rarity(
+	selected_rarity: int,
+	current_grid_size: int
+) -> Array[TraitDefinition]:
+	var candidates: Array[TraitDefinition] = _get_eligible_traits_for_rarity(
+		selected_rarity,
+		current_grid_size
+	)
+
+	if not candidates.is_empty():
+		return candidates
+
+	candidates = _get_eligible_traits(current_grid_size)
+
+	if DEBUG_TRAIT_ROLLS:
+		print("Fallback candidates: %s" % str(_get_trait_id_list(candidates)))
+
+	return candidates
+
+
+func get_weighted_trait_for_roll(
+	candidates: Array[TraitDefinition],
+	roll_normalized: float
+) -> TraitDefinition:
+	if candidates.is_empty():
+		return null
+
+	var total_weight: float = 0.0
+
+	for trait_definition: TraitDefinition in candidates:
+		total_weight += max(0.0, trait_definition.weight)
+
+	if total_weight <= 0.0:
+		var fallback_index: int = clampi(
+			int(floor(clampf(roll_normalized, 0.0, 0.999999) * candidates.size())),
+			0,
+			candidates.size() - 1
+		)
+
+		return candidates[fallback_index]
+
+	var roll: float = clampf(roll_normalized, 0.0, 0.999999) * total_weight
+	var cumulative_weight: float = 0.0
+
+	for trait_definition: TraitDefinition in candidates:
+		cumulative_weight += max(0.0, trait_definition.weight)
+
+		if roll < cumulative_weight:
+			return trait_definition
+
+	return candidates.back()
 
 
 func _load_traits_recursive(path: String) -> void:
@@ -411,24 +473,3 @@ func _apply_luck_transfer(
 
 	weights[from_rarity] = current_from_weight - actual_transfer
 	weights[to_rarity] = float(weights.get(to_rarity, 0.0)) + actual_transfer
-
-
-func _roll_weighted_trait(candidates: Array[TraitDefinition]) -> TraitDefinition:
-	var total_weight: float = 0.0
-
-	for trait_definition: TraitDefinition in candidates:
-		total_weight += max(0.0, trait_definition.weight)
-
-	if total_weight <= 0.0:
-		return candidates.pick_random() as TraitDefinition
-
-	var roll: float = randf() * total_weight
-	var cumulative_weight: float = 0.0
-
-	for trait_definition: TraitDefinition in candidates:
-		cumulative_weight += max(0.0, trait_definition.weight)
-
-		if roll <= cumulative_weight:
-			return trait_definition
-
-	return candidates.back()

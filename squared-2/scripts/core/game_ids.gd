@@ -13,7 +13,8 @@ const PASSIVE_VALUE_HARVESTER := "value_harvester"
 
 # Vertex upgrade IDs.
 const UPGRADE_UNLOCK_FIRST_GENERATOR := "unlock_first_generator"
-const UPGRADE_UNLOCK_VALUE_HARVESTER := "unlock_value_harvester"
+const UPGRADE_UNLOCK_VALUE_HARVESTER := "unlock_value_harvest"
+const UPGRADE_GEOMETRIC_INTUITION := "geometric_intuition"
 const UPGRADE_SHARPENED_ORIGIN := "sharpened_origin"
 
 # Achievement IDs.
@@ -23,11 +24,19 @@ const ACHIEVEMENT_FIRST_GENERATOR_UNLOCKED := "first_generator_unlocked"
 
 # Trait family IDs.
 const TRAIT_FAMILY_DENSE := "dense"
+const TRAIT_FAMILY_GLIMMER := "glimmer"
+const TRAIT_FAMILY_PATIENT := "patient"
 const TRAIT_FAMILY_QUICK := "quick"
 
 # Trait IDs.
 const TRAIT_COMMON_DENSE := "common_dense"
+const TRAIT_COMMON_GLIMMER := "common_glimmer"
+const TRAIT_COMMON_PATIENT := "common_patient"
 const TRAIT_COMMON_QUICK := "common_quick"
+const TRAIT_UNCOMMON_DENSE := "uncommon_dense"
+const TRAIT_UNCOMMON_GLIMMER := "uncommon_glimmer"
+const TRAIT_UNCOMMON_PATIENT := "uncommon_patient"
+const TRAIT_UNCOMMON_QUICK := "uncommon_quick"
 
 # Run stat IDs.
 const STAT_RUN_SQUARE_BASE_VALUE := "run_square_base_value"
