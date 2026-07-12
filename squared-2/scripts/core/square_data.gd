@@ -75,23 +75,94 @@ func generate_square_name() -> String:
 	if traits.is_empty():
 		return "Square %s" % coordinate
 
-	var primary_trait := _get_primary_title_trait()
+	var family_data: Dictionary = {}
 
-	if primary_trait == null:
+	for i: int in range(traits.size()):
+		var trait: TraitInstance = traits[i]
+		if trait == null or trait.definition == null:
+			continue
+
+		var family_key: String = _get_trait_family_key(trait)
+		if family_key == "":
+			continue
+
+		if not family_data.has(family_key):
+			family_data[family_key] = {
+				"stack_count": 0,
+				"max_rarity": -1,
+				"latest_index": -1
+			}
+
+		var info: Dictionary = family_data[family_key]
+		info.stack_count += 1
+		var rarity: int = int(trait.definition.rarity)
+		if rarity > info.max_rarity:
+			info.max_rarity = rarity
+		if i > info.latest_index:
+			info.latest_index = i
+
+	if family_data.is_empty():
 		return "Square %s" % coordinate
 
-	var primary_text := _get_trait_title_text(primary_trait)
-	var suffix_trait := _get_suffix_title_trait(primary_trait)
+	var family_keys: Array = family_data.keys()
+	family_keys.sort_custom(
+		func(a: String, b: String) -> bool:
+			var info_a: Dictionary = family_data[a]
+			var info_b: Dictionary = family_data[b]
 
-	if suffix_trait == null:
-		return "%s Square" % primary_text
+			if info_a.stack_count != info_b.stack_count:
+				return info_a.stack_count > info_b.stack_count
 
-	var suffix_text := _get_trait_title_text(suffix_trait)
+			if info_a.max_rarity != info_b.max_rarity:
+				return info_a.max_rarity > info_b.max_rarity
 
-	if suffix_text == "":
-		return "%s Square" % primary_text
+			if info_a.latest_index != info_b.latest_index:
+				return info_a.latest_index > info_b.latest_index
 
-	return "%s Square of %s" % [primary_text, suffix_text]
+			return a < b
+	)
+
+	var prefix_pool: Dictionary = {
+		"quick": ["Sharp", "Swift", "Keen"],
+		"dense": ["Heavy", "Deep", "Compact"],
+		"glimmer": ["Glimmering", "Bright", "Luminous"],
+		"patient": ["Patient", "Slow", "Still"],
+	}
+
+	var suffix_pool: Dictionary = {
+		"quick": ["of Haste", "of Motion", "of the First Click"],
+		"dense": ["of Weight", "of Mass", "of the Core"],
+		"glimmer": ["of First Light", "of Sparks", "of Wonder"],
+		"patient": ["of the Long Wait", "of Stored Time", "of the Quiet Pulse"],
+	}
+
+	var prefix_family: String = family_keys[0]
+	var prefix_stack: int = family_data[prefix_family].stack_count
+	var prefix_word: String = prefix_family
+
+	if prefix_pool.has(prefix_family):
+		var pool: Array = prefix_pool[prefix_family]
+		var idx: int = clamp(prefix_stack - 1, 0, pool.size() - 1)
+		prefix_word = pool[idx]
+
+	var suffix_family: String = ""
+	for key: String in family_keys:
+		if key != prefix_family:
+			suffix_family = key
+			break
+
+	if suffix_family == "":
+		return "%s Square" % prefix_word
+
+	var suffix_stack: int = family_data[suffix_family].stack_count
+	var suffix_word: String = "of " + suffix_family
+
+	if suffix_pool.has(suffix_family):
+		var pool: Array = suffix_pool[suffix_family]
+		var idx: int = clamp(suffix_stack - 1, 0, pool.size() - 1)
+		suffix_word = pool[idx]
+
+	return "%s Square %s" % [prefix_word, suffix_word]
 
 func has_traits() -> bool:
 	return traits.size() > 0
