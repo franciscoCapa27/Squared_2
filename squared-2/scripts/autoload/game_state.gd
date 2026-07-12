@@ -122,7 +122,7 @@ func prestige(save_after_prestige: bool = true) -> void:
 	vertices += gained_vertices
 	prestige_count += 1
 
-	spend_squares(get_prestige_required_squares())
+	squares = 0.0
 
 	PassiveSystem.reset_run_state_on_prestige()
 	RunUpgradeSystem.reset_run_state_on_prestige()
