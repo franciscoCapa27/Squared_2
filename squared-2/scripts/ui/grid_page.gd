@@ -148,7 +148,7 @@ func rebuild() -> void:
 		var square_button: SquareButton = square_button_scene.instantiate() as SquareButton
 		grid_root.add_child(square_button)
 
-		square_button.setup(square_data.id, "■")
+		square_button.setup(square_data.id)
 		square_button.set_square_data(square_data)
 		square_button.square_clicked.connect(_on_square_button_clicked)
 
