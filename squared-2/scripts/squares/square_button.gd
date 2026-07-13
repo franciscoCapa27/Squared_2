@@ -106,3 +106,21 @@ func set_square_data(p_square_data: SquareData) -> void:
 func apply_responsive_visual_size(_square_size: float) -> void:
 	# Body is textless; no visual scaling needed beyond layout.
 	pass
+
+
+func play_prestige_reveal() -> void:
+	if is_respawning:
+		return
+
+	# Quick scale pulse and slight brighten
+	if press_tween and press_tween.is_valid():
+		press_tween.kill()
+	scale = Vector2.ONE
+
+	var tw := create_tween().set_parallel(false)
+	tw.tween_property(self, "scale", Vector2(1.12, 1.12), 0.1).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "scale", Vector2.ONE, 0.3).set_ease(Tween.EASE_IN)
+
+	var old_mod := modulate
+	tw.parallel().tween_property(self, "modulate", old_mod * 1.3, 0.1).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "modulate", old_mod, 0.3).set_ease(Tween.EASE_IN)
