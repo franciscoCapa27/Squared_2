@@ -75,23 +75,74 @@ func generate_square_name() -> String:
 	if traits.is_empty():
 		return "Square %s" % coordinate
 
-	var primary_trait := _get_primary_title_trait()
+	var family_data: Dictionary = {}
 
-	if primary_trait == null:
+	for i: int in range(traits.size()):
+		var trait_iter: TraitInstance = traits[i]
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var family_key: String = _get_trait_family_key(trait_iter)
+		if family_key == "":
+			continue
+
+		if not family_data.has(family_key):
+			family_data[family_key] = {
+				"stack_count": 0,
+				"max_rarity": -1,
+				"latest_index": -1,
+				"first_definition": null,
+			}
+
+		var info: Dictionary = family_data[family_key]
+		info.stack_count += 1
+		var rarity: int = int(trait_iter.definition.rarity)
+		if rarity > info.max_rarity:
+			info.max_rarity = rarity
+		if i > info.latest_index:
+			info.latest_index = i
+
+		if info.get("first_definition", null) == null and trait_iter.definition != null:
+			info["first_definition"] = trait_iter.definition
+
+	if family_data.is_empty():
 		return "Square %s" % coordinate
 
-	var primary_text := _get_trait_title_text(primary_trait)
-	var suffix_trait := _get_suffix_title_trait(primary_trait)
+	var family_keys: Array = family_data.keys()
+	family_keys.sort_custom(
+		func(a: String, b: String) -> bool:
+			var info_a: Dictionary = family_data[a]
+			var info_b: Dictionary = family_data[b]
 
-	if suffix_trait == null:
-		return "%s Square" % primary_text
+			if info_a.stack_count != info_b.stack_count:
+				return info_a.stack_count > info_b.stack_count
 
-	var suffix_text := _get_trait_title_text(suffix_trait)
+			if info_a.max_rarity != info_b.max_rarity:
+				return info_a.max_rarity > info_b.max_rarity
 
-	if suffix_text == "":
-		return "%s Square" % primary_text
+			if info_a.latest_index != info_b.latest_index:
+				return info_a.latest_index > info_b.latest_index
 
-	return "%s Square of %s" % [primary_text, suffix_text]
+			return a < b
+	)
+
+	var prefix_family: String = family_keys[0]
+	var prefix_info: Dictionary = family_data[prefix_family]
+	var prefix_word: String = _get_family_prefix_word(prefix_family, prefix_info)
+
+	var suffix_family: String = ""
+	for key: String in family_keys:
+		if key != prefix_family:
+			suffix_family = key
+			break
+
+	if suffix_family == "":
+		return "%s Square" % prefix_word
+
+	var suffix_info: Dictionary = family_data[suffix_family]
+	var suffix_word: String = _get_family_suffix_word(suffix_family, suffix_info)
+
+	return "%s Square %s" % [prefix_word, suffix_word]
 
 func has_traits() -> bool:
 	return traits.size() > 0
@@ -149,6 +200,7 @@ func _rebuild_tags() -> void:
 func _rebuild_visual_profile() -> void:
 	var profile := VisualProfile.new()
 
+	# Start with per‑trait material contributions.
 	profile.edge_complexity = min(10, traits.size())
 
 	var rarity_score := 0
@@ -173,10 +225,57 @@ func _rebuild_visual_profile() -> void:
 	profile.edge_complexity = clamp(profile.edge_complexity, 0, 10)
 	profile.distortion_level = clamp(profile.distortion_level, 0, 10)
 
+	# --------------------------------------------------------------------
+	# Family‑material identity overlay (issue #68).
+	# --------------------------------------------------------------------
+	var family_groups := {}
+	for trait_iter in traits:
+		if trait_iter.definition == null:
+			continue
+		var fid: String = trait_iter.definition.family_id.strip_edges()
+		if fid == "":
+			continue
+
+		var info: Dictionary = family_groups.get(fid, {"stack": 0, "max_rarity": -1})
+		info.stack += 1
+		var r: int = int(trait_iter.definition.rarity)
+		if r > info.max_rarity:
+			info.max_rarity = r
+		family_groups[fid] = info
+
+	var primary_family := ""
+	var best_stack := -1
+	for fid in family_groups:
+		if family_groups[fid].stack > best_stack:
+			best_stack = family_groups[fid].stack
+			primary_family = fid
+
+	var fam_stack := 0
+	var fam_rarity := 0
+	if family_groups.has(primary_family):
+		fam_stack = family_groups[primary_family].stack
+		fam_rarity = family_groups[primary_family].max_rarity
+
+	var family_profile := VisualProfile.get_family_profile(primary_family, fam_stack, fam_rarity)
+
+	profile.base_color = family_profile.base_color
+	profile.accent_color = family_profile.accent_color
+
+	profile.glow_level = clampi(profile.glow_level + family_profile.glow_level, 0, 10)
+	profile.edge_complexity = clampi(profile.edge_complexity + family_profile.edge_complexity, 0, 10)
+	profile.gloss_level = clampi(profile.gloss_level + family_profile.gloss_level, 0, 10)
+	profile.distortion_level = clampi(profile.distortion_level + family_profile.distortion_level, 0, 10)
+
+	if family_profile.pulse_style != "none":
+		profile.pulse_style = family_profile.pulse_style
+	if family_profile.particle_style != "none":
+		profile.particle_style = family_profile.particle_style
+	if family_profile.pattern_style != "none":
+		profile.pattern_style = family_profile.pattern_style
+
 	profile.dominant_tag = _get_most_common_tag(tag_counts, 0)
 	profile.secondary_tag = _get_most_common_tag(tag_counts, 1)
-	profile.base_color = _get_color_for_dominant_tag(profile.dominant_tag)
-	profile.accent_color = _get_color_for_dominant_tag(profile.secondary_tag)
+
 	visual_profile = profile
 	
 func _get_color_for_dominant_tag(tag: String) -> Color:
@@ -193,6 +292,17 @@ func _get_color_for_dominant_tag(tag: String) -> Color:
 			return Color(0.85, 0.65, 1.0, 1.0)
 		"corruption":
 			return Color(0.65, 1.0, 0.65, 1.0)
+		# --------------------------------------------------------------------
+		# Family‑tag colours (issue #68).
+		# --------------------------------------------------------------------
+		"quick":
+			return Color(0.2, 0.6, 1.0, 1.0)       # bright electric blue
+		"dense":
+			return Color(0.9, 0.4, 0.15, 1.0)     # warm heavy orange‑brown
+		"glimmer":
+			return Color(1.0, 0.85, 0.4, 1.0)     # luminous gold
+		"patient":
+			return Color(0.5, 0.5, 1.0, 1.0)      # soft purple‑blue
 		_:
 			if traits.size() > 0:
 				return Color(0.85, 0.85, 1.0, 1.0)
@@ -270,6 +380,36 @@ func _get_trait_family_key(trait_iter: TraitInstance) -> String:
 
 	return trait_iter.definition.id
 
+func _get_family_prefix_word(family_key: String, family_info: Dictionary) -> String:
+	var count: int = family_info.stack_count
+	var def: TraitDefinition = family_info.get("first_definition", null)
+	if def != null:
+		var pool: Array = def.name_prefixes
+		if pool.size() > 0:
+			var idx: int = clampi(count - 1, 0, pool.size() - 1)
+			return pool[idx]
+		# Fallback: use the family's display name if present.
+		var family_display := def.family_display_name.strip_edges()
+		if family_display != "":
+			return family_display
+	# Ultimate safety fallback.
+	return family_key
+
+func _get_family_suffix_word(family_key: String, family_info: Dictionary) -> String:
+	var count: int = family_info.stack_count
+	var def: TraitDefinition = family_info.get("first_definition", null)
+	if def != null:
+		var pool: Array = def.name_suffixes
+		if pool.size() > 0:
+			var idx: int = clampi(count - 1, 0, pool.size() - 1)
+			return pool[idx]
+		# Fallback: create a suffix from the family's display name.
+		var family_display := def.family_display_name.strip_edges()
+		if family_display != "":
+			return "of " + family_display
+	# Ultimate safety fallback.
+	return "of " + family_key
+
 func get_trait_stack_counts() -> Dictionary:
 	var counts: Dictionary = {}
 
@@ -336,7 +476,74 @@ func get_trait_stack_display_text() -> String:
 		parts.append(display)
 
 	return ", ".join(parts)
+
+
+func get_family_stack_summary() -> String:
+	if traits.is_empty():
+		return "None"
 	
+	var family_groups: Dictionary = {}
+	
+	for trait_iter in traits:
+		if trait_iter.definition == null:
+			continue
+		
+		var family_key := _get_trait_family_key(trait_iter)
+		if family_key == "":
+			continue
+		
+		var info: Dictionary = family_groups.get(family_key, {
+			"stack_count": 0,
+			"max_rarity": -1,
+			"first_definition": null
+		})
+		info.stack_count += 1
+		var rarity_val := int(trait_iter.definition.rarity)
+		if rarity_val > info.max_rarity:
+			info.max_rarity = rarity_val
+		if info.first_definition == null:
+			info.first_definition = trait_iter.definition
+		family_groups[family_key] = info
+	
+	if family_groups.is_empty():
+		return "None"
+	
+	var sorted_families := family_groups.keys()
+	sorted_families.sort_custom(
+		func(a, b):
+			var info_a: Dictionary = family_groups[a]
+			var info_b: Dictionary = family_groups[b]
+			if info_a.max_rarity != info_b.max_rarity:
+				return info_a.max_rarity > info_b.max_rarity
+			if info_a.stack_count != info_b.stack_count:
+				return info_a.stack_count > info_b.stack_count
+			return a < b
+	)
+	
+	var lines: Array[String] = []
+	for family_key: String in sorted_families:
+		var info: Dictionary = family_groups[family_key]
+		var def: TraitDefinition = info.first_definition
+		
+		var family_display: String
+		if def != null and def.family_display_name.strip_edges() != "":
+			family_display = def.family_display_name
+		else:
+			family_display = family_key
+		
+		var roman: String = _to_roman(info.stack_count)
+		var rarity_name: String = ""
+		if info.max_rarity >= 0:
+			rarity_name = TraitDefinition.rarity_name_from_value(info.max_rarity)
+		
+		if rarity_name == "":
+			lines.append("%s %s" % [family_display, roman])
+		else:
+			lines.append("%s %s (%s)" % [family_display, roman, rarity_name])
+	
+	return "\n".join(lines)
+
+
 func _get_primary_title_trait() -> TraitInstance:
 	if traits.is_empty():
 		return null

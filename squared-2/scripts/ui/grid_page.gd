@@ -24,6 +24,7 @@ var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
 	EventBus.squares_changed.connect(_on_squares_changed)
+	EventBus.prestige_trait_reveal.connect(_on_prestige_trait_reveal)
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 
 	upgrade_grid_button.pressed.connect(_on_upgrade_grid_button_pressed)
@@ -148,8 +149,9 @@ func rebuild() -> void:
 		var square_button: SquareButton = square_button_scene.instantiate() as SquareButton
 		grid_root.add_child(square_button)
 
-		square_button.setup(square_data.id, "■")
+		square_button.setup(square_data.id)
 		square_button.set_square_data(square_data)
+		_clean_square_button_text(square_button)
 		square_button.square_clicked.connect(_on_square_button_clicked)
 
 		square_buttons_by_id[square_data.id] = square_button
@@ -168,6 +170,7 @@ func refresh_buttons() -> void:
 			continue
 
 		square_button.set_square_data(square_data)
+		_clean_square_button_text(square_button)
 
 	_refresh_upgrade_button()
 	_apply_grid_sizing()
@@ -216,7 +219,42 @@ func _get_grid_upgrade_hint_text(next_grid_size: int) -> String:
 func _on_square_button_clicked(square_id: String) -> void:
 	GameState.click_square(square_id)
 	square_selected.emit(square_id)
-	
+
+	var button: SquareButton = square_buttons_by_id.get(square_id) as SquareButton
+	if button:
+		var square_data: SquareData = GameState.get_square(square_id)
+		if square_data:
+			var payout: float = SquareCalculator.calculate_manual_payout(square_data)
+			_spawn_float_gain(button, payout)
+
+
+func _spawn_float_gain(button: SquareButton, payout: float) -> void:
+	# Instantiate a simple Label to serve as the floating gain indicator.
+	var label := Label.new()
+	var formatted := NumberFormatter.amount(payout)
+	label.text = ("+%s" % formatted) if payout >= 0.0 else formatted
+
+	# Some basic overrides so the text reads well across themes.
+	label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	label.add_theme_font_size_override("font_size", 14)
+
+	# Start invisible; the tween will fade it in/out.
+	label.modulate = Color(1.0, 1.0, 1.0, 0.0)
+
+	# Position near the button's centre, offset upward.
+	var btn_center := button.global_position + button.size * 0.5
+	var local_pos := btn_center - grid_area.global_position
+	label.position = local_pos + Vector2(-20, -20)
+
+	grid_area.add_child(label)
+
+	var tw := create_tween()
+	tw.set_parallel(false)
+
+	tw.tween_property(label, "modulate:a", 1.0, 0.05)
+	tw.tween_property(label, "position:y", label.position.y - 30, 0.6).set_ease(Tween.EASE_OUT)
+	tw.parallel().tween_property(label, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+	tw.tween_callback(label.queue_free)
 
 
 func _on_upgrade_grid_button_pressed() -> void:
@@ -226,3 +264,39 @@ func _on_upgrade_grid_button_pressed() -> void:
 func _on_squares_changed(_value: float) -> void:
 	_refresh_upgrade_button()
 	refresh_feature_visibility(false)
+
+
+func _on_prestige_trait_reveal(target_square_id: String, trait_family: String, trait_rarity: String, trait_roman_stack: String, square_title: String) -> void:
+	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
+	if button == null:
+		return
+
+	button.play_prestige_reveal()
+
+	var label := Label.new()
+	var reveal_text: String = trait_rarity + " · " + trait_roman_stack + "\n" + square_title
+	label.text = reveal_text
+	label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
+	label.add_theme_font_size_override("font_size", 16)
+	label.modulate.a = 0.0
+
+	var btn_center := button.global_position + button.size * 0.5
+	var local_pos := btn_center - grid_area.global_position
+	label.position = local_pos + Vector2(-80, -60)
+
+	grid_area.add_child(label)
+
+	var tw := create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(label, "modulate:a", 1.0, 0.2)
+	tw.tween_interval(3.0)
+	tw.tween_property(label, "modulate:a", 0.0, 0.8)
+	tw.tween_callback(label.queue_free)
+
+func _clean_square_button_text(button: SquareButton) -> void:
+	if button == null:
+		return
+	button.text = ""
+	for child in button.get_children():
+		if child is Label:
+			child.hide()

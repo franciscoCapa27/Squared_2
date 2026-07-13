@@ -70,7 +70,7 @@ func _build_square_details_text(square_data: SquareData) -> String:
 	var manual_payout: float = SquareCalculator.calculate_manual_payout(square_data)
 	var respawn_time: float = SquareCalculator.calculate_respawn_time(square_data)
 
-	var trait_stack_text: String = square_data.get_trait_stack_display_text()
+	var trait_stack_text: String = square_data.get_family_stack_summary()
 
 	if trait_stack_text == "":
 		trait_stack_text = "None"
@@ -93,4 +93,3 @@ func _format_string_array(values: Array[String]) -> String:
 		return "None"
 
 	return ", ".join(values)
-	

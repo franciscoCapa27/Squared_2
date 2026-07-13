@@ -8,17 +8,18 @@ var is_respawning: bool = false
 var respawn_timer: SceneTreeTimer = null
 var normal_modulate: Color = Color.WHITE
 
-func setup(id: String, display_text: String = "■") -> void:
+## A tween dedicated to the quick press/compression animation on manual click.
+var press_tween: Tween
+
+func setup(id: String) -> void:
 	square_id = id
-	text = display_text
-	tooltip_text = "Square %s" % square_id
 	_apply_square_visuals()
 	_reset_visual_state()
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	pressed.connect(_on_pressed)
-	
+
 	_apply_theme()
 
 func _apply_theme() -> void:
@@ -48,6 +49,7 @@ func _on_pressed() -> void:
 	if square_data != null:
 		respawn_time = SquareCalculator.calculate_respawn_time(square_data)
 
+	_play_press_animation()
 	_start_respawn(respawn_time)
 
 func refresh_visuals() -> void:
@@ -64,11 +66,23 @@ func _apply_square_visuals() -> void:
 
 	normal_modulate = square_data.visual_profile.base_color
 
+func _play_press_animation() -> void:
+	# Kill any previous animation that is still running so the scale state is clean.
+	if press_tween and press_tween.is_valid():
+		press_tween.kill()
+	scale = Vector2.ONE
+
+	press_tween = create_tween().set_parallel(false)
+	# Squash slightly
+	press_tween.tween_property(self, "scale", Vector2(0.92, 0.92), 0.05).set_ease(Tween.EASE_IN)
+	# Spring back
+	press_tween.tween_property(self, "scale", Vector2.ONE, 0.1).set_ease(Tween.EASE_OUT)
+
+
 func _start_respawn(respawn_time: float) -> void:
 	is_respawning = true
 	disabled = true
 	modulate = Color(normal_modulate.r, normal_modulate.g, normal_modulate.b, 0.25)
-	text = "·"
 
 	respawn_timer = get_tree().create_timer(respawn_time)
 	await respawn_timer.timeout
@@ -82,7 +96,6 @@ func _finish_respawn() -> void:
 	_reset_visual_state()
 
 func _reset_visual_state() -> void:
-	text = "■"
 	modulate = normal_modulate
 
 func set_square_data(p_square_data: SquareData) -> void:
@@ -90,16 +103,24 @@ func set_square_data(p_square_data: SquareData) -> void:
 	square_data = p_square_data
 	_apply_square_visuals()
 	
-func apply_responsive_visual_size(square_size: float) -> void:
-	if square_size < 28.0:
-		text = ""
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
-	elif square_size < 52.0:
-		text = ""
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
-	elif square_size < 72.0:
-		text = "■"
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("tiny"))
-	else:
-		text = "■"
-		add_theme_font_size_override("font_size", ThemeSystem.get_font_size("detail"))
+func apply_responsive_visual_size(_square_size: float) -> void:
+	# Body is textless; no visual scaling needed beyond layout.
+	pass
+
+
+func play_prestige_reveal() -> void:
+	if is_respawning:
+		return
+
+	# Quick scale pulse and slight brighten
+	if press_tween and press_tween.is_valid():
+		press_tween.kill()
+	scale = Vector2.ONE
+
+	var tw := create_tween().set_parallel(false)
+	tw.tween_property(self, "scale", Vector2(1.12, 1.12), 0.1).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "scale", Vector2.ONE, 0.3).set_ease(Tween.EASE_IN)
+
+	var old_mod := modulate
+	tw.parallel().tween_property(self, "modulate", old_mod * 1.3, 0.1).set_ease(Tween.EASE_OUT)
+	tw.tween_property(self, "modulate", old_mod, 0.3).set_ease(Tween.EASE_IN)
