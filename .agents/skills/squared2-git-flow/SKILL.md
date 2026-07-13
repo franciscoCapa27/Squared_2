@@ -100,6 +100,19 @@ Session mode rules:
 - The final session PR into `develop` is the review boundary. Do not treat session branch merges as production-ready.
 - Session branches do not deploy. `main` remains the only automatic production deploy branch.
 
+Wrapper commands:
+
+```text
+./run_ticket.sh --max 1
+./run_ticket.sh --issue 123
+./run_ticket.sh --max 10 --session overnight-ui-pass
+./run_ticket.sh --finalize-session session/aider/YYYY-MM-DD-name
+./run_ticket.sh --list-ready
+./run_ticket.sh --dry-run --max 10 --session overnight-ui-pass
+```
+
+Use `--session-branch session/aider/...` to resume an exact existing session branch. Use `--no-auto-merge-session` only when debugging the wrapper; normal overnight runs should merge ticket PRs into the session branch so closing and unblocking can happen. Use `--no-final-session-pr` only when the final integration PR should be created manually.
+
 Hotfix flow:
 
 ```text
