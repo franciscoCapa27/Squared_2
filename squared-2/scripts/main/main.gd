@@ -301,17 +301,15 @@ func _on_story_message(message: String) -> void:
 
 func _refresh_prestige_panel() -> void:
 	var vertices_gain: int = max(1, GameState.calculate_vertices_gain())
+	var cost_value: float = GameState.get_prestige_required_squares()
+	var cost_text: String = NumberFormatter.amount(cost_value)
+	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
-	if GameState.can_prestige():
-		prestige_button.text = "Prestige"
-		prestige_details.text = "Gain %s Vertices • A square gains a permanent Trait • Reset this run" % [
-			NumberFormatter.integer_amount(vertices_gain)
-		]
-	else:
-		prestige_button.text = "Prestige"
-		prestige_details.text = "Requires %s Squares • Next reset adds a permanent Trait to a square • Cost grows 1.75x per Prestige" % [
-			NumberFormatter.amount(GameState.get_prestige_required_squares())
-		]
+	prestige_button.text = "Prestige"
+	prestige_details.text = "Cost: %s Squares • Gain %s Vertices • A square gains a permanent Trait • Reset this run" % [
+		cost_text,
+		vertex_text,
+	]
 	prestige_description.text = "Reset this run to gain Vertices and roll a random Trait."
 		
 func _refresh_achievement_summary() -> void:
