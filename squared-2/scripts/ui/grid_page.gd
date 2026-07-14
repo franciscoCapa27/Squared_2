@@ -289,7 +289,7 @@ func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: S
 	reveal_panel.setup_data(trait_family_display, trait_rarity_display, square_title, target_square_id)
 
 	# Wait a frame for the panel's children to be laid out, then position and animate.
-	_position_reveal_panel(reveal_panel, button)
+	_position_reveal_panel(reveal_panel, target_square_id)
 
 
 func _remove_reveal_panel() -> void:
@@ -298,14 +298,24 @@ func _remove_reveal_panel() -> void:
 	current_reveal_panel = null
 
 
-func _position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_button: SquareButton) -> void:
+func _position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_square_id: String) -> void:
 	# Defer to the next idle frame so the panel has a chance to measure its size.
-	call_deferred("_deferred_position_reveal_panel", reveal_panel, target_button)
+	call_deferred("_deferred_position_reveal_panel", reveal_panel, target_square_id)
 
 
-func _deferred_position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_button: SquareButton) -> void:
+func _deferred_position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_square_id: String) -> void:
 	# Wait one more frame for full layout.
 	await get_tree().process_frame
+
+	if not is_instance_valid(reveal_panel):
+		return
+
+	var target_button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
+	if target_button == null or not is_instance_valid(target_button):
+		reveal_panel.queue_free()
+		if current_reveal_panel == reveal_panel:
+			current_reveal_panel = null
+		return
 
 	var btn_center_global := target_button.global_position + target_button.size * 0.5
 	var local_pos := btn_center_global - grid_area.global_position
