@@ -17,9 +17,12 @@ const MAX_GRID_GAP := 10
 @onready var grid_upgrade_feature_visibility: FeaturePanelVisibility = %GridUpgradeFeatureVisibility
 
 var square_button_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
+var prestige_reveal_scene: PackedScene = preload("res://scenes/ui/PrestigeRevealPanel.tscn")
+
 var square_buttons_by_id: Dictionary = {}
 var has_discovered_current_grid_upgrade: bool = false
 var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
+var current_reveal_panel: PrestigeRevealPanel = null
 
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
@@ -266,32 +269,81 @@ func _on_squares_changed(_value: float) -> void:
 	refresh_feature_visibility(false)
 
 
-func _on_prestige_trait_reveal(target_square_id: String, trait_family: String, trait_rarity: String, trait_roman_stack: String, square_title: String) -> void:
+func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String) -> void:
 	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
 	if button == null:
 		return
 
 	button.play_prestige_reveal()
 
-	var label := Label.new()
-	var reveal_text: String = trait_rarity + " · " + trait_roman_stack + "\n" + square_title
-	label.text = reveal_text
-	label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
-	label.add_theme_font_size_override("font_size", 16)
-	label.modulate.a = 0.0
+	# Remove any previous reveal panel so only one is active.
+	_remove_reveal_panel()
 
-	var btn_center := button.global_position + button.size * 0.5
-	var local_pos := btn_center - grid_area.global_position
-	label.position = local_pos + Vector2(-80, -60)
+	var reveal_panel := prestige_reveal_scene.instantiate() as PrestigeRevealPanel
+	if reveal_panel == null:
+		return
 
-	grid_area.add_child(label)
+	grid_area.add_child(reveal_panel)
+	current_reveal_panel = reveal_panel
 
+	reveal_panel.setup_data(trait_family_display, trait_rarity_display, square_title, target_square_id)
+
+	# Wait a frame for the panel's children to be laid out, then position and animate.
+	_position_reveal_panel(reveal_panel, button)
+
+
+func _remove_reveal_panel() -> void:
+	if current_reveal_panel and is_instance_valid(current_reveal_panel):
+		current_reveal_panel.queue_free()
+	current_reveal_panel = null
+
+
+func _position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_button: SquareButton) -> void:
+	# Defer to the next idle frame so the panel has a chance to measure its size.
+	call_deferred("_deferred_position_reveal_panel", reveal_panel, target_button)
+
+
+func _deferred_position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_button: SquareButton) -> void:
+	# Wait one more frame for full layout.
+	await get_tree().process_frame
+
+	var btn_center_global := target_button.global_position + target_button.size * 0.5
+	var local_pos := btn_center_global - grid_area.global_position
+
+	var panel_size := reveal_panel.size
+	if panel_size == Vector2.ZERO:
+		panel_size = reveal_panel.get_rect().size
+
+	var center_desired := local_pos - panel_size / 2.0
+	var grid_size := grid_area.size
+
+	# Clamp the panel position so it stays fully inside the grid_area.
+	var final_pos := Vector2(
+		clamp(center_desired.x, 0.0, max(0.0, grid_size.x - panel_size.x)),
+		clamp(center_desired.y, 0.0, max(0.0, grid_size.y - panel_size.y))
+	)
+
+	reveal_panel.position = final_pos
+	reveal_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	reveal_panel.visible = true
+
+	_play_reveal_animation(reveal_panel)
+
+
+func _play_reveal_animation(reveal_panel: PrestigeRevealPanel) -> void:
 	var tw := create_tween()
 	tw.set_parallel(false)
-	tw.tween_property(label, "modulate:a", 1.0, 0.2)
-	tw.tween_interval(3.0)
-	tw.tween_property(label, "modulate:a", 0.0, 0.8)
-	tw.tween_callback(label.queue_free)
+
+	tw.tween_property(reveal_panel, "modulate:a", 1.0, 0.3).set_ease(Tween.EASE_OUT)
+	tw.tween_interval(2.5)
+	tw.tween_property(reveal_panel, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+	tw.tween_callback(func():
+		if is_instance_valid(reveal_panel):
+			reveal_panel.queue_free()
+			if current_reveal_panel == reveal_panel:
+				current_reveal_panel = null
+	)
+
 
 func _clean_square_button_text(button: SquareButton) -> void:
 	if button == null:
