@@ -283,7 +283,9 @@ func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: S
 	if reveal_panel == null:
 		return
 
-	grid_area.add_child(reveal_panel)
+	# GridArea is a CenterContainer and would override the panel position.
+	# Attach the overlay to this Control so its global position follows the target square.
+	add_child(reveal_panel)
 	current_reveal_panel = reveal_panel
 
 	reveal_panel.setup_data(trait_family_display, trait_rarity_display, square_title, target_square_id)
@@ -318,22 +320,22 @@ func _deferred_position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_s
 		return
 
 	var btn_center_global := target_button.global_position + target_button.size * 0.5
-	var local_pos := btn_center_global - grid_area.global_position
 
 	var panel_size := reveal_panel.size
 	if panel_size == Vector2.ZERO:
 		panel_size = reveal_panel.get_rect().size
 
-	var center_desired := local_pos - panel_size / 2.0
-	var grid_size := grid_area.size
+	var grid_top_left := grid_area.global_position
+	var grid_bottom_right := grid_top_left + grid_area.size
+	var center_desired := btn_center_global - panel_size / 2.0
 
 	# Clamp the panel position so it stays fully inside the grid_area.
-	var final_pos := Vector2(
-		clamp(center_desired.x, 0.0, max(0.0, grid_size.x - panel_size.x)),
-		clamp(center_desired.y, 0.0, max(0.0, grid_size.y - panel_size.y))
+	var final_global_pos := Vector2(
+		clamp(center_desired.x, grid_top_left.x, max(grid_top_left.x, grid_bottom_right.x - panel_size.x)),
+		clamp(center_desired.y, grid_top_left.y, max(grid_top_left.y, grid_bottom_right.y - panel_size.y))
 	)
 
-	reveal_panel.position = final_pos
+	reveal_panel.global_position = final_global_pos
 	reveal_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	reveal_panel.visible = true
 

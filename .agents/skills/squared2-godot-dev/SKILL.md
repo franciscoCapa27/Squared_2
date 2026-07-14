@@ -96,6 +96,33 @@ Use the lightest verification that meaningfully covers the change:
 
 Always report verification in the PR body. If Godot is unavailable locally, say so plainly and include static checks performed.
 
+## Godot CLI Setup And Checks
+
+The project currently targets Godot 4.6. Install the matching Godot 4.6 stable macOS application from the official Godot download or with Homebrew:
+
+```bash
+brew install --cask godot
+```
+
+The CLI is included inside the application bundle. If `godot` is not already on `PATH`, expose it for Codex, Aider, and terminal sessions:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+ln -sf "/Applications/Godot.app/Contents/MacOS/Godot" "$HOME/.local/bin/godot"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zprofile"
+source "$HOME/.zprofile"
+godot --version
+```
+
+Run these checks from the repository root after gameplay, scene, or GDScript changes:
+
+```bash
+godot --headless --path squared-2 --editor --quit
+git diff --check
+```
+
+The headless editor boot imports project resources and parses referenced scenes/scripts without launching the interactive game. Do not add committed verifier scripts just to replace this check. Use actual Godot playtesting for interaction, timing, layout, and game-feel validation.
+
 ## Planning Issues
 
 Good Squared² development issues should include:
