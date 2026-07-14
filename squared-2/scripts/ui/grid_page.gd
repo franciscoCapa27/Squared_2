@@ -267,6 +267,25 @@ func _on_squares_changed(_value: float) -> void:
 
 
 func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String, previous_square_title: String) -> void:
+	# The reveal signal fires before GameState emits grid_changed. Defer until the
+	# rebuilt SquareButton instances are available.
+	call_deferred(
+		"_show_prestige_reveal",
+		target_square_id,
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		square_title
+	)
+
+
+func _show_prestige_reveal(
+	target_square_id: String,
+	trait_family_display: String,
+	trait_rarity_display: String,
+	previous_square_title: String,
+	square_title: String
+) -> void:
 	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
 	if button == null:
 		return
