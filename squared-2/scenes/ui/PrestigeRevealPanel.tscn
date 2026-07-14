@@ -17,19 +17,22 @@ mouse_filter = 2
 layout_mode = 2
 alignment = 1
 
-[node name="%TraitLabel" type="Label" parent="VBox"]
+[node name="TraitLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Quick - Rare"
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="%SquareContainer" type="Control" parent="VBox"]
+[node name="SquareContainer" type="Control" parent="VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 2
 custom_minimum_size = Vector2(64, 64)
 
-[node name="%TitleLabel" type="Label" parent="VBox"]
+[node name="TitleLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "A1"
 horizontal_alignment = 1
