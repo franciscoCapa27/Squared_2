@@ -21,6 +21,7 @@ const PRESTIGE_COST_MULTIPLIER := 1.75
 var squares: float = 0.0
 var vertices: int = 0
 var prestige_count: int = 0
+var cheat_square_value_enabled: bool = false
 
 var grid_size: int = INITIAL_GRID_SIZE
 var square_ids: Array[String] = [INITIAL_SQUARE_ID]

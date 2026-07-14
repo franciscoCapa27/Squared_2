@@ -6,6 +6,8 @@ static func calculate_manual_payout(square_data: SquareData) -> float:
 		return 0.0
 
 	var value: float = square_data.base_value
+	if GameState.cheat_square_value_enabled:
+		value *= 100.0
 
 	value *= GameState.get_permanent_stat_multiplier(GameIds.STAT_SQUARE_BASE_VALUE)
 	value *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_SQUARE_BASE_VALUE)
