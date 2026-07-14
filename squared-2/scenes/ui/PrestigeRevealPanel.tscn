@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://da6vbvk0sov7c"]
+
+[ext_resource type="Script" path="res://scripts/ui/prestige_reveal_panel.gd" id="1_4g5k8"]
+
+[node name="PrestigeRevealPanel" type="PanelContainer"]
+script = ExtResource("1_4g5k8")
+layout_mode = 2
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_right = 200.0
+offset_bottom = 160.0
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+
+[node name="%TraitLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Quick - Rare"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="%SquareContainer" type="Control" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
+custom_minimum_size = Vector2(64, 64)
+
+[node name="%TitleLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "A1"
+horizontal_alignment = 1
+autowrap_mode = 3
