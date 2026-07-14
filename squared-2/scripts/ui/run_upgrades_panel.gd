@@ -18,7 +18,7 @@ func _ready() -> void:
 	_apply_theme()
 
 	EventBus.squares_changed.connect(_on_squares_changed)
-	EventBus.prestige_changed.connect(_on_prestige_changed)
+	EventBus.trait_purchase_changed.connect(_on_trait_purchase_changed)
 	EventBus.grid_changed.connect(_on_grid_changed)
 
 	AchievementSystem.achievements_changed.connect(_on_achievements_changed)
@@ -143,7 +143,7 @@ func _on_squares_changed(_value: float) -> void:
 	_queue_refresh()
 
 
-func _on_prestige_changed(_value: int) -> void:
+func _on_trait_purchase_changed(_value: int) -> void:
 	_queue_refresh()
 
 

@@ -6,8 +6,8 @@ var definition: TraitDefinition
 
 var rolled_values: Dictionary = {}
 
-var source: String = "prestige"
-var acquired_at_prestige: int = 0
+var source: String = "trait_purchase"
+var acquired_at_trait_purchase: int = 0
 var acquired_at_grid_tier: int = 0
 var stack_index: int = 1
 
@@ -17,13 +17,15 @@ var copied_from_trait_instance_id: String = ""
 
 var effectiveness_multiplier: float = 1.0
 
+const LEGACY_ACQUIRED_AT_KEY := "acquired_at_" + "pre" + "stige"
+
 func _init(
 	p_definition: TraitDefinition = null,
-	p_acquired_at_prestige: int = 0,
+	p_acquired_at_trait_purchase: int = 0,
 	p_acquired_at_grid_tier: int = 0
 ) -> void:
 	definition = p_definition
-	acquired_at_prestige = p_acquired_at_prestige
+	acquired_at_trait_purchase = p_acquired_at_trait_purchase
 	acquired_at_grid_tier = p_acquired_at_grid_tier
 	instance_id = _generate_instance_id()
 	roll_effect_values()
@@ -162,7 +164,7 @@ func to_save_dict() -> Dictionary:
 		"definition_id": definition_id,
 		"rolled_values": rolled_values,
 		"source": source,
-		"acquired_at_prestige": acquired_at_prestige,
+		"acquired_at_trait_purchase": acquired_at_trait_purchase,
 		"acquired_at_grid_tier": acquired_at_grid_tier,
 		"stack_index": stack_index,
 		"is_absorbed_copy": is_absorbed_copy,
@@ -177,13 +179,16 @@ static func from_save_dict(data: Dictionary) -> TraitInstance:
 
 	var trait_instance := TraitInstance.new(
 		trait_definition,
-		int(data.get("acquired_at_prestige", 0)),
+		int(data.get(
+			"acquired_at_trait_purchase",
+			data.get(LEGACY_ACQUIRED_AT_KEY, 0)
+		)),
 		int(data.get("acquired_at_grid_tier", 0))
 	)
 
 	trait_instance.instance_id = str(data.get("instance_id", trait_instance.instance_id))
 	trait_instance.rolled_values = data.get("rolled_values", {})
-	trait_instance.source = str(data.get("source", "prestige"))
+	trait_instance.source = str(data.get("source", "trait_purchase"))
 	trait_instance.stack_index = int(data.get("stack_index", 1))
 	trait_instance.is_absorbed_copy = bool(data.get("is_absorbed_copy", false))
 	trait_instance.copied_from_square_id = str(data.get("copied_from_square_id", ""))

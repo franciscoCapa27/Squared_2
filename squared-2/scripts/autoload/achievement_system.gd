@@ -9,7 +9,7 @@ var unlocked_achievements: Dictionary = {}
 func _ready() -> void:
 	EventBus.squares_changed.connect(_on_any_progress_value_changed)
 	EventBus.vertices_changed.connect(_on_any_progress_value_changed)
-	EventBus.prestige_changed.connect(_on_any_progress_value_changed)
+	EventBus.trait_purchase_changed.connect(_on_any_progress_value_changed)
 	EventBus.grid_changed.connect(_on_any_progress_changed)
 	EventBus.grid_upgraded.connect(_on_grid_upgraded)
 	EventBus.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
@@ -131,8 +131,8 @@ func _get_condition_current_value(achievement: AchievementDefinition) -> float:
 			return _get_total_squares_generated()
 		AchievementDefinition.ConditionType.CURRENT_SQUARES:
 			return GameState.squares
-		AchievementDefinition.ConditionType.PRESTIGE_COUNT:
-			return float(GameState.prestige_count)
+		AchievementDefinition.ConditionType.TRAIT_PURCHASE_COUNT:
+			return float(GameState.trait_purchase_count)
 		AchievementDefinition.ConditionType.VERTICES_EARNED:
 			return float(_get_total_vertex_upgrade_currency_earned_approximation())
 		AchievementDefinition.ConditionType.VERTEX_UPGRADE_PURCHASED:

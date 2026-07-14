@@ -24,7 +24,7 @@ var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
 	EventBus.squares_changed.connect(_on_squares_changed)
-	EventBus.prestige_trait_reveal.connect(_on_prestige_trait_reveal)
+	EventBus.trait_purchase_reveal.connect(_on_trait_purchase_reveal)
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 
 	upgrade_grid_button.pressed.connect(_on_upgrade_grid_button_pressed)
@@ -266,11 +266,11 @@ func _on_squares_changed(_value: float) -> void:
 	refresh_feature_visibility(false)
 
 
-func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String, previous_square_title: String) -> void:
+func _on_trait_purchase_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String, previous_square_title: String) -> void:
 	# The reveal signal fires before GameState emits grid_changed. Defer until the
 	# rebuilt SquareButton instances are available.
 	call_deferred(
-		"_show_prestige_reveal",
+		"_show_trait_purchase_reveal",
 		target_square_id,
 		trait_family_display,
 		trait_rarity_display,
@@ -279,7 +279,7 @@ func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: S
 	)
 
 
-func _show_prestige_reveal(
+func _show_trait_purchase_reveal(
 	target_square_id: String,
 	trait_family_display: String,
 	trait_rarity_display: String,
@@ -290,7 +290,7 @@ func _show_prestige_reveal(
 	if button == null:
 		return
 
-	button.play_prestige_reveal(
+	button.play_trait_purchase_reveal(
 		trait_family_display,
 		trait_rarity_display,
 		previous_square_title,

@@ -2,7 +2,7 @@
 
 ## 1. Project Summary
 
-**Squared²** is a Godot 4.6 incremental / prestige game built around a grid of Squares.
+**Squared²** is a Godot 4.6 incremental / trait purchase game built around a grid of Squares.
 
 The player:
 
@@ -12,11 +12,12 @@ The player:
    * Grid expansion.
    * Run upgrades.
    * Passive generator levels.
-3. Prestiges to:
+3. Buy Traits to:
 
-   * Reset run progress.
-   * Gain `Vertices`.
+   * Spend the current Buy Trait cost.
+   * Gain cost-based `Vertices`.
    * Roll one random Trait onto an existing Square.
+   * Keep all other run state intact.
 4. Spends `Vertices` on permanent upgrades.
 5. Unlocks additional mechanics through Vertex upgrades, achievements, grid expansion, and run progression.
 
@@ -28,7 +29,7 @@ The game architecture is intentionally resource-driven. Most content is defined 
 
 ### 2.1 Run Layer
 
-The run layer resets on prestige.
+The run layer persists through Buy Trait. It resets only on a new game; a future Condensation system will own the deeper reset.
 
 Includes:
 
@@ -54,12 +55,12 @@ PassiveGeneratorInstance
 
 ### 2.2 Permanent Layer
 
-The permanent layer persists through prestige.
+The permanent layer persists through Buy Trait.
 
 Includes:
 
 * `Vertices`.
-* Prestige count.
+* Buy Trait count.
 * Grid size.
 * Existing Squares.
 * Traits applied to Squares.
@@ -168,7 +169,7 @@ Used by:
 * Passive panel.
 * Run upgrades panel.
 * Grid upgrade button.
-* Prestige panel.
+* Buy Trait panel.
 
 ---
 
@@ -182,19 +183,19 @@ Used by:
 
 * Main resource label.
 * Vertex shop.
-* Prestige panel.
+* Buy Trait panel.
 
 ---
 
 ```gdscript
-signal prestige_changed(value: int)
+signal trait_purchase_changed(value: int)
 ```
 
-Emitted when prestige count changes.
+Emitted when trait purchase count changes.
 
 Used by:
 
-* Prestige label.
+* Buy Trait label.
 * Run upgrades panel.
 * Achievements.
 
@@ -387,7 +388,7 @@ section_gap
 card_gap
 inner_margin
 grid_gap
-prestige_gap
+trait_purchase_gap
 ```
 
 ---
@@ -424,7 +425,7 @@ Creates a slightly stronger panel style.
 
 Used for:
 
-* Prestige panel.
+* Buy Trait panel.
 * Important containers.
 
 ---
@@ -655,7 +656,7 @@ func get_roll_candidates_for_rarity(
 
 Returns the candidates for a selected rarity. If no Trait is eligible for the selected rarity, this falls back to all Traits eligible at the current grid size.
 
-This is the explicit fallback path used by prestige Trait rolls.
+This is the explicit fallback path used by trait purchase Trait rolls.
 
 ---
 
@@ -668,7 +669,7 @@ func get_weighted_trait_for_roll(
 
 Selects one Trait from candidates using `TraitDefinition.weight` and a normalized roll value from `0.0` to less than `1.0`.
 
-This is the deterministic form of weighted Trait selection. Random prestige rolls call it with `randf()`.
+This is the deterministic form of weighted Trait selection. Random trait purchase rolls call it with `randf()`.
 
 ---
 
@@ -1108,7 +1109,7 @@ GameState should own:
 * Core currencies.
 * Grid state.
 * Square data.
-* Prestige.
+* Buy Trait.
 * Vertex upgrades.
 * Permanent stats.
 
@@ -1162,10 +1163,12 @@ Grid upgrade cost multiplier per grid tier.
 ---
 
 ```gdscript
-const PRESTIGE_REQUIRED_SQUARES := 10.0
+const TRAIT_PURCHASE_COST_BASE := 15.0
+const TRAIT_PURCHASE_COST_MULTIPLIER := 1.75
+const TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR := 25.0
 ```
 
-Minimum Squares required to prestige.
+Base cost and scaling for Buy Trait.
 
 ---
 
@@ -1192,7 +1195,7 @@ var squares: float = 0.0
 
 Current run currency.
 
-Resets on prestige.
+Persists through Buy Trait.
 
 ---
 
@@ -1200,19 +1203,19 @@ Resets on prestige.
 var vertices: int = 0
 ```
 
-Permanent prestige currency.
+Permanent currency earned by buying Traits.
 
-Persists through prestige.
+Persists through Buy Trait.
 
 ---
 
 ```gdscript
-var prestige_count: int = 0
+var trait_purchase_count: int = 0
 ```
 
-Total number of prestiges.
+Total number of trait purchases.
 
-Persists through prestige.
+Persists through trait purchase.
 
 ---
 
@@ -1351,50 +1354,46 @@ Returns `true` if successful.
 ---
 
 ```gdscript
-func can_prestige() -> bool
+func can_buy_trait() -> bool
 ```
 
-Returns whether player has enough Squares to prestige.
+Returns whether the player has enough Squares for the current Buy Trait cost.
 
 ---
 
 ```gdscript
-func calculate_vertices_gain() -> int
+func calculate_trait_purchase_vertices_gain() -> int
 ```
 
-Calculates Vertex gain from current Squares.
+Calculates Vertex gain from the current Buy Trait cost.
 
 Current formula:
 
 ```text
-floor(sqrt(squares / VERTEX_GAIN_DIVISOR))
+max(1, floor(sqrt(trait_purchase_cost / TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR)))
 ```
 
-Prestige clamps this to at least `1`.
+Buy Trait clamps this to at least `1`.
 
 ---
 
 ```gdscript
-func prestige() -> void
+func buy_trait() -> void
 ```
 
-Performs prestige.
+Performs trait purchase.
 
 Current behavior:
 
-1. Check `can_prestige`.
-2. Calculate gained Vertices.
-3. Add Vertices.
-4. Increment prestige count.
-5. Reset Squares to 0.
-6. Reset PassiveSystem run state.
-7. Reset RunUpgradeSystem run state.
-8. Apply random Trait to random Square using current grid size.
-9. Emit core state changes.
-10. Emit grid changed.
-11. Save game.
+1. Check `can_buy_trait`.
+2. Spend exactly the current Buy Trait cost from Squares.
+3. Calculate and add cost-based Vertices.
+4. Increment `trait_purchase_count`.
+5. Apply one random Trait to one random Square using the current grid size.
+6. Emit core state changes, the reveal, and grid changed.
+7. Save game.
 
-Prestige does **not** expand grid.
+Buy Trait does **not** reset Squares, run upgrades, passive levels, timers, or square run state. It does **not** expand the grid.
 
 ---
 
@@ -1662,7 +1661,7 @@ Includes:
 ```text
 squares
 vertices
-prestige_count
+trait_purchase_count
 grid_size
 square_ids
 squares_by_id
@@ -1793,11 +1792,7 @@ Permanently unlocks generator.
 
 ---
 
-```gdscript
-func reset_run_state_on_prestige() -> void
-```
-
-Resets run levels/timers but keeps permanent unlocks.
+There is no Buy Trait reset hook. Run state is cleared only by `reset_to_new_game()`; future Condensation work may add a separate reset boundary.
 
 ---
 
@@ -1875,7 +1870,7 @@ var run_upgrade_levels: Dictionary = {}
 
 Maps run upgrade ID to current level.
 
-Resets on prestige.
+Persists through Buy Trait; cleared only by a new game.
 
 ---
 
@@ -1978,11 +1973,7 @@ Flow:
 
 ---
 
-```gdscript
-func reset_run_state_on_prestige() -> void
-```
-
-Clears run upgrade levels and run stats.
+Run upgrade state persists through Buy Trait and is cleared only by a new game.
 
 ---
 
@@ -1990,7 +1981,7 @@ Clears run upgrade levels and run stats.
 func reset_to_new_game() -> void
 ```
 
-Same as prestige reset for this system.
+Clears all run upgrades for a new game.
 
 ---
 
@@ -2393,7 +2384,7 @@ Highest payout this Square has generated.
 ---
 
 ```gdscript
-var created_at_prestige: int
+var created_at_trait_purchase: int
 var created_at_grid_tier: int
 ```
 
@@ -2498,10 +2489,10 @@ Loaded definition reference.
 ---
 
 ```gdscript
-var applied_at_prestige: int
+var applied_at_trait_purchase: int
 ```
 
-Prestige count when applied.
+Buy Trait count when applied.
 
 ---
 
@@ -2589,16 +2580,16 @@ var level: int
 
 Run level.
 
-Resets on prestige.
+Persists through Buy Trait; cleared only by a new game.
 
 ---
 
 ```gdscript
-var self_prestige_level: int
-var can_self_prestige: bool
+var self_condensation_level: int
+var can_self_condensation: bool
 ```
 
-Reserved for future passive self-prestige.
+Reserved for future passive Condensation behavior.
 
 ---
 
@@ -2844,7 +2835,7 @@ Important variables:
 @export var cost_vertices: int
 @export var is_visible_by_default: bool
 @export var sort_order: int
-@export var required_prestige_count: int
+@export var required_trait_purchase_count: int
 @export var required_grid_size: int
 @export var required_upgrade_ids: Array[String]
 @export var hidden_until_requirements_met: bool
@@ -2857,7 +2848,7 @@ Important functions:
 
 ```gdscript
 func requirements_are_met(
-    prestige_count: int,
+    trait_purchase_count: int,
     grid_size: int,
     unlocked_vertex_upgrades: Dictionary
 ) -> bool
@@ -2933,8 +2924,8 @@ Important variables:
 @export var base_level_cost: float
 @export var level_cost_multiplier: float
 @export var targeting_mode: TargetingMode
-@export var self_prestige_is_permanent: bool
-@export var self_prestige_unlock_level: int
+@export var self_condensation_is_permanent: bool
+@export var self_condensation_unlock_level: int
 ```
 
 Targeting modes:
@@ -3005,7 +2996,7 @@ Condition types:
 ```gdscript
 ALWAYS
 CURRENT_SQUARES
-PRESTIGE_COUNT
+TRAIT_PURCHASE_COUNT
 GRID_SIZE
 ACHIEVEMENT_UNLOCKED
 PASSIVE_GENERATOR_LEVEL
@@ -3106,7 +3097,7 @@ section_gap
 card_gap
 inner_margin
 grid_gap
-prestige_gap
+trait_purchase_gap
 ```
 
 ---
@@ -3325,7 +3316,7 @@ Main responsibilities:
 * Refresh labels.
 * Refresh panels.
 * Apply global theme to major layout nodes.
-* Handle prestige button.
+* Handle trait purchase button.
 * Handle top/navigation buttons.
 * Handle story messages.
 
@@ -3336,9 +3327,9 @@ Common onready vars:
 ```gdscript
 @onready var squares_label: Label
 @onready var vertices_label: Label
-@onready var prestige_label: Label
+@onready var trait_purchase_label: Label
 @onready var story_label: Label
-@onready var prestige_button: Button
+@onready var trait_purchase_button: Button
 ```
 
 Page refs:
@@ -3369,8 +3360,8 @@ Layout refs:
 @onready var left_panel: VBoxContainer
 @onready var right_panel: VBoxContainer
 @onready var center_page_root: Control
-@onready var prestige_panel: PanelContainer
-@onready var prestige_details: Label
+@onready var trait_purchase_panel: PanelContainer
+@onready var trait_purchase_details: Label
 ```
 
 ### Important Functions
@@ -3448,10 +3439,10 @@ achievements
 ---
 
 ```gdscript
-func _refresh_prestige_panel() -> void
+func _refresh_trait_purchase_panel() -> void
 ```
 
-Updates prestige button/detail text.
+Updates trait purchase button/detail text.
 
 ---
 
@@ -4225,7 +4216,7 @@ Recent / relevant commits:
 ```bash
 git commit -m "Add trait luck rarity weighting"
 git commit -m "Add trait luck vertex upgrade"
-git commit -m "Decouple grid expansion from prestige"
+git commit -m "Decouple grid expansion from trait purchase"
 git commit -m "Add run-based square upgrades"
 git commit -m "Add UI theme system foundation"
 git commit -m "Apply theme to cards and buttons"

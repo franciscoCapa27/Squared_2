@@ -11,9 +11,9 @@ metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
 
 [resource]
 script = ExtResource("2_upesh")
-id = "first_prestige"
-display_name = "First Prestige"
-description = "Prestige for the first time."
+id = "first_trait_purchase"
+display_name = "First Trait Purchase"
+description = "Buy a Trait for the first time."
 category = 2
 condition_type = 4
 sort_order = 20

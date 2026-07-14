@@ -4,7 +4,7 @@ class_name RunUpgradeUnlockCondition
 enum ConditionType {
 	ALWAYS,
 	CURRENT_SQUARES,
-	PRESTIGE_COUNT,
+	TRAIT_PURCHASE_COUNT,
 	GRID_SIZE,
 	ACHIEVEMENT_UNLOCKED,
 	PASSIVE_GENERATOR_LEVEL,
@@ -24,8 +24,8 @@ func is_met() -> bool:
 			return true
 		ConditionType.CURRENT_SQUARES:
 			return GameState.squares >= threshold
-		ConditionType.PRESTIGE_COUNT:
-			return float(GameState.prestige_count) >= threshold
+		ConditionType.TRAIT_PURCHASE_COUNT:
+			return float(GameState.trait_purchase_count) >= threshold
 		ConditionType.GRID_SIZE:
 			return float(GameState.grid_size) >= threshold
 		ConditionType.ACHIEVEMENT_UNLOCKED:
@@ -48,8 +48,8 @@ func get_display_text() -> String:
 			return "Always available"
 		ConditionType.CURRENT_SQUARES:
 			return "Requires %s Squares" % NumberFormatter.amount(threshold)
-		ConditionType.PRESTIGE_COUNT:
-			return "Requires %s Prestiges" % NumberFormatter.integer_amount(int(threshold))
+		ConditionType.TRAIT_PURCHASE_COUNT:
+			return "Requires %s Trait Purchases" % NumberFormatter.integer_amount(int(threshold))
 		ConditionType.GRID_SIZE:
 			return "Requires Grid Size %sx%s" % [int(threshold), int(threshold)]
 		ConditionType.ACHIEVEMENT_UNLOCKED:

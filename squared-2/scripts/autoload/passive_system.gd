@@ -80,13 +80,6 @@ func unlock_generator(generator_id: String) -> void:
 	passive_state_changed.emit()
 	EventBus.passive_generator_unlocked.emit(generator_id)
 
-func reset_run_state_on_prestige() -> void:
-	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
-		if generator_instance.is_unlocked:
-			generator_instance.reset_run_state()
-	discovered_visible_generators.clear()
-	passive_state_changed.emit()
-
 func can_upgrade_generator(generator_id: String) -> bool:
 	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
 

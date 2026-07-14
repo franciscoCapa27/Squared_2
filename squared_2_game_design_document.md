@@ -2,9 +2,9 @@
 
 ## 1. High-Level Concept
 
-**Squared²** is a fast-prestige incremental game about a lonely square in empty space slowly becoming a universe of interconnected squares, traits, geometry, and emergent systems.
+**Squared²** is a fast Buy Trait incremental game about a lonely square in empty space slowly becoming a universe of interconnected squares, Traits, geometry, and emergent systems.
 
-The player begins with a single square. They click it to gain **Squares**, buy upgrades, automate collection, and eventually prestige. Prestiging resets the current run but permanently changes the board by giving one square a lasting **Trait**. Over time, the board expands from one square into a grid, and every player’s board becomes a unique geometric history of prestiges, choices, luck, and strategy.
+The player begins with a single square. They click it to gain **Squares**, buy upgrades, automate collection, and buy Traits. Buying a Trait spends the current Squares cost, awards cost-based **Vertices**, and permanently changes one square without resetting the run. Over time, the board expands from one square into a grid, and every player’s board becomes a unique geometric history of Trait purchases, choices, luck, and strategy. A later **Condensation** system will provide the deeper reset layer.
 
 The core emotional fantasy is:
 
@@ -12,17 +12,17 @@ The core emotional fantasy is:
 
 The core mechanical fantasy is:
 
-> Fast resets, permanent square evolution, randomized traits, and grid-based synergies.
+> Fast Buy Trait decisions, permanent square evolution, randomized Traits, and grid-based synergies.
 
 ---
 
 ## 2. Core Pillars
 
-### 2.1 Fast Prestige
+### 2.1 Fast Buy Trait
 
-Prestige should happen quickly, especially early. The first prestige should happen within a few minutes.
+Buying Traits should happen quickly, especially early. The first Buy Trait should happen within a few minutes.
 
-Prestige is not a rare endgame event. It is the central rhythm of the game.
+Buy Trait is not a rare endgame event. It is the central rhythm of the game.
 
 The player should think:
 
@@ -49,7 +49,7 @@ Squares should eventually be renameable.
 
 ### 2.3 Every Board Is Different
 
-The game should create different boards for different players through randomized Traits, limited choices, prestige timing, square placement, and later board manipulation.
+The game should create different boards for different players through randomized Traits, limited choices, trait purchase timing, square placement, and later board manipulation.
 
 The player should feel:
 
@@ -67,7 +67,7 @@ These styles should exist early but should not fully fork until later.
 
 The game should feel lonely, abstract, cosmic, and gradually alive.
 
-The square begins as a primitive shape in the void. Through repetition, prestige, and accumulation, it becomes the seed of a larger geometric universe.
+The square begins as a primitive shape in the void. Through repetition, trait purchase, and accumulation, it becomes the seed of a larger geometric universe.
 
 Tone keywords:
 
@@ -108,13 +108,13 @@ This is intentionally simple and slightly funny. It also makes the game language
 
 > Use squares to upgrade squares so squares make more Squares.
 
-### 4.2 Prestige Currency: Vertices
+### 4.2 Permanent Currency: Vertices
 
-The prestige currency is called **Vertices**.
+The permanent currency earned by buying Traits is called **Vertices**.
 
 Example:
 
-> Prestige → gain Vertices.
+> Buy Trait → gain Vertices.
 
 Vertices are used for permanent upgrades, increased control, stronger starts, and later systems.
 
@@ -137,9 +137,9 @@ Examples:
 - Hungry Square of the Third Row
 - Crowned Square of the First Plane
 
-### 4.4 Prestige Action Name
+### 4.4 Buy Trait Action Name
 
-For now, use **Prestige** for clarity.
+For now, use **Buy Trait** for clarity.
 
 Later, the button/action could be renamed if a better thematic word emerges.
 
@@ -155,7 +155,7 @@ Possible future names:
 
 Potential final phrasing:
 
-> Prestige the grid. Gain Vertices. Preserve one new Trait.
+> Buy a Trait. Gain Vertices. Keep the run.
 
 ---
 
@@ -169,25 +169,25 @@ Potential final phrasing:
 4. Square respawns after a delay.
 5. Player buys run upgrades.
 6. Player generates Squares faster.
-7. Prestige becomes available.
+7. Buy Trait becomes available.
 
-### 5.2 Prestige Loop
+### 5.2 Buy Trait Loop
 
-1. Player reaches prestige threshold.
-2. Player decides whether to prestige now or push longer for more Vertices.
-3. Player prestiges.
-4. Current run resets.
-5. Player gains Vertices.
-6. One square gains a permanent randomized Trait.
+1. Player can afford the current Buy Trait cost.
+2. Player decides whether to Buy Trait now or save for expansion.
+3. Player spends the cost and gains cost-based Vertices.
+4. The purchase count increases, raising the next cost.
+5. One square gains a permanent randomized Trait.
+6. Squares, upgrades, passives, timers, and other run state remain intact.
 7. The board becomes stronger and more unique.
-8. Player begins again.
+8. Player continues the current run.
 
 ### 5.3 Long-Term Loop
 
 1. Fill current grid tier with traited squares.
 2. Unlock next grid size.
 3. Unlock better Trait rarities.
-4. Unlock more player choice during prestige.
+4. Unlock more player choice during trait purchase.
 5. Unlock limited board manipulation.
 6. Continue building a personal geometric universe.
 
@@ -208,17 +208,17 @@ Available mechanics:
 - respawn speed upgrades
 - passive clickers
 - passive clicker upgrades
-- first prestige unlock
+- first trait purchase unlock
 
 Goal:
 
-Teach the player the basic loop and reach prestige quickly.
+Teach the player the basic loop and reach trait purchase quickly.
 
 ### 6.2 Tier 1 — The First Grid
 
 Grid size: **2x2**
 
-Unlocked after first prestige.
+Unlocked after first trait purchase.
 
 New mechanics:
 
@@ -244,7 +244,7 @@ New mechanics:
 - stronger positional effects
 - more meaningful board patterns
 - first limited square swapping
-- more prestige choice
+- more trait purchase choice
 
 Goal:
 
@@ -261,34 +261,35 @@ Possible future mechanics:
 - square families
 - shape bonuses
 - geometric patterns
-- larger prestige layers
+- larger trait purchase layers
 - automation specialization
 - active/idle path separation
 
 ---
 
-## 7. Prestige Timing and Decision
+## 7. Buy Trait Timing and Decision
 
-Prestige should always involve a meaningful decision.
+Buy Trait should always involve a meaningful decision.
 
 The player should ask:
 
-> “Do I reset now for another permanent square change, or do I push longer for more Vertices?”
+> “Do I buy a Trait now, or do I push longer to afford expansion and a stronger next purchase?”
 
-### 7.1 Prestige Reward Components
+### 7.1 Buy Trait Reward Components
 
-Prestige grants:
+Buy Trait grants:
 
-1. **Vertices** — permanent currency based on total Squares earned this run.
+1. **Vertices** — permanent currency based on the current Buy Trait cost.
 2. **A new Trait** — permanent modifier added to a square.
 3. Potential grid progression if requirements are met.
 
-### 7.2 Example Prestige Formula
+### 7.2 Example Buy Trait Formula
 
-Initial placeholder formula:
+Current formula:
 
 ```text
-Vertices gained = floor(sqrt(total_squares_earned / 1000))
+Buy Trait cost = ceil(15 * 1.75 ^ buy_trait_count)
+Vertices gained = max(1, floor(sqrt(buy_trait_cost / 25)))
 ```
 
 Example values:
@@ -302,19 +303,19 @@ Example values:
 | 100,000 | 10 |
 | 1,000,000 | 31 |
 
-This creates diminishing returns, encouraging frequent early prestige while still rewarding longer pushes.
+The cost curve makes each purchase progressively harder, while the cost-based Vertex formula increases the permanent reward as the player commits to later purchases.
 
 This formula is only a starting point and will require tuning.
 
 ---
 
-## 8. Prestige Choice Evolution
+## 8. Buy Trait Choice Evolution
 
-Early prestige should be simple and random.
+Early trait purchase should be simple and random.
 
-Later prestige should introduce controlled randomness.
+Later trait purchase should introduce controlled randomness.
 
-### 8.1 Early Prestige
+### 8.1 Early Buy Trait
 
 At first:
 
@@ -374,13 +375,13 @@ Initial movement should be very limited:
 
 > Swap 2 squares once.
 
-This may be unlocked as a permanent upgrade, prestige reward, or special action.
+This may be unlocked as a permanent upgrade, trait purchase reward, or special action.
 
 ### 9.3 Future Movement Options
 
 Possible later mechanics:
 
-- one swap per prestige
+- one swap per trait purchase
 - swap two adjacent squares only
 - rotate a 2x2 block
 - lock one square in place
@@ -435,7 +436,7 @@ Possible visual channels:
 1. **Base color** — dominant Trait family, square archetype, or current alignment.
 2. **Secondary color / accent** — highest rarity, special status, or secondary family.
 3. **Glow intensity** — total power, total generated Squares, or Trait count.
-4. **Gloss / material** — rarity tier, prestige depth, or special evolution stage.
+4. **Gloss / material** — rarity tier, trait purchase depth, or special evolution stage.
 5. **Edge complexity** — number of Traits, age, or square importance.
 6. **Border thickness** — total modifier strength or defensive/stability theme.
 7. **Inner pattern** — dominant category such as active, passive, row, column, chance, growth.
@@ -502,7 +503,7 @@ Possible families:
 - storage
 - growth
 - conversion
-- prestige
+- trait purchase
 - movement
 - copy
 - absorb
@@ -541,7 +542,7 @@ Clicking or hovering a square should show exact details:
 - active status effects
 - manual clicks
 - passive clicks
-- prestige history
+- trait purchase history
 
 This preserves readability while still allowing deep complexity.
 
@@ -582,7 +583,7 @@ Possible future paths:
 
 - active clicking build
 - passive automation build
-- burst prestige build
+- burst trait purchase build
 - long-run scaling build
 - row/column synergy build
 - chance/gambling build
@@ -614,7 +615,7 @@ Traits may affect:
 - rows
 - columns
 - diagonals
-- prestige currency gain
+- trait purchase currency gain
 - chance effects
 - temporary states
 - square movement
@@ -649,9 +650,9 @@ Examples:
 - converting Squares into Vertices
 - storing overkill payout
 - creating chain reactions
-- modifying prestige formulas
+- modifying trait purchase formulas
 - changing passive clicker behavior
-- growing stronger across prestiges
+- growing stronger across trait purchases
 - unlocking new square states
 
 ---
@@ -688,7 +689,7 @@ Square
 - base_name
 - coordinate
 - grid_position
-- created_at_prestige
+- created_at_trait_purchase
 - created_at_grid_tier
 - traits[]
 - permanent_tags[]
@@ -708,7 +709,7 @@ id: unique identifier
 base_name: generated name, e.g. "Quick Square"
 display_name: player rename, optional
 coordinate: A1, A2, B1, etc.
-created_at_prestige: prestige count when created
+created_at_trait_purchase: trait purchase count when created
 created_at_grid_tier: grid tier when created
 ```
 
@@ -751,7 +752,7 @@ lifetime_squares_generated
 lifetime_manual_clicks
 lifetime_passive_clicks
 times_traited
-times_selected_for_prestige
+times_selected_for_trait_purchase
 highest_single_payout
 ```
 
@@ -809,7 +810,7 @@ TraitInstance
 - instance_id
 - rolled_values
 - source
-- acquired_at_prestige
+- acquired_at_trait_purchase
 - acquired_at_grid_tier
 - stack_index
 - is_absorbed_copy
@@ -903,7 +904,7 @@ Trigger events could include:
 - on_manual_click
 - on_passive_click
 - on_square_respawn
-- on_prestige
+- on_trait_purchase
 - on_trait_gained
 - on_adjacent_clicked
 - on_row_clicked
@@ -1098,7 +1099,7 @@ row
 column
 chance
 growth
-prestige
+trait purchase
 copy
 absorb
 corruption
@@ -1345,7 +1346,7 @@ Tags:
 Effect:
 
 - gains +1% temporary Squares when adjacent squares are clicked
-- temporary bonus resets on prestige
+- temporary bonus resets on new game or future Condensation
 
 Tags:
 
@@ -1433,11 +1434,11 @@ Tags:
 
 Effect:
 
-- this square slightly increases Vertices gained on prestige
+- this square slightly increases Vertices gained on trait purchase
 
 Tags:
 
-- prestige
+- trait purchase
 - conversion
 
 ---
@@ -1454,7 +1455,7 @@ Permanent upgrades should:
 - increase player agency
 - unlock quality-of-life
 - create new strategic options
-- improve prestige rewards
+- improve trait purchase rewards
 - modify randomness carefully
 
 ### 23.2 Early Vertex Upgrade Examples
@@ -1481,19 +1482,19 @@ Passive clickers are 10% stronger.
 
 #### Choose Trait I
 
-On prestige, choose 1 Trait from 2 random options.
+On trait purchase, choose 1 Trait from 2 random options.
 
 #### Choose Trait II
 
-On prestige, choose 1 Trait from 3 random options.
+On trait purchase, choose 1 Trait from 3 random options.
 
 #### Choose Square I
 
-On prestige, choose the affected square from 2 random squares.
+On trait purchase, choose the affected square from 2 random squares.
 
 #### Choose Square II
 
-On prestige, choose the affected square from 3 random squares.
+On trait purchase, choose the affected square from 3 random squares.
 
 #### Favor the Empty
 
@@ -1501,7 +1502,7 @@ Squares without Traits are more likely to be selected.
 
 #### First Swap
 
-Unlock one square swap per prestige, starting at 3x3 grid tier.
+Unlock one square swap per trait purchase, starting at 3x3 grid tier.
 
 ---
 
@@ -1515,13 +1516,13 @@ To unlock the next grid tier:
 
 Example:
 
-- 1x1 → 2x2 after first prestige.
+- 1x1 → 2x2 after first trait purchase.
 - 2x2 → 3x3 after all four squares have at least one Trait.
 - 3x3 → 4x4 after all nine squares have at least one Trait.
 
 ### 24.2 Duplicate Traits on Same Square
 
-Prestige may hit a square that already has a Trait.
+Buy Trait may hit a square that already has a Trait.
 
 This is allowed.
 
@@ -1554,7 +1555,7 @@ Do not add too much control too early.
 
 The game should include fast, minimal storytelling.
 
-The story should not interrupt the incremental flow. It should appear as short lines, unlock messages, prestige text, and atmospheric fragments.
+The story should not interrupt the incremental flow. It should appear as short lines, unlock messages, trait purchase text, and atmospheric fragments.
 
 ### 25.1 Story Premise
 
@@ -1581,7 +1582,7 @@ Thought becomes universe.
 Story should be delivered through:
 
 - first-time unlock messages
-- prestige messages
+- trait purchase messages
 - tier transition text
 - square inspection flavor
 - rare event text
@@ -1606,11 +1607,11 @@ First passive clicker:
 
 > The square learns to continue without you.
 
-First prestige unlock:
+First trait purchase unlock:
 
 > Collapse is not an ending.
 
-First prestige:
+First trait purchase:
 
 > Something remains.
 
@@ -1654,14 +1655,14 @@ The first playable version should prove the core hook only.
 - Squares currency
 - Basic run upgrades
 - Passive clicker
-- Prestige button
+- Buy Trait button
 - Vertices currency
 - 2x2 grid unlock
 - Random Traits
-- Traits persist after prestige
+- Traits persist after trait purchase
 - Basic visual evolution from aggregate square data
 - Square detail panel
-- Basic prestige screen
+- Basic trait purchase screen
 - Save/load
 
 ### 26.2 MVP Should Not Include Yet
@@ -1671,7 +1672,7 @@ The first playable version should prove the core hook only.
 - square movement
 - complex story system
 - hundreds of Traits
-- late-game prestige layers
+- late-game trait purchase layers
 - active/idle specialization trees
 - offline progress
 - mobile UI
@@ -1679,7 +1680,7 @@ The first playable version should prove the core hook only.
 
 ### 26.3 MVP Success Test
 
-The MVP is successful if the player wants to prestige again to see what happens to the board.
+The MVP is successful if the player wants to trait purchase again to see what happens to the board.
 
 Core question:
 
@@ -1725,9 +1726,9 @@ Handles normal run upgrades:
 - value upgrades
 - respawn upgrades
 - passive clicker upgrades
-- prestige unlock
+- trait purchase unlock
 
-#### Prestige Screen
+#### Buy Trait Screen
 
 Shows:
 
@@ -1763,7 +1764,7 @@ Save file should include:
 - lifetime Squares
 - current Vertices
 - lifetime Vertices
-- prestige count
+- trait purchase count
 - grid tier
 - grid size
 - square data
@@ -1778,7 +1779,7 @@ Save file should include:
 
 ### 28.1 Too Much Randomness
 
-If the player has no agency, prestige may feel frustrating.
+If the player has no agency, trait purchase may feel frustrating.
 
 Solution:
 
@@ -1794,11 +1795,11 @@ Use aggregate visual channels and detail panels.
 
 ### 28.3 Too Slow Early Game
 
-If the first prestige takes too long, the player never sees the real hook.
+If the first trait purchase takes too long, the player never sees the real hook.
 
 Solution:
 
-First prestige should happen quickly.
+First trait purchase should happen quickly.
 
 ### 28.4 Generic Incremental Feel
 
@@ -1806,7 +1807,7 @@ If upgrades are only numerical, the game may feel like any other idle game.
 
 Solution:
 
-Use grid synergies, square identity, and prestige mutation as the central hook.
+Use grid synergies, square identity, and trait purchase mutation as the central hook.
 
 ### 28.5 Board Convergence
 
@@ -1830,7 +1831,7 @@ Use data-driven Trait definitions, composable effect components, tags, scopes, a
 
 1. Confirm final terminology:
    - normal currency: Squares
-   - prestige currency: Vertices
+   - trait purchase currency: Vertices
    - modifiers: Traits
 
 2. Define the first 8 normal upgrades.
@@ -1845,27 +1846,26 @@ Use data-driven Trait definitions, composable effect components, tags, scopes, a
 
 7. Define the first visual profile fields.
 
-8. Decide first prestige timing target.
+8. Decide first trait purchase timing target.
 
 9. Prototype the 1x1 clicking loop in Godot.
 
-10. Add prestige reset and 2x2 grid unlock.
+10. Add Buy Trait and 2x2 grid unlock.
 
 11. Add random Trait assignment.
 
 12. Add basic aggregate visual evolution system.
 
-13. Test whether the prestige loop feels addictive.
+13. Test whether the trait purchase loop feels addictive.
 
 ---
 
 ## 30. Current Design Summary
 
-**Squared²** is a fast-reset incremental game where the player begins with one square in the void. By clicking, upgrading, automating, and repeatedly prestiging, the square expands into a grid. Each prestige permanently gives a square a randomized Trait, creating an evolving board full of history, luck, strategy, and identity.
+**Squared²** is a fast Buy Trait incremental game where the player begins with one square in the void. By clicking, upgrading, automating, and repeatedly buying Traits, the square evolves into a grid. Each purchase permanently gives a square a randomized Trait while preserving the current run, creating an evolving board full of history, luck, strategy, and identity. Future Condensation will be the deeper reset layer.
 
 The game should feel minimal and ethereal at first, then increasingly alive and cosmic.
 
 The unique hook is:
 
 > Your board is not just upgraded. It is remembered.
-

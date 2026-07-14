@@ -2,13 +2,13 @@ extends Control
 
 @onready var squares_label: Label = %SquaresLabel
 @onready var vertices_label: Label = %VerticesLabel
-@onready var prestige_button: Button = %PrestigeButton
-@onready var prestige_title: Label = %PrestigeTitle
-@onready var prestige_description: Label = %PrestigeDescription
+@onready var trait_purchase_button: Button = %BuyTraitButton
+@onready var trait_purchase_title: Label = %BuyTraitTitle
+@onready var trait_purchase_description: Label = %BuyTraitDescription
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
-var has_discovered_prestige_panel: bool = false
+var has_discovered_trait_purchase_panel: bool = false
 var grid_expansion_story_shown: bool = false
 var vertex_shop_story_shown: bool = false
 var passives_story_shown: bool = false
@@ -40,8 +40,8 @@ var passives_story_shown: bool = false
 @onready var right_panel: VBoxContainer = %RightPanel
 @onready var center_page_root: Control = %CenterPageRoot
 
-@onready var prestige_panel: PanelContainer = %PrestigePanel
-@onready var prestige_details: Label = %PrestigeDetails
+@onready var trait_purchase_panel: PanelContainer = %BuyTraitPanel
+@onready var trait_purchase_details: Label = %BuyTraitDetails
 
 @onready var achievement_summary_panel: PanelContainer = %AchievementSummaryPanel
 @onready var achievement_summary_label: Label = %AchievementSummaryLabel
@@ -49,7 +49,7 @@ var passives_story_shown: bool = false
 
 @onready var passive_feature_visibility: FeaturePanelVisibility = %PassiveFeatureVisibility
 @onready var vertex_shop_feature_visibility: FeaturePanelVisibility = %VertexShopFeatureVisibility
-@onready var prestige_feature_visibility: FeaturePanelVisibility = %PrestigeFeatureVisibility
+@onready var trait_purchase_feature_visibility: FeaturePanelVisibility = %BuyTraitFeatureVisibility
 @onready var run_upgrades_feature_visibility: FeaturePanelVisibility = %RunUpgradesFeatureVisibility
 @onready var square_details_feature_visibility: FeaturePanelVisibility = %SquareDetailsFeatureVisibility
 @onready var achievement_summary_feature_visibility: FeaturePanelVisibility = %AchievementSummaryFeatureVisibility
@@ -83,10 +83,10 @@ func _apply_theme() -> void:
 	ThemeLayoutHelper.apply_box_separation(right_panel, "panel_gap")
 
 	top_bar.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	prestige_panel.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
+	trait_purchase_panel.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
 	achievement_summary_panel.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
-	ThemeButtonHelper.apply_button_theme(prestige_button)
+	ThemeButtonHelper.apply_button_theme(trait_purchase_button)
 	ThemeButtonHelper.apply_button_theme(grid_tab_button)
 	ThemeButtonHelper.apply_button_theme(vertex_shop_tab_button)
 	ThemeButtonHelper.apply_button_theme(stats_tab_button)
@@ -97,9 +97,9 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_resource_label(squares_label)
 	ThemeTextHelper.apply_resource_label(vertices_label)
 	ThemeTextHelper.apply_body_label(story_label)
-	ThemeTextHelper.apply_panel_title(prestige_title)
-	ThemeTextHelper.apply_body_label(prestige_description)
-	ThemeTextHelper.apply_detail_label(prestige_details)
+	ThemeTextHelper.apply_panel_title(trait_purchase_title)
+	ThemeTextHelper.apply_body_label(trait_purchase_description)
+	ThemeTextHelper.apply_detail_label(trait_purchase_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
 	story_panel.add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 	ThemeLayoutHelper.apply_margin(story_margin, "inner_margin")
@@ -121,7 +121,7 @@ func _connect_global_signals() -> void:
 
 
 func _connect_ui_signals() -> void:
-	prestige_button.pressed.connect(_on_prestige_pressed)
+	trait_purchase_button.pressed.connect(_on_trait_purchase_pressed)
 
 	grid_tab_button.pressed.connect(_on_grid_tab_pressed)
 	vertex_shop_tab_button.pressed.connect(_on_vertex_shop_tab_pressed)
@@ -143,7 +143,7 @@ func _connect_page_signals() -> void:
 
 func _initialize_new_game_ui() -> void:
 	_refresh_labels()
-	_refresh_prestige_panel()
+	_refresh_trait_purchase_panel()
 	_refresh_achievement_summary()
 
 	grid_page.rebuild()
@@ -154,7 +154,7 @@ func _initialize_new_game_ui() -> void:
 	achievements_page.refresh()
 	square_details_panel.clear()
 	run_upgrades_panel.refresh()
-	has_discovered_prestige_panel = false
+	has_discovered_trait_purchase_panel = false
 	grid_expansion_story_shown = false
 	vertex_shop_story_shown = false
 	passives_story_shown = false
@@ -167,7 +167,7 @@ func _initialize_new_game_ui() -> void:
 
 func _refresh_all_ui() -> void:
 	_refresh_labels()
-	_refresh_prestige_panel()
+	_refresh_trait_purchase_panel()
 	_refresh_achievement_summary()
 
 	grid_page.rebuild()
@@ -184,16 +184,16 @@ func _refresh_all_ui() -> void:
 func _refresh_feature_visibility(animated: bool = true) -> void:
 	var show_passives: bool = FeatureVisibilityRules.should_show_passive_panel()
 	var show_vertex_shop: bool = FeatureVisibilityRules.should_show_vertex_shop_access()
-	var show_prestige: bool = FeatureVisibilityRules.should_show_prestige_panel()
+	var show_trait_purchase: bool = FeatureVisibilityRules.should_show_trait_purchase_panel()
 	var show_run_upgrades: bool = FeatureVisibilityRules.should_show_run_upgrades_panel()
 	var show_square_details: bool = FeatureVisibilityRules.should_show_square_details_panel(
 		square_details_panel.selected_square_id
 	)
 	var show_achievement_summary: bool = FeatureVisibilityRules.should_show_achievement_summary_panel()
 
-	if show_prestige and not has_discovered_prestige_panel:
-		_on_story_message("Prestige is now available — reset your run to gain Vertices and roll a random Trait.")
-		has_discovered_prestige_panel = true
+	if show_trait_purchase and not has_discovered_trait_purchase_panel:
+		_on_story_message("Buy Trait is now available — spend Squares to gain Vertices and roll a random Trait.")
+		has_discovered_trait_purchase_panel = true
 
 	if show_vertex_shop and not vertex_shop_story_shown:
 		vertex_shop_story_shown = true
@@ -205,7 +205,7 @@ func _refresh_feature_visibility(animated: bool = true) -> void:
 
 	passive_feature_visibility.set_feature_visible(show_passives, animated)
 	vertex_shop_feature_visibility.set_feature_visible(show_vertex_shop, animated)
-	prestige_feature_visibility.set_feature_visible(has_discovered_prestige_panel, animated)
+	trait_purchase_feature_visibility.set_feature_visible(has_discovered_trait_purchase_panel, animated)
 	run_upgrades_feature_visibility.set_feature_visible(show_run_upgrades, animated)
 	square_details_feature_visibility.set_feature_visible(show_square_details, animated)
 	achievement_summary_feature_visibility.set_feature_visible(show_achievement_summary, animated)
@@ -279,9 +279,9 @@ func _on_stats_tab_pressed() -> void:
 
 func _on_squares_changed(value: float) -> void:
 	squares_label.text = "Squares: %s" % NumberFormatter.amount(value)
-	prestige_button.disabled = not GameState.can_prestige()
+	trait_purchase_button.disabled = not GameState.can_buy_trait()
 
-	_refresh_prestige_panel()
+	_refresh_trait_purchase_panel()
 	_refresh_passive_panel()
 	_refresh_feature_visibility(true)
 
@@ -289,7 +289,7 @@ func _on_squares_changed(value: float) -> void:
 func _on_vertices_changed(value: int) -> void:
 	vertices_label.text = "Vertices: %s" % NumberFormatter.integer_amount(value)
 	_refresh_vertex_shop()
-	_refresh_prestige_panel()
+	_refresh_trait_purchase_panel()
 	_refresh_feature_visibility(true)
 
 
@@ -299,18 +299,18 @@ func _on_vertices_changed(value: int) -> void:
 func _on_story_message(message: String) -> void:
 	story_label.text = message
 
-func _refresh_prestige_panel() -> void:
-	var vertices_gain: int = max(1, GameState.calculate_vertices_gain())
-	var cost_value: float = GameState.get_prestige_required_squares()
+func _refresh_trait_purchase_panel() -> void:
+	var vertices_gain: int = max(1, GameState.calculate_trait_purchase_vertices_gain())
+	var cost_value: float = GameState.get_trait_purchase_cost()
 	var cost_text: String = NumberFormatter.amount(cost_value)
 	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
-	prestige_button.text = "Prestige"
-	prestige_details.text = "Cost: %s Squares • Gain %s Vertices • A square gains a permanent Trait • Reset this run" % [
+	trait_purchase_button.text = "Buy Trait"
+	trait_purchase_details.text = "Cost: %s Squares • Gain %s Vertices • Add a permanent Trait • Keep this run" % [
 		cost_text,
 		vertex_text,
 	]
-	prestige_description.text = "Reset this run to gain Vertices and roll a random Trait."
+	trait_purchase_description.text = "Spend Squares to gain Vertices and roll a random Trait. Nothing resets."
 		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
@@ -324,8 +324,8 @@ func _refresh_achievement_summary() -> void:
 # Player Actions
 # ------------------------------------------------------------------------------
 
-func _on_prestige_pressed() -> void:
-	GameState.prestige()
+func _on_trait_purchase_pressed() -> void:
+	GameState.buy_trait()
 
 
 func _on_grid_square_selected(square_id: String) -> void:
@@ -373,7 +373,7 @@ func _on_options_save_imported() -> void:
 
 
 func _on_options_hard_reset_completed() -> void:
-	has_discovered_prestige_panel = false
+	has_discovered_trait_purchase_panel = false
 	grid_expansion_story_shown = false
 	vertex_shop_story_shown = false
 	passives_story_shown = false

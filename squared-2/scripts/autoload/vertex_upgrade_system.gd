@@ -42,7 +42,7 @@ func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
 		return false
 
 	if not upgrade.requirements_are_met(
-		GameState.prestige_count,
+		GameState.trait_purchase_count,
 		GameState.grid_size,
 		unlocked_vertex_upgrades
 	):

@@ -183,17 +183,12 @@ func is_run_upgrade_maxed(upgrade_id: String) -> bool:
 
 
 
-func reset_run_state_on_prestige() -> void:
+func reset_to_new_game() -> void:
 	run_upgrade_levels.clear()
 	run_stat_multipliers.clear()
 	run_stat_additions.clear()
 	discovered_visible_run_upgrades.clear()
-
 	run_upgrades_changed.emit()
-
-
-func reset_to_new_game() -> void:
-	reset_run_state_on_prestige()
 
 
 func to_save_dict() -> Dictionary:

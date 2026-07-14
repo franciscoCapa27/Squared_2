@@ -73,7 +73,7 @@ func refresh() -> void:
 			+ "Level 1:\n"
 			+ "- Interval: %s\n" % NumberFormatter.seconds(generator_instance.definition.base_interval_seconds)
 			+ "- Extraction: %s\n\n" % NumberFormatter.percent(generator_instance.definition.base_extraction_rate)
-			+ "Run levels reset on prestige."
+			+ "Run levels persist after buying a Trait."
 		)
 		return
 

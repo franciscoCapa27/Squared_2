@@ -23,7 +23,7 @@ enum UpgradeCategory {
 @export var sort_order: int = 0
 
 # Requirement fields.
-@export var required_prestige_count: int = 0
+@export var required_trait_purchase_count: int = 0
 @export var required_grid_size: int = 1
 @export var required_upgrade_ids: Array[String] = []
 @export var hidden_until_requirements_met: bool = false
@@ -35,11 +35,11 @@ enum UpgradeCategory {
 @export var effects: Array[VertexUpgradeEffect] = []
 
 func requirements_are_met(
-	prestige_count: int,
+	trait_purchase_count: int,
 	grid_size: int,
 	purchased_upgrade_ids: Dictionary
 ) -> bool:
-	if prestige_count < required_prestige_count:
+	if trait_purchase_count < required_trait_purchase_count:
 		return false
 
 	if grid_size < required_grid_size:

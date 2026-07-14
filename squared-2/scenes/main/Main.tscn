@@ -287,46 +287,46 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="PrestigePanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=721662999]
+[node name="BuyTraitPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=721662999]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="PrestigeMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel" unique_id=1318115022]
+[node name="BuyTraitMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel" unique_id=1318115022]
 layout_mode = 2
 
-[node name="PrestigeHBox" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin" unique_id=1862153416]
+[node name="BuyTraitHBox" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin" unique_id=1862153416]
 layout_mode = 2
 
-[node name="PrestigeTextVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=1706788438]
+[node name="BuyTraitTextVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox" unique_id=1706788438]
 layout_mode = 2
 
-[node name="PrestigeTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=118207868]
+[node name="BuyTraitTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=118207868]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Prestige"
+text = "Buy Trait"
 
-[node name="PrestigeDescription" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=1988103486]
+[node name="BuyTraitDescription" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=1988103486]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Reset your run to gain permanent bonuses."
 
-[node name="PrestigeDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=246128059]
+[node name="BuyTraitDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 custom_minimum_size = Vector2(0, 64)
-text = "Gain Vertices • A square gains a permanent Trait • Reset this run"
+text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
 
-[node name="PrestigeButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=126762251]
+[node name="BuyTraitButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox" unique_id=126762251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 8
 disabled = true
-text = "Prestige"
+text = "Buy Trait"
 
 [node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
@@ -590,10 +590,10 @@ unique_name_in_owner = true
 script = ExtResource("4_3km4f")
 target = NodePath("../../RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox/ResourceCluster/VertexShopTabButton")
 
-[node name="PrestigeFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=1016824750 node_paths=PackedStringArray("target")]
+[node name="BuyTraitFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=1016824750 node_paths=PackedStringArray("target")]
 unique_name_in_owner = true
 script = ExtResource("4_3km4f")
-target = NodePath("../../RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel")
+target = NodePath("../../RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel")
 
 [node name="RunUpgradesFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=76750194 node_paths=PackedStringArray("target")]
 unique_name_in_owner = true

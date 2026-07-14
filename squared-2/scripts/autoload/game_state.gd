@@ -10,17 +10,19 @@ const VERTEX_GAIN_DIVISOR := 100.0
 const MAX_GRID_SIZE := 6
 const GRID_UPGRADE_BASE_COST := 35.0
 const GRID_UPGRADE_COST_MULTIPLIER := 5.0
-const FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT := 1
+const FIRST_SQUARE_SOFT_PUSH_TRAIT_PURCHASE_COUNT := 1
 
 # -------------------------
-# Prestige scaling constants
+# Buy Trait scaling constants
 # -------------------------
-const PRESTIGE_COST_BASE := 15.0
-const PRESTIGE_COST_MULTIPLIER := 1.75
+const TRAIT_PURCHASE_COST_BASE := 15.0
+const TRAIT_PURCHASE_COST_MULTIPLIER := 1.75
+const TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR := 25.0
+const LEGACY_TRAIT_PURCHASE_COUNT_KEY := "pre" + "stige_count"
 
 var squares: float = 0.0
 var vertices: int = 0
-var prestige_count: int = 0
+var trait_purchase_count: int = 0
 var cheat_square_value_enabled: bool = false
 
 var grid_size: int = INITIAL_GRID_SIZE
@@ -99,43 +101,41 @@ func spend_vertices(amount: int) -> bool:
 	return true
 
 # ------------------------------------------------------------------------------
-# Prestige
+# Buy Trait
 # ------------------------------------------------------------------------------
 
-func get_prestige_required_squares() -> float:
-	return ceil(PRESTIGE_COST_BASE * pow(PRESTIGE_COST_MULTIPLIER, float(prestige_count)))
+func get_trait_purchase_cost() -> float:
+	return ceil(TRAIT_PURCHASE_COST_BASE * pow(TRAIT_PURCHASE_COST_MULTIPLIER, float(trait_purchase_count)))
 
 
-func can_prestige() -> bool:
-	return squares >= get_prestige_required_squares()
+func can_buy_trait() -> bool:
+	return squares >= get_trait_purchase_cost()
 
 
-func calculate_vertices_gain() -> int:
-	return int(floor(sqrt(squares / VERTEX_GAIN_DIVISOR)))
+func calculate_trait_purchase_vertices_gain() -> int:
+	return max(1, int(floor(sqrt(get_trait_purchase_cost() / TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR))))
 
 
-func prestige(save_after_prestige: bool = true) -> void:
-	if not can_prestige():
+func buy_trait(save_after_buy: bool = true) -> void:
+	if not can_buy_trait():
 		return
 
-	var gained_vertices: int = max(1, calculate_vertices_gain())
+	var trait_cost: float = get_trait_purchase_cost()
+	var gained_vertices: int = calculate_trait_purchase_vertices_gain()
+
+	if not spend_squares(trait_cost):
+		return
 
 	vertices += gained_vertices
-	prestige_count += 1
-
-	squares = 0.0
-
-	PassiveSystem.reset_run_state_on_prestige()
-	RunUpgradeSystem.reset_run_state_on_prestige()
-	_reset_square_run_state_on_prestige()
+	trait_purchase_count += 1
 
 	var trait_message: String = _apply_random_trait_to_random_square(grid_size)
 
 	_emit_core_state_changed()
 	EventBus.grid_changed.emit()
-	EventBus.story_message.emit(_get_prestige_story_message(gained_vertices, trait_message))
+	EventBus.story_message.emit(_get_trait_purchase_story_message(gained_vertices, trait_message))
 
-	if save_after_prestige:
+	if save_after_buy:
 		SaveSystem.save_game()
 
 
@@ -170,7 +170,7 @@ func _set_grid_size(new_grid_size: int) -> void:
 				continue
 
 			var square_data: SquareData = SquareData.new(square_id, x, y)
-			square_data.created_at_prestige = prestige_count
+			square_data.created_at_trait_purchase = trait_purchase_count
 			square_data.created_at_grid_tier = grid_size
 			squares_by_id[square_id] = square_data
 
@@ -190,7 +190,7 @@ func get_next_grid_size() -> int:
 
 
 func should_soft_push_grid_upgrade() -> bool:
-	return grid_size == INITIAL_GRID_SIZE and prestige_count >= FIRST_SQUARE_SOFT_PUSH_PRESTIGE_COUNT
+	return grid_size == INITIAL_GRID_SIZE and trait_purchase_count >= FIRST_SQUARE_SOFT_PUSH_TRAIT_PURCHASE_COUNT
 
 
 func upgrade_grid() -> bool:
@@ -238,7 +238,7 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 	var previous_square_title: String = target_square.display_name
 	var trait_instance: TraitInstance = TraitInstance.new(
 		trait_definition,
-		prestige_count,
+		trait_purchase_count,
 		trait_roll_grid_size
 	)
 
@@ -250,7 +250,7 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 	var roman_stack: String = trait_instance.get_display_name()
 	var square_title: String = target_square.display_name
 
-	EventBus.prestige_trait_reveal.emit(
+	EventBus.trait_purchase_reveal.emit(
 		target_square_id,
 		family_display,
 		rarity_display,
@@ -264,20 +264,9 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 		trait_definition.display_name
 	]
 
-
-func _reset_square_run_state_on_prestige() -> void:
-	for square_id: String in square_ids:
-		var square_data: SquareData = get_square(square_id)
-
-		if square_data == null:
-			continue
-
-		square_data.reset_run_state_on_prestige()
-
-
-func _get_prestige_story_message(gained_vertices: int, trait_message: String) -> String:
+func _get_trait_purchase_story_message(gained_vertices: int, trait_message: String) -> String:
 	var parts: Array[String] = [
-		"Prestige complete",
+		"Trait purchased",
 		"+%s Vertices" % NumberFormatter.integer_amount(gained_vertices)
 	]
 
@@ -348,7 +337,7 @@ func to_save_dict() -> Dictionary:
 	return {
 		"squares": squares,
 		"vertices": vertices,
-		"prestige_count": prestige_count,
+		"trait_purchase_count": trait_purchase_count,
 		"grid_size": grid_size,
 		"square_ids": square_ids,
 		"squares_by_id": square_save_data,
@@ -360,7 +349,10 @@ func to_save_dict() -> Dictionary:
 func from_save_dict(data: Dictionary) -> void:
 	squares = float(data.get("squares", 0.0))
 	vertices = int(data.get("vertices", 0))
-	prestige_count = int(data.get("prestige_count", 0))
+	trait_purchase_count = int(data.get(
+		"trait_purchase_count",
+		data.get(LEGACY_TRAIT_PURCHASE_COUNT_KEY, 0)
+	))
 	grid_size = int(data.get("grid_size", INITIAL_GRID_SIZE))
 
 	square_ids = _string_array_from_variant(data.get("square_ids", [INITIAL_SQUARE_ID]))
@@ -387,7 +379,7 @@ func _load_squares_from_save_data(data: Dictionary) -> void:
 func reset_to_new_game() -> void:
 	squares = 0.0
 	vertices = 0
-	prestige_count = 0
+	trait_purchase_count = 0
 	permanent_stat_multipliers.clear()
 	permanent_stat_additions.clear()
 
@@ -404,7 +396,7 @@ func reset_to_new_game() -> void:
 func _emit_core_state_changed() -> void:
 	EventBus.squares_changed.emit(squares)
 	EventBus.vertices_changed.emit(vertices)
-	EventBus.prestige_changed.emit(prestige_count)
+	EventBus.trait_purchase_changed.emit(trait_purchase_count)
 
 
 func _emit_full_state_changed() -> void:

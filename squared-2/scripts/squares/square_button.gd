@@ -7,8 +7,8 @@ var square_id: String = ""
 var is_respawning: bool = false
 var respawn_timer: SceneTreeTimer = null
 var normal_modulate: Color = Color.WHITE
-var prestige_reveal_label: RichTextLabel = null
-var prestige_reveal_tween: Tween = null
+var trait_purchase_reveal_label: RichTextLabel = null
+var trait_purchase_reveal_tween: Tween = null
 
 ## A tween dedicated to the quick press/compression animation on manual click.
 var press_tween: Tween
@@ -110,13 +110,13 @@ func apply_responsive_visual_size(_square_size: float) -> void:
 	pass
 
 
-func play_prestige_reveal(
+func play_trait_purchase_reveal(
 	trait_family_display: String,
 	trait_rarity_display: String,
 	previous_square_title: String,
 	new_square_title: String
 ) -> void:
-	_show_prestige_reveal_text(
+	_show_trait_purchase_reveal_text(
 		trait_family_display,
 		trait_rarity_display,
 		previous_square_title,
@@ -140,16 +140,16 @@ func play_prestige_reveal(
 	tw.tween_property(self, "modulate", old_mod, 0.3).set_ease(Tween.EASE_IN)
 
 
-func _show_prestige_reveal_text(
+func _show_trait_purchase_reveal_text(
 	trait_family_display: String,
 	trait_rarity_display: String,
 	previous_square_title: String,
 	new_square_title: String
 ) -> void:
-	if prestige_reveal_tween and prestige_reveal_tween.is_valid():
-		prestige_reveal_tween.kill()
-	if prestige_reveal_label and is_instance_valid(prestige_reveal_label):
-		prestige_reveal_label.queue_free()
+	if trait_purchase_reveal_tween and trait_purchase_reveal_tween.is_valid():
+		trait_purchase_reveal_tween.kill()
+	if trait_purchase_reveal_label and is_instance_valid(trait_purchase_reveal_label):
+		trait_purchase_reveal_label.queue_free()
 
 	var reveal_label := RichTextLabel.new()
 	reveal_label.bbcode_enabled = true
@@ -167,7 +167,7 @@ func _show_prestige_reveal_text(
 	reveal_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	ThemeTextHelper.apply_body_rich_text(reveal_label)
 	reveal_label.add_theme_font_size_override("normal_font_size", 11)
-	reveal_label.text = _build_prestige_reveal_text(
+	reveal_label.text = _build_trait_purchase_reveal_text(
 		trait_family_display,
 		trait_rarity_display,
 		previous_square_title,
@@ -175,21 +175,21 @@ func _show_prestige_reveal_text(
 	)
 	reveal_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
 	add_child(reveal_label)
-	prestige_reveal_label = reveal_label
+	trait_purchase_reveal_label = reveal_label
 
-	prestige_reveal_tween = create_tween()
-	prestige_reveal_tween.tween_property(reveal_label, "modulate:a", 1.0, 0.2)
-	prestige_reveal_tween.tween_interval(2.0)
-	prestige_reveal_tween.tween_property(reveal_label, "modulate:a", 0.0, 0.6)
-	prestige_reveal_tween.tween_callback(func():
+	trait_purchase_reveal_tween = create_tween()
+	trait_purchase_reveal_tween.tween_property(reveal_label, "modulate:a", 1.0, 0.2)
+	trait_purchase_reveal_tween.tween_interval(2.0)
+	trait_purchase_reveal_tween.tween_property(reveal_label, "modulate:a", 0.0, 0.6)
+	trait_purchase_reveal_tween.tween_callback(func():
 		if is_instance_valid(reveal_label):
 			reveal_label.queue_free()
-		if prestige_reveal_label == reveal_label:
-			prestige_reveal_label = null
+		if trait_purchase_reveal_label == reveal_label:
+			trait_purchase_reveal_label = null
 	)
 
 
-func _build_prestige_reveal_text(
+func _build_trait_purchase_reveal_text(
 	trait_family_display: String,
 	trait_rarity_display: String,
 	previous_square_title: String,

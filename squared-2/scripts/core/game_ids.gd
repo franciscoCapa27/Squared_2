@@ -19,7 +19,7 @@ const UPGRADE_SHARPENED_ORIGIN := "sharpened_origin"
 
 # Achievement IDs.
 const ACHIEVEMENT_FIRST_CLICK := "first_click"
-const ACHIEVEMENT_FIRST_PRESTIGE := "first_prestige"
+const ACHIEVEMENT_FIRST_TRAIT_PURCHASE := "first_trait_purchase"
 const ACHIEVEMENT_FIRST_GENERATOR_UNLOCKED := "first_generator_unlocked"
 
 # Trait family IDs.
