@@ -15,17 +15,17 @@ var display_name: String = ""
 var is_unlocked: bool = false
 
 # Run-based level, bought with Squares.
-# Resets to 0 on prestige.
+# Persists through Trait purchases and resets only on a new game.
 var level: int = 0
 var max_level: int = 100
 
-# Future self-prestige support.
-var self_prestige_level: int = 0
-var can_self_prestige: bool = false
+# Future self-condensation support.
+var self_condensation_level: int = 0
+var can_self_condensation: bool = false
 
-# If true later, self_prestige_level survives normal prestige.
-# If false later, self_prestige_level resets with the run.
-var self_prestige_is_permanent: bool = false
+# If true later, self-condensation state survives a normal Condensation.
+# If false later, self-condensation state resets with that layer.
+var self_condensation_is_permanent: bool = false
 
 var base_interval_seconds: float = 2.5
 var minimum_interval_seconds: float = 0.4
@@ -64,10 +64,10 @@ func reset_run_state() -> void:
 	last_payout = 0.0
 	lifetime_squares_generated = 0.0
 	lifetime_pulses = 0
-	can_self_prestige = false
+	can_self_condensation = false
 
-	if not self_prestige_is_permanent:
-		self_prestige_level = 0
+	if not self_condensation_is_permanent:
+		self_condensation_level = 0
 
 func is_active() -> bool:
 	return is_unlocked and level > 0
@@ -116,7 +116,7 @@ func level_up() -> bool:
 	level += 1
 
 	if level >= max_level:
-		can_self_prestige = true
+		can_self_condensation = true
 
 	return true
 

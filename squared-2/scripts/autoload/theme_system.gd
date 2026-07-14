@@ -235,8 +235,8 @@ func get_spacing(spacing_id: String) -> int:
 			return active_theme.inner_margin
 		"grid_gap":
 			return active_theme.grid_gap
-		"prestige_gap":
-			return active_theme.prestige_gap
+		"trait_purchase_gap":
+			return active_theme.trait_purchase_gap
 		_:
 			push_warning("Unknown theme spacing id: %s" % spacing_id)
 			return 0

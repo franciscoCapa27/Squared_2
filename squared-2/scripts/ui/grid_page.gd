@@ -24,7 +24,7 @@ var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
 	EventBus.squares_changed.connect(_on_squares_changed)
-	EventBus.prestige_trait_reveal.connect(_on_prestige_trait_reveal)
+	EventBus.trait_purchase_reveal.connect(_on_trait_purchase_reveal)
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 
 	upgrade_grid_button.pressed.connect(_on_upgrade_grid_button_pressed)
@@ -266,32 +266,37 @@ func _on_squares_changed(_value: float) -> void:
 	refresh_feature_visibility(false)
 
 
-func _on_prestige_trait_reveal(target_square_id: String, trait_family: String, trait_rarity: String, trait_roman_stack: String, square_title: String) -> void:
+func _on_trait_purchase_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String, previous_square_title: String) -> void:
+	# The reveal signal fires before GameState emits grid_changed. Defer until the
+	# rebuilt SquareButton instances are available.
+	call_deferred(
+		"_show_trait_purchase_reveal",
+		target_square_id,
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		square_title
+	)
+
+
+func _show_trait_purchase_reveal(
+	target_square_id: String,
+	trait_family_display: String,
+	trait_rarity_display: String,
+	previous_square_title: String,
+	square_title: String
+) -> void:
 	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
 	if button == null:
 		return
 
-	button.play_prestige_reveal()
+	button.play_trait_purchase_reveal(
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		square_title
+	)
 
-	var label := Label.new()
-	var reveal_text: String = trait_rarity + " · " + trait_roman_stack + "\n" + square_title
-	label.text = reveal_text
-	label.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0, 1.0))
-	label.add_theme_font_size_override("font_size", 16)
-	label.modulate.a = 0.0
-
-	var btn_center := button.global_position + button.size * 0.5
-	var local_pos := btn_center - grid_area.global_position
-	label.position = local_pos + Vector2(-80, -60)
-
-	grid_area.add_child(label)
-
-	var tw := create_tween()
-	tw.set_parallel(false)
-	tw.tween_property(label, "modulate:a", 1.0, 0.2)
-	tw.tween_interval(3.0)
-	tw.tween_property(label, "modulate:a", 0.0, 0.8)
-	tw.tween_callback(label.queue_free)
 
 func _clean_square_button_text(button: SquareButton) -> void:
 	if button == null:

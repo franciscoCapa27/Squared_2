@@ -1,6 +1,6 @@
 ---
 name: squared2-godot-dev
-description: Use for Squared² Godot development tasks in this repository: gameplay systems, GDScript, scenes, UI, `.tres` content, economy tuning, traits, prestige, passive generators, achievements, save/load, Godot export/deploy concerns, or planning implementation issues. Applies the project's resource-driven architecture, minimal cosmic UI direction, incremental-game pacing, and safety checks.
+description: Use for Squared² Godot development tasks in this repository: gameplay systems, GDScript, scenes, UI, `.tres` content, economy tuning, Traits, Buy Trait progression, passive generators, achievements, save/load, Godot export/deploy concerns, or planning implementation issues. Applies the project's resource-driven architecture, minimal cosmic UI direction, incremental-game pacing, and safety checks.
 ---
 
 # Squared² Godot Dev
@@ -29,7 +29,8 @@ description: Use for Squared² Godot development tasks in this repository: gamep
 Preserve the core fantasy:
 
 - A single square in the void becomes a personal geometric universe.
-- Prestige should be fast, especially early.
+- Buying Traits should be fast, especially early. It is a permanent mutation action, not a run reset.
+- Condensation is the future reset layer; do not implement it as part of Buy Trait work.
 - Permanent square identity matters. Traits should make squares feel remembered.
 - Active and idle play should both feel viable.
 - Tone should be lonely, ethereal, geometric, cosmic, quiet, minimal, mysterious, and gradually alive.
@@ -42,7 +43,7 @@ Avoid turning the UI into a generic dashboard or loud mobile-idle game. The expe
 - Keep run-layer state separate from permanent-layer state.
 - Route cross-system updates through `EventBus` or existing system signals instead of direct UI-to-system tangles.
 - Respect autoload responsibilities:
-  - `GameState`: currencies, grid, prestige, permanent square state.
+  - `GameState`: currencies, grid, Buy Trait count, and permanent square state.
   - `PassiveSystem`: passive generators and pulses.
   - `RunUpgradeSystem`: run-limited upgrade levels and run stats.
   - `VertexUpgradeSystem`: permanent vertex upgrades.
@@ -64,15 +65,15 @@ Avoid turning the UI into a generic dashboard or loud mobile-idle game. The expe
 ## UI Direction
 
 - Keep the UI minimal, readable, and workmanlike, but not sterile.
-- Improve feedback where it clarifies the loop: square click, respawn, prestige readiness, trait gained, passive pulse, unlocks, and save/import state.
+- Improve feedback where it clarifies the loop: square click, Buy Trait readiness, Trait gained, passive pulse, unlocks, and save/import state.
 - Keep feature visibility progressive. Do not show every panel before the player has context.
 - Reuse `ThemeSystem`, `ThemeTextHelper`, `ThemeButtonHelper`, and `ThemeLayoutHelper` instead of styling one-off controls.
 - Avoid large decorative UI unless it supports the geometric/cosmic tone and real gameplay readability.
 
 ## Economy And Content
 
-- Treat first-session pacing as sacred: the first prestige should arrive within a few minutes.
-- Tune active clicks, run upgrades, passive generators, prestige threshold, vertex gain, and grid costs together.
+- Treat first-session pacing as sacred: the first Buy Trait should arrive within a few minutes.
+- Tune active clicks, run upgrades, passive generators, Buy Trait cost, Vertex gain, and grid costs together.
 - When adding content, prefer a small coherent pack over one isolated resource.
 - Give each new content item a clear role: faster play, bigger payouts, passive support, trait identity, grid progression, or quality of life.
 - Watch for multiplicative stacking. Note expected early/mid impact in PRs when changing economy values.
@@ -82,7 +83,7 @@ Avoid turning the UI into a generic dashboard or loud mobile-idle game. The expe
 - Be conservative with saved field names and save schema changes.
 - If adding persistent data, update `to_save_dict()` and `from_save_dict()` together.
 - Provide defaults for older saves.
-- Test or reason through hard reset, save import/export, and prestige reset behavior for any persistent state change.
+- Test or reason through hard reset, save import/export, and the rule that Buy Trait does not reset run state. Condensation will own future reset behavior.
 
 ## Verification
 
@@ -95,6 +96,33 @@ Use the lightest verification that meaningfully covers the change:
 - For UI changes: inspect scene/script wiring and, when possible, run the project or capture screenshots.
 
 Always report verification in the PR body. If Godot is unavailable locally, say so plainly and include static checks performed.
+
+## Godot CLI Setup And Checks
+
+The project currently targets Godot 4.6. Install the matching Godot 4.6 stable macOS application from the official Godot download or with Homebrew:
+
+```bash
+brew install --cask godot
+```
+
+The CLI is included inside the application bundle. If `godot` is not already on `PATH`, expose it for Codex, Aider, and terminal sessions:
+
+```bash
+mkdir -p "$HOME/.local/bin"
+ln -sf "/Applications/Godot.app/Contents/MacOS/Godot" "$HOME/.local/bin/godot"
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zprofile"
+source "$HOME/.zprofile"
+godot --version
+```
+
+Run these checks from the repository root after gameplay, scene, or GDScript changes:
+
+```bash
+godot --headless --path squared-2 --editor --quit
+git diff --check
+```
+
+The headless editor boot imports project resources and parses referenced scenes/scripts without launching the interactive game. Do not add committed verifier scripts just to replace this check. Use actual Godot playtesting for interaction, timing, layout, and game-feel validation.
 
 ## Planning Issues
 

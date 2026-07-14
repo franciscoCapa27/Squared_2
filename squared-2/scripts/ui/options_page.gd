@@ -8,6 +8,7 @@ const HARD_RESET_CONFIRM_SECONDS := 5.0
 
 @onready var autosave_enabled_check_box: CheckBox = %AutosaveEnabledCheckBox
 @onready var autosave_interval_spin_box: SpinBox = %AutosaveIntervalSpinBox
+@onready var cheat_square_value_check_box: CheckBox = %CheatSquareValueCheckBox
 
 @onready var save_button: Button = %SaveButton
 @onready var export_save_button: Button = %ExportSaveButton
@@ -23,6 +24,7 @@ var is_syncing_controls: bool = false
 func _ready() -> void:
 	autosave_enabled_check_box.toggled.connect(_on_autosave_enabled_toggled)
 	autosave_interval_spin_box.value_changed.connect(_on_autosave_interval_changed)
+	cheat_square_value_check_box.toggled.connect(_on_cheat_square_value_toggled)
 
 	save_button.pressed.connect(_on_save_button_pressed)
 	export_save_button.pressed.connect(_on_export_save_button_pressed)
@@ -59,6 +61,7 @@ func _sync_from_save_system() -> void:
 	autosave_enabled_check_box.button_pressed = SaveSystem.autosave_enabled
 	autosave_interval_spin_box.value = SaveSystem.get_autosave_interval_seconds()
 	autosave_interval_spin_box.editable = SaveSystem.autosave_enabled
+	cheat_square_value_check_box.button_pressed = GameState.cheat_square_value_enabled
 
 	is_syncing_controls = false
 
@@ -82,6 +85,17 @@ func _on_autosave_interval_changed(value: float) -> void:
 
 	SaveSystem.set_autosave_interval_seconds(value)
 	options_status_label.text = "Autosave interval set to %s seconds." % int(value)
+
+
+func _on_cheat_square_value_toggled(enabled: bool) -> void:
+	if is_syncing_controls:
+		return
+
+	GameState.cheat_square_value_enabled = enabled
+	if enabled:
+		options_status_label.text = "Cheat enabled: Squares are worth x100."
+	else:
+		options_status_label.text = "Cheat disabled: normal Square values restored."
 
 
 func _on_save_button_pressed() -> void:

@@ -187,7 +187,7 @@ func _apply_save_data(save_data: Dictionary) -> void:
 
 	EventBus.squares_changed.emit(GameState.squares)
 	EventBus.vertices_changed.emit(GameState.vertices)
-	EventBus.prestige_changed.emit(GameState.prestige_count)
+	EventBus.trait_purchase_changed.emit(GameState.trait_purchase_count)
 	EventBus.grid_changed.emit()
 	EventBus.story_message.emit("Save loaded.")
 	PassiveSystem.passive_state_changed.emit()

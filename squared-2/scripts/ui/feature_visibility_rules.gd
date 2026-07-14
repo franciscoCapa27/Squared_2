@@ -8,11 +8,11 @@ static func should_show_passive_panel() -> bool:
 
 
 static func should_show_vertex_shop_access() -> bool:
-	return GameState.vertices > 0 or GameState.prestige_count > 0
+	return GameState.vertices > 0 or GameState.trait_purchase_count > 0
 
 
-static func should_show_prestige_panel() -> bool:
-	return GameState.can_prestige() or GameState.prestige_count > 0 or GameState.vertices > 0
+static func should_show_trait_purchase_panel() -> bool:
+	return GameState.can_buy_trait() or GameState.trait_purchase_count > 0 or GameState.vertices > 0
 
 
 static func should_show_run_upgrades_panel() -> bool:
