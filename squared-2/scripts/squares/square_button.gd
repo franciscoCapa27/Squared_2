@@ -7,6 +7,8 @@ var square_id: String = ""
 var is_respawning: bool = false
 var respawn_timer: SceneTreeTimer = null
 var normal_modulate: Color = Color.WHITE
+var prestige_reveal_label: RichTextLabel = null
+var prestige_reveal_tween: Tween = null
 
 ## A tween dedicated to the quick press/compression animation on manual click.
 var press_tween: Tween
@@ -108,7 +110,19 @@ func apply_responsive_visual_size(_square_size: float) -> void:
 	pass
 
 
-func play_prestige_reveal() -> void:
+func play_prestige_reveal(
+	trait_family_display: String,
+	trait_rarity_display: String,
+	previous_square_title: String,
+	new_square_title: String
+) -> void:
+	_show_prestige_reveal_text(
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		new_square_title
+	)
+
 	if is_respawning:
 		return
 
@@ -124,3 +138,85 @@ func play_prestige_reveal() -> void:
 	var old_mod := modulate
 	tw.parallel().tween_property(self, "modulate", old_mod * 1.3, 0.1).set_ease(Tween.EASE_OUT)
 	tw.tween_property(self, "modulate", old_mod, 0.3).set_ease(Tween.EASE_IN)
+
+
+func _show_prestige_reveal_text(
+	trait_family_display: String,
+	trait_rarity_display: String,
+	previous_square_title: String,
+	new_square_title: String
+) -> void:
+	if prestige_reveal_tween and prestige_reveal_tween.is_valid():
+		prestige_reveal_tween.kill()
+	if prestige_reveal_label and is_instance_valid(prestige_reveal_label):
+		prestige_reveal_label.queue_free()
+
+	var reveal_label := RichTextLabel.new()
+	reveal_label.bbcode_enabled = true
+	reveal_label.fit_content = false
+	reveal_label.scroll_active = false
+	reveal_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	reveal_label.anchor_right = 1.0
+	reveal_label.anchor_bottom = 1.0
+	reveal_label.offset_left = 5.0
+	reveal_label.offset_top = 5.0
+	reveal_label.offset_right = -5.0
+	reveal_label.offset_bottom = -5.0
+	reveal_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	reveal_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	reveal_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	ThemeTextHelper.apply_body_rich_text(reveal_label)
+	reveal_label.add_theme_font_size_override("normal_font_size", 11)
+	reveal_label.text = _build_prestige_reveal_text(
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		new_square_title
+	)
+	reveal_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
+	add_child(reveal_label)
+	prestige_reveal_label = reveal_label
+
+	prestige_reveal_tween = create_tween()
+	prestige_reveal_tween.tween_property(reveal_label, "modulate:a", 1.0, 0.2)
+	prestige_reveal_tween.tween_interval(2.0)
+	prestige_reveal_tween.tween_property(reveal_label, "modulate:a", 0.0, 0.6)
+	prestige_reveal_tween.tween_callback(func():
+		if is_instance_valid(reveal_label):
+			reveal_label.queue_free()
+		if prestige_reveal_label == reveal_label:
+			prestige_reveal_label = null
+	)
+
+
+func _build_prestige_reveal_text(
+	trait_family_display: String,
+	trait_rarity_display: String,
+	previous_square_title: String,
+	new_square_title: String
+) -> String:
+	var rarity: String = trait_rarity_display.to_lower()
+	var rarity_color: String = _get_reveal_rarity_color(rarity)
+	var old_title: String = previous_square_title if previous_square_title != "" else "Square"
+
+	return "[center][color=%s][font_size=13]%s · %s[/font_size]\n[font_size=10]%s[/font_size]\n[font_size=10]→ %s[/font_size][/color][/center]" % [
+		rarity_color,
+		trait_family_display,
+		rarity,
+		old_title,
+		new_square_title
+	]
+
+
+func _get_reveal_rarity_color(rarity: String) -> String:
+	match rarity:
+		"uncommon":
+			return "#7ee2b8"
+		"rare":
+			return "#c79aff"
+		"epic":
+			return "#ff9bd6"
+		"legendary":
+			return "#ffd37a"
+		_:
+			return "#d5dde7"

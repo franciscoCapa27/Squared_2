@@ -17,12 +17,9 @@ const MAX_GRID_GAP := 10
 @onready var grid_upgrade_feature_visibility: FeaturePanelVisibility = %GridUpgradeFeatureVisibility
 
 var square_button_scene: PackedScene = preload("res://scenes/squares/SquareButton.tscn")
-var prestige_reveal_scene: PackedScene = preload("res://scenes/ui/PrestigeRevealPanel.tscn")
-
 var square_buttons_by_id: Dictionary = {}
 var has_discovered_current_grid_upgrade: bool = false
 var discovered_grid_size: int = GameState.INITIAL_GRID_SIZE
-var current_reveal_panel: PrestigeRevealPanel = null
 
 func _ready() -> void:
 	EventBus.grid_changed.connect(rebuild)
@@ -269,91 +266,16 @@ func _on_squares_changed(_value: float) -> void:
 	refresh_feature_visibility(false)
 
 
-func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String) -> void:
+func _on_prestige_trait_reveal(target_square_id: String, trait_family_display: String, trait_rarity_display: String, _trait_roman_stack: String, square_title: String, previous_square_title: String) -> void:
 	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
 	if button == null:
 		return
 
-	button.play_prestige_reveal()
-
-	# Remove any previous reveal panel so only one is active.
-	_remove_reveal_panel()
-
-	var reveal_panel := prestige_reveal_scene.instantiate() as PrestigeRevealPanel
-	if reveal_panel == null:
-		return
-
-	# GridArea is a CenterContainer and would override the panel position.
-	# Attach the overlay to this Control so its global position follows the target square.
-	add_child(reveal_panel)
-	current_reveal_panel = reveal_panel
-
-	reveal_panel.setup_data(trait_family_display, trait_rarity_display, square_title, target_square_id)
-
-	# Wait a frame for the panel's children to be laid out, then position and animate.
-	_position_reveal_panel(reveal_panel, target_square_id)
-
-
-func _remove_reveal_panel() -> void:
-	if current_reveal_panel and is_instance_valid(current_reveal_panel):
-		current_reveal_panel.queue_free()
-	current_reveal_panel = null
-
-
-func _position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_square_id: String) -> void:
-	# Defer to the next idle frame so the panel has a chance to measure its size.
-	call_deferred("_deferred_position_reveal_panel", reveal_panel, target_square_id)
-
-
-func _deferred_position_reveal_panel(reveal_panel: PrestigeRevealPanel, target_square_id: String) -> void:
-	# Wait one more frame for full layout.
-	await get_tree().process_frame
-
-	if not is_instance_valid(reveal_panel):
-		return
-
-	var target_button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
-	if target_button == null or not is_instance_valid(target_button):
-		reveal_panel.queue_free()
-		if current_reveal_panel == reveal_panel:
-			current_reveal_panel = null
-		return
-
-	var btn_center_global := target_button.global_position + target_button.size * 0.5
-
-	var panel_size := reveal_panel.size
-	if panel_size == Vector2.ZERO:
-		panel_size = reveal_panel.get_rect().size
-
-	var grid_top_left := grid_area.global_position
-	var grid_bottom_right := grid_top_left + grid_area.size
-	var center_desired := btn_center_global - panel_size / 2.0
-
-	# Clamp the panel position so it stays fully inside the grid_area.
-	var final_global_pos := Vector2(
-		clamp(center_desired.x, grid_top_left.x, max(grid_top_left.x, grid_bottom_right.x - panel_size.x)),
-		clamp(center_desired.y, grid_top_left.y, max(grid_top_left.y, grid_bottom_right.y - panel_size.y))
-	)
-
-	reveal_panel.global_position = final_global_pos
-	reveal_panel.modulate = Color(1.0, 1.0, 1.0, 0.0)
-	reveal_panel.visible = true
-
-	_play_reveal_animation(reveal_panel)
-
-
-func _play_reveal_animation(reveal_panel: PrestigeRevealPanel) -> void:
-	var tw := create_tween()
-	tw.set_parallel(false)
-
-	tw.tween_property(reveal_panel, "modulate:a", 1.0, 0.3).set_ease(Tween.EASE_OUT)
-	tw.tween_interval(2.5)
-	tw.tween_property(reveal_panel, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
-	tw.tween_callback(func():
-		if is_instance_valid(reveal_panel):
-			reveal_panel.queue_free()
-			if current_reveal_panel == reveal_panel:
-				current_reveal_panel = null
+	button.play_prestige_reveal(
+		trait_family_display,
+		trait_rarity_display,
+		previous_square_title,
+		square_title
 	)
 
 

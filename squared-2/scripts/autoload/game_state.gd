@@ -234,6 +234,7 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 	if target_square == null:
 		return ""
 
+	var previous_square_title: String = target_square.display_name
 	var trait_instance: TraitInstance = TraitInstance.new(
 		trait_definition,
 		prestige_count,
@@ -253,7 +254,8 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 		family_display,
 		rarity_display,
 		roman_stack,
-		square_title
+		square_title,
+		previous_square_title
 	)
 
 	return "%s gained the %s Trait" % [
