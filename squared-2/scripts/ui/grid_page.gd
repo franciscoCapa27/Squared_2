@@ -5,6 +5,7 @@ signal square_selected(square_id: String)
 signal grid_upgrade_requested()
 
 const MAX_GRID_AREA_SIZE := 430.0
+const FALLBACK_GRID_AREA_SIZE := 320.0
 const MIN_SQUARE_SIZE := 8.0
 const MAX_SQUARE_SIZE := 82.0
 const MIN_GRID_GAP := 1
@@ -47,17 +48,21 @@ func _apply_grid_sizing() -> void:
 	var available_width: float = grid_area.size.x
 	var available_height: float = grid_area.size.y
 
-	if available_width <= 0.0 or available_height <= 0.0:
-		return
-
-	var target_grid_area: float = min(
-		available_width,
-		available_height,
-		MAX_GRID_AREA_SIZE
-	)
-
 	var gap: int = _calculate_grid_gap(grid_size)
 	var total_gap_size: float = float(max(0, grid_size - 1) * gap)
+	var target_grid_area: float
+	if available_width <= 0.0 or available_height <= 0.0:
+		# GridArea can report zero during the first layout pass because GridRoot
+		# has no size until this calculation runs. Seed a bounded size so the
+		# layout can settle, then the real viewport dimensions take over.
+		target_grid_area = FALLBACK_GRID_AREA_SIZE
+	else:
+		target_grid_area = min(
+			available_width,
+			available_height,
+			MAX_GRID_AREA_SIZE
+		)
+
 	var square_size: float = floor((target_grid_area - total_gap_size) / float(grid_size))
 
 	square_size = clamp(square_size, MIN_SQUARE_SIZE, MAX_SQUARE_SIZE)
