@@ -78,10 +78,10 @@ func _get_requirement_text() -> String:
 
 	var lines: Array[String] = []
 
-	if upgrade_definition.required_prestige_count > 0:
+	if upgrade_definition.required_trait_purchase_count > 0:
 		lines.append(
-			"Requires Prestiges: %s" % NumberFormatter.integer_amount(
-				upgrade_definition.required_prestige_count
+			"Requires Trait Purchases: %s" % NumberFormatter.integer_amount(
+				upgrade_definition.required_trait_purchase_count
 			)
 		)
 

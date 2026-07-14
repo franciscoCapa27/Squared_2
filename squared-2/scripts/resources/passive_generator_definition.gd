@@ -29,9 +29,9 @@ enum TargetingMode {
 
 @export var targeting_mode: TargetingMode = TargetingMode.RANDOM_SQUARE
 
-# Future self-prestige support.
-@export var self_prestige_is_permanent: bool = false
-@export var self_prestige_unlock_level: int = 100
+# Future self-condensation support.
+@export var self_condensation_is_permanent: bool = false
+@export var self_condensation_unlock_level: int = 100
 
 func is_valid_definition() -> bool:
 	return id.strip_edges() != ""

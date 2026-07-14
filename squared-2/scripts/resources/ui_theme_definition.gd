@@ -51,7 +51,7 @@ class_name UIThemeDefinition
 @export_range(0, 64, 1) var card_gap: int = 10
 @export_range(0, 64, 1) var inner_margin: int = 16
 @export_range(0, 64, 1) var grid_gap: int = 14
-@export_range(0, 128, 1) var prestige_gap: int = 32
+@export_range(0, 128, 1) var trait_purchase_gap: int = 32
 
 @export_group("Typography")
 @export_range(8, 40, 1) var font_size_resource: int = 16

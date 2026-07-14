@@ -18,6 +18,6 @@ description = "Make every square start a little sharper. Permanently increases a
 category = 3
 cost_vertices = 1
 sort_order = 10
-required_prestige_count = 1
+required_trait_purchase_count = 1
 effects = Array[ExtResource("1_cktol")]([SubResource("Resource_cktol")])
 metadata/_custom_type_script = "uid://dowlqajtj0tyi"

@@ -1,15 +1,15 @@
 # Squared²
 
-Domain language for Squared², a fast-prestige incremental Godot game about a single square becoming a personal geometric universe.
+Domain language for Squared², a fast Buy Trait incremental Godot game about a single square becoming a personal geometric universe.
 
 ## Language
 
 **First Fun Pass**:
-The next development slice after the First 2x2 Grid Era baseline, focused on making the existing loop satisfying moment-to-moment before adding more systems or content. It improves click feedback, prestige drama, Trait reveal, square readability, unlock anticipation, and basic UI feel without changing the core progression structure.
+The next development slice after the First 2x2 Grid Era baseline, focused on making the existing loop satisfying moment-to-moment before adding more systems or content. It improves click feedback, trait purchase drama, Trait reveal, square readability, unlock anticipation, and basic UI feel without changing the core progression structure.
 _Avoid_: UI polish, flavour pass, content pass, juice pass
 
 **First Fun Pass Order**:
-The implementation order for the First Fun Pass: build the reusable Square Body first, then add click feedback, then Affix Square Naming and Grouped Square Details, then Prestige Reveal Echo, then Family-Rarity-Rank Visuals. The Square Body is the stage for later feedback and identity work.
+The implementation order for the First Fun Pass: build the reusable Square Body first, then add click feedback, then Affix Square Naming and Grouped Square Details, then Buy Trait Reveal Echo, then Family-Rarity-Rank Visuals. The Square Body is the stage for later feedback and identity work.
 _Avoid_: Trait visuals before square body, bundled mega-ticket, layout redesign first
 
 **Opening Curiosity**:
@@ -17,15 +17,15 @@ The intended first-minute feeling that the player wants to discover what the squ
 _Avoid_: Power fantasy, tutorial clarity, number chasing, solved opener
 
 **Square-First Feedback**:
-The First Fun Pass rule that curiosity should come primarily from the square itself: its click reaction, visible state, name, color, Trait marks, and prestige transformation. Story, panels, and shop text should support the square's change rather than carry the whole experience.
+The First Fun Pass rule that curiosity should come primarily from the square itself: its click reaction, visible state, name, color, Trait marks, and Buy Trait transformation. Story, panels, and shop text should support the square's change rather than carry the whole experience.
 _Avoid_: Panel-first feedback, text-only discovery, shop-driven curiosity
 
 **Square Body**:
-The player-facing square should become a Godot-native visual body rather than remaining primarily a text button. During the First Fun Pass, the square can become a simple rectangular visual surface that supports material changes, click reactions, prestige reactions, glow, outline, and later shader-based effects while still behaving as the clickable game object.
+The player-facing square should become a Godot-native visual body rather than remaining primarily a text button. During the First Fun Pass, the square can become a simple rectangular visual surface that supports material changes, click reactions, trait purchase reactions, glow, outline, and later shader-based effects while still behaving as the clickable game object.
 _Avoid_: Text-button square, text inside the clickable body, web-style card tile, non-clickable decoration
 
 **Square Body Boundary**:
-The Square Body should own only its clickable object behavior and local visual reactions, such as click compression, material changes, trait marks, glow, and prestige pulses. Square titles, details panels, reveal text, shop UI, and story UI should live outside the Square Body so the same object can be reused across 1x1, 2x2, and larger grids.
+The Square Body should own only its clickable object behavior and local visual reactions, such as click compression, material changes, trait marks, glow, and trait purchase pulses. Square titles, details panels, reveal text, shop UI, and story UI should live outside the Square Body so the same object can be reused across 1x1, 2x2, and larger grids.
 _Avoid_: Panel logic inside the square, text owned by the clickable body, separate square implementations per grid size
 
 **Quiet Tactile Feedback**:
@@ -36,12 +36,12 @@ _Avoid_: Juicy arcade feedback, explosive particles, screen shake, clicker chaos
 The First Fun Pass click-feedback element where each manual click can spawn a small readable number near the clicked square, then rise and fade out. It should make gained Squares visible moment-to-moment without adding combo mechanics, noisy particles, or permanent UI clutter.
 _Avoid_: Combo popups, unreadable number spam, screen-wide click effects
 
-**Prestige Reveal Ritual**:
-The short emotional beat after pressing Prestige where the run resets, the chosen square briefly becomes the focus, the new Trait is revealed by name, and the square visibly changes. It should feel like the square changed, not like a plain reset confirmation.
+**Buy Trait Reveal Ritual**:
+The short emotional beat after pressing Buy Trait where Squares are spent, the chosen square briefly becomes the focus, the new Trait is revealed by name, and the square visibly changes. It should feel like the square changed, not like a plain purchase confirmation.
 _Avoid_: Instant silent reset, modal reward screen, long ceremony, text-only reveal
 
 **Trait Identity First**:
-The Prestige Reveal Ritual should foreground the Trait Family and rarity before exact mechanics. Rarity is part of the gamble and should be visible in the reveal because it can make a large difference; detailed numbers belong in square details after the emotional reveal lands.
+The Buy Trait Reveal Ritual should foreground the Trait Family and rarity before exact mechanics. Rarity is part of the gamble and should be visible in the reveal because it can make a large difference; detailed numbers belong in square details after the emotional reveal lands.
 _Avoid_: Numbers-first reward, hidden rarity, spreadsheet reveal
 
 **Family Visual Identity**:
@@ -85,7 +85,7 @@ The naming model where a square's title hints at its Trait mixture through a rea
 _Avoid_: Dominant-only title, raw Trait concatenation, full Trait list as title
 
 **Rarity-Off Title**:
-The Affix Square Naming rule that rarity words should not appear in the square's main title. A title should read like Swift Square of First Light, not Uncommon Swift Square of Common First Light. Rarity belongs in the Prestige Reveal Echo and Grouped Square Details.
+The Affix Square Naming rule that rarity words should not appear in the square's main title. A title should read like Swift Square of First Light, not Uncommon Swift Square of Common First Light. Rarity belongs in the Buy Trait Reveal Echo and Grouped Square Details.
 _Avoid_: Rarity-prefixed title, raw display-name title, title as mechanics summary
 
 **Family-Authored Affixes**:
@@ -120,20 +120,20 @@ _Avoid_: Spreadsheet counts, raw trait list, hidden stack count
 The square-details rule that the full Trait stack should be grouped by Trait Family for scanning, with each family showing its Roman Trait Stack, rarity information, and mechanical summary. The square title can stay poetic and compressed because the details panel carries the factual history.
 _Avoid_: Title-as-full-history, chronological-only details, vague flavor-only details
 
-**Prestige Reveal Echo**:
-The auto-disappearing in-game feedback after a Prestige Reveal Ritual that highlights which Trait Family was upgraded, using an ethereal fade-out and a subtle square-local glow. It should show identity and rarity first, such as Uncommon Quick and Quick II, then secondarily show the new Evolving Square Title; detailed mechanical effects stay in Grouped Square Details.
+**Buy Trait Reveal Echo**:
+The auto-disappearing in-game feedback after a Buy Trait Reveal Ritual that highlights which Trait Family was upgraded, using an ethereal fade-out and a subtle square-local glow. It should show identity and rarity first, such as Uncommon Quick and Quick II, then secondarily show the new Evolving Square Title; detailed mechanical effects stay in Grouped Square Details.
 _Avoid_: Modal reward screen, noisy toast spam, text-only confirmation, numbers-first pop-up
 
 **First 2x2 Grid Era**:
-The next development slice for the game: a fresh save through the first several prestiges, first permanent Traits, first automation unlocks, and the first expansion to a 2x2 grid. This slice should make roughly the first 20 minutes feel coherent and replayable.
+The next development slice for the game: a fresh save through the first several trait purchases, first permanent Traits, first automation unlocks, and the first expansion to a 2x2 grid. This slice should make roughly the first 20 minutes feel coherent and replayable.
 _Avoid_: Early game, first chapter, tutorial, content pass
 
 **First Square Era**:
-The opening 1x1 portion of a fresh save, where the player prestiges a small number of times on the original square, sees a few common Trait Families if lucky, and is then strongly encouraged to expand to 2x2. This era should make prestige understandable, but should not be the main long-term decision space.
+The opening 1x1 portion of a fresh save, where the player buys a small number of Traits on the original square, sees a few common Trait Families if lucky, and is then strongly encouraged to expand to 2x2. This era should make Buy Trait understandable, but should not be the main long-term decision space.
 _Avoid_: Tutorial, starter phase, single-square game
 
-**Prestige Tension**:
-The early-game question of whether to prestige now for one more Trait roll or keep pushing the current run toward a larger goal, especially grid expansion that may unlock rarer and cooler Traits. This tension should make "one more prestige" and "save for expansion" both feel tempting.
+**Buy Trait Tension**:
+The early-game question of whether to Buy Trait now for one more Trait roll or keep pushing the current run toward a larger goal, especially grid expansion that may unlock rarer and cooler Traits. This tension should make "one more Trait" and "save for expansion" both feel tempting.
 _Avoid_: Reset loop, optimal timing, progression choice
 
 **Reactive Luck**:
@@ -157,7 +157,7 @@ A permanent or run-based stat that shifts Trait roll weight toward higher unlock
 _Avoid_: Family luck, trait value boost, future-rarity unlock
 
 **Trait Pool Expansion**:
-A grid-tier milestone where future prestige rolls can include stronger rarity variants and, when appropriate, additional Trait Families. The 2x2 expansion should clearly communicate that uncommon variants and more family variety can now appear.
+A grid-tier milestone where future trait purchase rolls can include stronger rarity variants and, when appropriate, additional Trait Families. The 2x2 expansion should clearly communicate that uncommon variants and more family variety can now appear.
 _Avoid_: Trait shop, trait choice, rarity upgrade
 
 **Enticing Mystery**:
@@ -165,19 +165,19 @@ The unlock communication style where the game makes it obvious that something ex
 _Avoid_: Full odds display, hidden unlock, dry feature text
 
 **Soft Push**:
-A progression pressure that makes the next milestone feel clearly desirable without forbidding alternate play. The First Square Era should strongly encourage expanding to 2x2 after a few prestiges, but should not hard-stop continued 1x1 trait stacking.
+A progression pressure that makes the next milestone feel clearly desirable without forbidding alternate play. The First Square Era should strongly encourage expanding to 2x2 after a few trait purchases, but should not hard-stop continued 1x1 trait stacking.
 _Avoid_: Hard gate, forced tutorial, optimal-only path
 
 **Condensation**:
-A future second-layer prestige idea where the player collapses a developed grid back into one special square, starting over with no ordinary resources but preserving some fraction or expression of the grid's accumulated Traits. This is not part of the First 2x2 Grid Era, but it explains why long-term one-square stacking can eventually become valid.
-_Avoid_: Second prestige, ascension, reset
+A future second-layer reset idea where the player collapses a developed grid back into one special square, starting over with no ordinary resources but preserving some fraction or expression of the grid's accumulated Traits. This is not part of the First 2x2 Grid Era, but it explains why long-term one-square stacking can eventually become valid.
+_Avoid_: Calling this Buy Trait, ascension, or a generic reset
 
 **Condensation Foreshadowing**:
 Light story-message atmosphere hinting that a grid might someday fold back into one square. During the First 2x2 Grid Era, this should have no mechanical hooks and should not promise timing; the actual system belongs hours later, if the game needs it.
 _Avoid_: Condensation tutorial, second-layer unlock, mechanical preview
 
 **Active-First Automation**:
-The early balance where manual clicking remains the fastest and clearest way to progress, while passive generators provide relief, curiosity, and a feeling that the board is waking up. During the First 2x2 Grid Era, automation should support the prestige loop without replacing active play.
+The early balance where manual clicking remains the fastest and clearest way to progress, while passive generators provide relief, curiosity, and a feeling that the board is waking up. During the First 2x2 Grid Era, automation should support the trait purchase loop without replacing active play.
 _Avoid_: Idle-first, full automation, passive-only progression
 
 **Post-Expansion Automation**:

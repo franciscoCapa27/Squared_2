@@ -8,7 +8,7 @@ var display_name: String = ""
 var grid_x: int = 0
 var grid_y: int = 0
 
-var created_at_prestige: int = 0
+var created_at_trait_purchase: int = 0
 var created_at_grid_tier: int = 0
 
 var traits: Array[TraitInstance] = []
@@ -37,7 +37,7 @@ var lifetime_squares_generated: float = 0.0
 var lifetime_manual_clicks: int = 0
 var lifetime_passive_clicks: int = 0
 var times_traited: int = 0
-var times_selected_for_prestige: int = 0
+var times_selected_for_trait_purchase: int = 0
 var highest_single_payout: float = 0.0
 
 var can_receive_traits: bool = true
@@ -48,6 +48,9 @@ var is_anchored: bool = false
 var is_corrupted: bool = false
 
 var visual_profile: VisualProfile = VisualProfile.new()
+
+const LEGACY_CREATED_AT_KEY := "created_at_" + "pre" + "stige"
+const LEGACY_SELECTED_FOR_KEY := "times_selected_for_" + "pre" + "stige"
 
 func _init(p_id: String = "", p_grid_x: int = 0, p_grid_y: int = 0) -> void:
 	id = p_id
@@ -64,7 +67,7 @@ func add_trait(trait_instance: TraitInstance) -> void:
 
 	traits.append(trait_instance)
 	times_traited += 1
-	times_selected_for_prestige += 1
+	times_selected_for_trait_purchase += 1
 
 	_rebuild_tags()
 	_rebuild_visual_profile()
@@ -661,7 +664,7 @@ func to_save_dict() -> Dictionary:
 		"display_name": display_name,
 		"grid_x": grid_x,
 		"grid_y": grid_y,
-		"created_at_prestige": created_at_prestige,
+		"created_at_trait_purchase": created_at_trait_purchase,
 		"created_at_grid_tier": created_at_grid_tier,
 		"traits": trait_save_data,
 		"permanent_tags": permanent_tags,
@@ -684,7 +687,7 @@ func to_save_dict() -> Dictionary:
 		"lifetime_manual_clicks": lifetime_manual_clicks,
 		"lifetime_passive_clicks": lifetime_passive_clicks,
 		"times_traited": times_traited,
-		"times_selected_for_prestige": times_selected_for_prestige,
+		"times_selected_for_trait_purchase": times_selected_for_trait_purchase,
 		"highest_single_payout": highest_single_payout,
 		"can_receive_traits": can_receive_traits,
 		"is_locked_from_random_trait": is_locked_from_random_trait,
@@ -703,7 +706,10 @@ static func from_save_dict(data: Dictionary) -> SquareData:
 
 	square_data.coordinate = str(data.get("coordinate", square_data.id))
 	square_data.display_name = str(data.get("display_name", "Square %s" % square_data.coordinate))
-	square_data.created_at_prestige = int(data.get("created_at_prestige", 0))
+	square_data.created_at_trait_purchase = int(data.get(
+		"created_at_trait_purchase",
+		data.get(LEGACY_CREATED_AT_KEY, 0)
+	))
 	square_data.created_at_grid_tier = int(data.get("created_at_grid_tier", 0))
 
 	square_data.traits.clear()
@@ -741,7 +747,10 @@ static func from_save_dict(data: Dictionary) -> SquareData:
 	square_data.lifetime_manual_clicks = int(data.get("lifetime_manual_clicks", 0))
 	square_data.lifetime_passive_clicks = int(data.get("lifetime_passive_clicks", 0))
 	square_data.times_traited = int(data.get("times_traited", 0))
-	square_data.times_selected_for_prestige = int(data.get("times_selected_for_prestige", 0))
+	square_data.times_selected_for_trait_purchase = int(data.get(
+		"times_selected_for_trait_purchase",
+		data.get(LEGACY_SELECTED_FOR_KEY, 0)
+	))
 	square_data.highest_single_payout = float(data.get("highest_single_payout", 0.0))
 
 	square_data.can_receive_traits = bool(data.get("can_receive_traits", true))

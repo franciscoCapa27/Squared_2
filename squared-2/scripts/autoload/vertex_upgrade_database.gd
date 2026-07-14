@@ -119,7 +119,7 @@ func get_visible_upgrades() -> Array[VertexUpgradeDefinition]:
 			continue
 
 		var requirements_met: bool = upgrade.requirements_are_met(
-			GameState.prestige_count,
+			GameState.trait_purchase_count,
 			GameState.grid_size,
 			VertexUpgradeSystem.unlocked_vertex_upgrades
 		)

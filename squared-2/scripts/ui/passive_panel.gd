@@ -56,7 +56,7 @@ func _rebuild_passive_generator_list() -> void:
 
 	if unlocked_generators.is_empty():
 		var empty_label: Label = Label.new()
-		empty_label.text = "No passive systems unlocked.\n\nPrestige and spend Vertices to awaken automation."
+		empty_label.text = "No passive systems unlocked.\n\nBuy Traits and spend Vertices to awaken automation."
 		empty_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		passive_generator_list.add_child(empty_label)
 		return

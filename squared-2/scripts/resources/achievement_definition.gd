@@ -4,7 +4,7 @@ class_name AchievementDefinition
 enum AchievementCategory {
 	GENERAL,
 	CLICKS,
-	PRESTIGE,
+	TRAIT_PURCHASE,
 	VERTEX,
 	PASSIVE,
 	TRAITS,
@@ -17,7 +17,7 @@ enum ConditionType {
 	TOTAL_PASSIVE_CLICKS,
 	TOTAL_SQUARES_GENERATED,
 	CURRENT_SQUARES,
-	PRESTIGE_COUNT,
+	TRAIT_PURCHASE_COUNT,
 	VERTICES_EARNED,
 	VERTEX_UPGRADE_PURCHASED,
 	PASSIVE_GENERATOR_UNLOCKED,
@@ -53,8 +53,8 @@ func get_category_name() -> String:
 			return "General"
 		AchievementCategory.CLICKS:
 			return "Clicks"
-		AchievementCategory.PRESTIGE:
-			return "Prestige"
+		AchievementCategory.TRAIT_PURCHASE:
+			return "Trait Purchases"
 		AchievementCategory.VERTEX:
 			return "Vertex"
 		AchievementCategory.PASSIVE:
