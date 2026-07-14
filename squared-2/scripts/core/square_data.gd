@@ -175,6 +175,15 @@ func record_passive_click(amount: float) -> void:
 	lifetime_passive_clicks += 1
 	_record_squares_generated(amount)
 
+func reset_run_state_on_prestige() -> void:
+	run_squares_generated = 0.0
+	run_manual_clicks = 0
+	run_passive_clicks = 0
+	current_cooldown = 0.0
+	current_charge = 0.0
+	temporary_value_multiplier = 1.0
+	temporary_speed_multiplier = 1.0
+
 func _record_squares_generated(amount: float) -> void:
 	run_squares_generated += amount
 	lifetime_squares_generated += amount
