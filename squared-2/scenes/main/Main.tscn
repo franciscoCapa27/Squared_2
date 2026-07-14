@@ -315,6 +315,8 @@ text = "Reset your run to gain permanent bonuses."
 [node name="PrestigeDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox/PrestigeTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
+autowrap_mode = 3
+custom_minimum_size = Vector2(0, 64)
 text = "Gain Vertices • A square gains a permanent Trait • Reset this run"
 
 [node name="PrestigeButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/PrestigePanel/PrestigeMargin/PrestigeHBox" unique_id=126762251]
