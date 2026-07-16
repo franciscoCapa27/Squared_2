@@ -383,12 +383,13 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Reset your run to gain permanent bonuses."
 
-[node name="BuyTraitDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=246128059]
+[node name="BuyTraitDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
-custom_minimum_size = Vector2(0, 64)
-text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
+bbcode_enabled = true
+text = "Cost: 15 Squares • Gain: 1 Vertices\nPossible rarities: Common"
+fit_content = true
 
 [node name="BuyTraitButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" unique_id=126762251]
 unique_name_in_owner = true

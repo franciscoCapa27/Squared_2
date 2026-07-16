@@ -4,6 +4,7 @@ extends Control
 @onready var vertices_label: Label = %VerticesLabel
 @onready var trait_purchase_button: Button = %BuyTraitButton
 @onready var trait_purchase_description: Label = %BuyTraitDescription
+@onready var trait_purchase_details: RichTextLabel = %BuyTraitDetails
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
@@ -40,7 +41,6 @@ var passives_story_shown: bool = false
 @onready var center_page_root: Control = %CenterPageRoot
 
 @onready var trait_purchase_panel: PanelContainer = %BuyTraitPanel
-@onready var trait_purchase_details: Label = %BuyTraitDetails
 
 @onready var achievement_summary_panel: PanelContainer = %AchievementSummaryPanel
 @onready var achievement_summary_label: Label = %AchievementSummaryLabel
@@ -97,7 +97,7 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_resource_label(vertices_label)
 	ThemeTextHelper.apply_body_label(story_label)
 	ThemeTextHelper.apply_body_label(trait_purchase_description)
-	ThemeTextHelper.apply_detail_label(trait_purchase_details)
+	ThemeTextHelper.apply_detail_rich_text(trait_purchase_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
 	story_panel.add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 	ThemeLayoutHelper.apply_margin(story_margin, "inner_margin")
@@ -108,6 +108,7 @@ func _on_theme_changed() -> void:
 func _connect_global_signals() -> void:
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.vertices_changed.connect(_on_vertices_changed)
+	EventBus.grid_changed.connect(_on_grid_changed)
 	EventBus.story_message.connect(_on_story_message)
 
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
@@ -295,6 +296,10 @@ func _on_vertices_changed(value: int) -> void:
 
 
 
+func _on_grid_changed() -> void:
+	_refresh_trait_purchase_panel()
+
+
 func _on_story_message(message: String) -> void:
 	story_label.text = message
 
@@ -305,11 +310,33 @@ func _refresh_trait_purchase_panel() -> void:
 	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
 	trait_purchase_button.text = "Buy Trait"
-	trait_purchase_details.text = "Cost: %s Squares • Gain %s Vertices • Add a permanent Trait • Keep this run" % [
+	trait_purchase_details.text = "Cost: %s Squares • Gain: %s Vertices\nPossible rarities: %s" % [
 		cost_text,
 		vertex_text,
+		_get_possible_rarities_rich_text(),
 	]
-	trait_purchase_description.text = "Spend Squares to gain Vertices and roll a random Trait. Nothing resets."
+	trait_purchase_description.text = "Spend Squares to permanently add a random Trait and gain Vertices."
+
+
+func _get_possible_rarities_rich_text() -> String:
+	var rarity_parts: Array[String] = []
+	var rarity_weights: Dictionary = TraitDatabase.get_rarity_weights_for_grid(GameState.grid_size)
+
+	for rarity_variant: Variant in rarity_weights.keys():
+		var rarity: int = int(rarity_variant)
+		if float(rarity_weights[rarity_variant]) <= 0.0:
+			continue
+
+		var rarity_name: String = TraitDefinition.rarity_name_from_value(rarity)
+		var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity_name)
+		rarity_parts.append("[color=%s]%s[/color]" % [rarity_color, rarity_name])
+
+	if rarity_parts.is_empty():
+		var fallback_name: String = TraitDefinition.rarity_name_from_value(TraitDefinition.Rarity.COMMON)
+		var fallback_color: String = ThemeTextHelper.get_rarity_color_hex(fallback_name)
+		return "[color=%s]%s[/color]" % [fallback_color, fallback_name]
+
+	return ", ".join(rarity_parts)
 		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
@@ -354,6 +381,7 @@ func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
 
 func _on_vertex_upgrades_changed() -> void:
 	_refresh_vertex_shop()
+	_refresh_trait_purchase_panel()
 	_refresh_passive_panel()
 	grid_page.refresh_buttons()
 	square_details_panel.refresh()
