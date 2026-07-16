@@ -31,8 +31,8 @@ func _ready() -> void:
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
-	ThemeLayoutHelper.apply_margin(run_upgrades_margin, "inner_margin")
-	ThemeLayoutHelper.apply_box_separation(run_upgrades_v_box, "card_gap")
+	ThemeLayoutHelper.apply_dense_margin(run_upgrades_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(run_upgrades_v_box, "card_gap")
 
 
 func _on_theme_changed() -> void:

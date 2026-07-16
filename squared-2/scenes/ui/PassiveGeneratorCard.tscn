@@ -11,18 +11,18 @@ script = ExtResource("1_w8yjn")
 
 [node name="CardMargin" type="MarginContainer" parent="." unique_id=1646056221]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
 [node name="CardVBox" type="VBoxContainer" parent="CardMargin" unique_id=589219007]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="TitleRow" type="HBoxContainer" parent="CardMargin/CardVBox" unique_id=1992256305]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="TitleLabel" type="Label" parent="CardMargin/CardVBox/TitleRow" unique_id=1992256305]
 unique_name_in_owner = true
@@ -47,5 +47,5 @@ max_value = 1.0
 
 [node name="UpgradeButton" type="Button" parent="CardMargin/CardVBox" unique_id=19665633]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2

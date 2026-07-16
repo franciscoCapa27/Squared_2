@@ -1,13 +1,15 @@
 extends Control
 class_name AchievementsPage
 
-const TILE_SIZE := 84.0
-const GRID_GAP := 12.0
+const TILE_SIZE := 72.0
+const GRID_GAP := 8.0
 
 @onready var achievements_description: RichTextLabel = %AchievementsDescription
 @onready var achievement_grid: GridContainer = %AchievementGrid
 @onready var achievement_selection_detail: RichTextLabel = %AchievementSelectionDetail
 @onready var achievement_detail_help: ContextualHelp = %AchievementDetailHelp
+@onready var achievements_margin: MarginContainer = %AchievementsMargin
+@onready var achievements_v_box: VBoxContainer = %AchievementsVBox
 
 var achievement_tile_scene: PackedScene = preload("res://scenes/ui/AchievementIconTile.tscn")
 var achievement_tiles: Dictionary = {}
@@ -21,6 +23,8 @@ func _ready() -> void:
 	achievement_grid.resized.connect(_update_grid_columns)
 	resized.connect(_update_grid_columns)
 	get_viewport().size_changed.connect(_update_grid_columns)
+	ThemeLayoutHelper.apply_dense_margin(achievements_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(achievements_v_box, "section_gap")
 	refresh()
 	call_deferred("_update_grid_columns")
 
