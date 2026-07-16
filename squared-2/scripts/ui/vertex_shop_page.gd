@@ -42,6 +42,8 @@ const CANVAS_SIZE := Vector2(620, 660)
 
 var vertex_upgrade_node_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeNode.tscn")
 var vertex_upgrade_nodes: Dictionary = {}
+var revealed_node_ids: Dictionary = {}
+var revealed_connection_ids: Dictionary = {}
 var refresh_queued: bool = false
 
 
@@ -88,6 +90,7 @@ func _rebuild_vertex_upgrade_tree() -> void:
 
 	vertex_upgrade_nodes.clear()
 	vertex_upgrade_canvas.custom_minimum_size = CANVAS_SIZE
+	var current_revealed_node_ids: Dictionary = {}
 
 	if VertexUpgradeDatabase.all_upgrades.is_empty():
 		VertexUpgradeDatabase.load_upgrades()
@@ -114,7 +117,13 @@ func _rebuild_vertex_upgrade_tree() -> void:
 		upgrade_node.setup(upgrade, str(NODE_ICONS.get(upgrade_id, "◇")))
 		upgrade_node.buy_requested.connect(_on_vertex_upgrade_buy_requested)
 		vertex_upgrade_nodes[upgrade_id] = upgrade_node
+		current_revealed_node_ids[upgrade_id] = true
+		if revealed_node_ids.has(upgrade_id):
+			upgrade_node.show_immediately()
+		else:
+			upgrade_node.play_reveal(float(vertex_upgrade_nodes.size() - 1) * 0.04)
 
+	revealed_node_ids = current_revealed_node_ids
 	_add_visible_connections()
 
 
@@ -134,6 +143,8 @@ func _is_node_revealed(upgrade_id: String) -> bool:
 
 
 func _add_visible_connections() -> void:
+	var current_connection_ids: Dictionary = {}
+
 	for parent_id_variant: Variant in TREE_CHILDREN.keys():
 		var parent_id: String = str(parent_id_variant)
 		var child_ids: Array = TREE_CHILDREN[parent_id]
@@ -145,16 +156,37 @@ func _add_visible_connections() -> void:
 			if not vertex_upgrade_nodes.has(child_id):
 				continue
 
+			var connection_id: String = "%s->%s" % [parent_id, child_id]
+			current_connection_ids[connection_id] = true
+
 			var connection: Line2D = Line2D.new()
 			connection.width = 2.0
-			connection.default_color = ThemeSystem.get_color("border_soft")
+			connection.default_color = _get_connection_color(child_id)
 			connection.antialiased = true
 			connection.z_index = -1
+			connection.modulate.a = 1.0 if revealed_connection_ids.has(connection_id) else 0.0
 			connection.points = PackedVector2Array([
 				TREE_POSITIONS[parent_id] + Vector2(NODE_SIZE.x * 0.5, NODE_SIZE.y),
 				TREE_POSITIONS[child_id] + Vector2(NODE_SIZE.x * 0.5, 0),
 			])
 			vertex_upgrade_canvas.add_child(connection)
+
+			if not revealed_connection_ids.has(connection_id):
+				var connection_tween: Tween = create_tween()
+				connection_tween.tween_interval(0.08)
+				connection_tween.tween_property(connection, "modulate:a", 1.0, 0.24)
+
+	revealed_connection_ids = current_connection_ids
+
+
+func _get_connection_color(child_id: String) -> Color:
+	if VertexUpgradeSystem.has_vertex_upgrade(child_id):
+		return ThemeSystem.get_color("accent_primary")
+
+	if VertexUpgradeSystem.can_buy_vertex_upgrade(child_id):
+		return ThemeSystem.get_color("accent_secondary")
+
+	return ThemeSystem.get_color("text_muted")
 
 
 func _on_vertex_upgrade_buy_requested(upgrade_id: String) -> void:

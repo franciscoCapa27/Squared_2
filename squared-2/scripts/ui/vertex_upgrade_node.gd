@@ -12,6 +12,8 @@ signal buy_requested(upgrade_id: String)
 
 var upgrade_definition: VertexUpgradeDefinition
 var icon_glyph: String = "◇"
+var node_is_purchased: bool = false
+var node_can_buy: bool = false
 
 
 func _ready() -> void:
@@ -34,6 +36,8 @@ func refresh() -> void:
 	var purchase_count: int = VertexUpgradeSystem.get_vertex_upgrade_purchase_count(upgrade_definition.id)
 	var is_purchased: bool = purchase_count > 0 and not upgrade_definition.is_repeatable
 	var can_buy: bool = VertexUpgradeSystem.can_buy_vertex_upgrade(upgrade_definition.id)
+	node_is_purchased = is_purchased
+	node_can_buy = can_buy
 
 	icon_label.text = "✓" if is_purchased else icon_glyph
 	title_label.text = upgrade_definition.display_name
@@ -60,6 +64,23 @@ func refresh() -> void:
 		state_label.text = "Locked"
 		buy_button.text = "Locked"
 		buy_button.disabled = true
+
+	_apply_state_theme()
+
+
+func play_reveal(delay_seconds: float) -> void:
+	modulate.a = 0.0
+	scale = Vector2(0.96, 0.96)
+	var reveal_tween: Tween = create_tween()
+	reveal_tween.tween_interval(delay_seconds)
+	reveal_tween.set_parallel(true)
+	reveal_tween.tween_property(self, "modulate:a", 1.0, 0.22)
+	reveal_tween.tween_property(self, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+func show_immediately() -> void:
+	modulate.a = 1.0
+	scale = Vector2.ONE
 
 
 func _get_buy_state_detail(is_purchased: bool, can_buy: bool) -> String:
@@ -100,6 +121,25 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_primary_label(icon_label)
 	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
 	ThemeButtonHelper.apply_button_theme(buy_button)
+	_apply_state_theme()
+
+
+func _apply_state_theme() -> void:
+	if node_is_purchased:
+		add_theme_stylebox_override("panel", ThemeSystem.make_selected_card_style())
+		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_primary"))
+		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("success"))
+	elif node_can_buy:
+		add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
+		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_secondary"))
+		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_secondary"))
+	else:
+		add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
+		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
+		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
 
 
 func _on_theme_changed() -> void:

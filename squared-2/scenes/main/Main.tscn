@@ -452,6 +452,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 1
+vertical_scroll_mode = 1
+follow_focus = true
 
 [node name="VertexUpgradeCanvas" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
