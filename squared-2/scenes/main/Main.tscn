@@ -784,19 +784,23 @@ offset_bottom = 8.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
-bbcode_enabled = true
-scroll_active = true
-text = "No square selected."
+horizontal_scroll_mode = 0
+
+[node name="SquareDetailsContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox/SelectedSquareDetails" unique_id=195294755]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 help_title = "Selected square"
-help_detail = "This panel shows the selected square's identity, values, Traits, and active effects."
+help_detail = "A square's title is shaped by its Trait families. The title favors the strongest family identity and uses another family when one is present, while the details below keep the full factual Trait history visible."
 
 [node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=682771557]
 unique_name_in_owner = true
