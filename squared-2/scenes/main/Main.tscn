@@ -401,9 +401,10 @@ disabled = true
 text = "Buy Trait"
 
 [node name="BuyTraitHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" instance=ExtResource("10_contextual_help")]
+unique_name_in_owner = true
 layout_mode = 2
 help_title = "Buy Trait"
-help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
+help_detail = "Buy Trait spends Squares to grant Vertices and permanently add a random Trait to a random square. Open this help for current cost, gain, and rarity availability."
 
 [node name="VertexShopPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
