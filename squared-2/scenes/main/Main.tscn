@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://8mmn8xlnp7rn" path="res://scripts/ui/achievements_page.gd" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
+[ext_resource type="Script" path="res://scripts/ui/stats_page.gd" id="9_stats"]
 [ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TriangleIndicator.tscn" id="11_triangle_indicator"]
@@ -414,18 +415,31 @@ grow_vertical = 2
 script = ExtResource("3_dc040")
 
 [node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage" unique_id=1648899683]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [node name="VertexShopTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Vertex Shop"
 
 [node name="VertexShopDescription" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=734586641]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 8
 bbcode_enabled = true
 text = "Spend Vertices on permanent systems."
@@ -433,7 +447,9 @@ fit_content = true
 
 [node name="VertexUpgradesScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1910849744]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
@@ -669,18 +685,33 @@ layout_mode = 2
 [node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
 unique_name_in_owner = true
 visible = false
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_stats")
 
 [node name="StatsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage" unique_id=1731496513]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="StatsLabel" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin" unique_id=152981671]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 bbcode_enabled = true
-text = "Stats page placeholder.
-Run stats, lifetime stats, and detailed square data will live here."
+text = "Run statistics will appear here."
 
 [node name="RightPanel" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox" unique_id=772359619]
 unique_name_in_owner = true
