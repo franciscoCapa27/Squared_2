@@ -5,6 +5,7 @@ extends Control
 @onready var trait_purchase_button: Button = %BuyTraitButton
 @onready var trait_purchase_description: Label = %BuyTraitDescription
 @onready var trait_purchase_details: RichTextLabel = %BuyTraitDetails
+@onready var trait_purchase_help: ContextualHelp = %BuyTraitHelp
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
@@ -316,10 +317,26 @@ func _refresh_trait_purchase_panel() -> void:
 		_get_possible_rarities_rich_text(),
 	]
 	trait_purchase_description.text = "Spend Squares to permanently add a random Trait and gain Vertices."
+	trait_purchase_help.help_title = "Buy Trait"
+	trait_purchase_help.help_detail = _get_trait_purchase_help_detail(cost_text, vertex_text)
+	trait_purchase_help.tooltip_text = "%s\n%s" % [
+		trait_purchase_help.help_title,
+		trait_purchase_help.help_detail,
+	]
 
 
 func _get_possible_rarities_rich_text() -> String:
 	var rarity_parts: Array[String] = []
+
+	for rarity_name: String in _get_possible_rarity_names():
+		var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity_name)
+		rarity_parts.append("[color=%s]%s[/color]" % [rarity_color, rarity_name])
+
+	return ", ".join(rarity_parts)
+
+
+func _get_possible_rarity_names() -> Array[String]:
+	var rarity_names: Array[String] = []
 	var rarity_weights: Dictionary = TraitDatabase.get_rarity_weights_for_grid(GameState.grid_size)
 
 	for rarity_variant: Variant in rarity_weights.keys():
@@ -327,16 +344,20 @@ func _get_possible_rarities_rich_text() -> String:
 		if float(rarity_weights[rarity_variant]) <= 0.0:
 			continue
 
-		var rarity_name: String = TraitDefinition.rarity_name_from_value(rarity)
-		var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity_name)
-		rarity_parts.append("[color=%s]%s[/color]" % [rarity_color, rarity_name])
+		rarity_names.append(TraitDefinition.rarity_name_from_value(rarity))
 
-	if rarity_parts.is_empty():
-		var fallback_name: String = TraitDefinition.rarity_name_from_value(TraitDefinition.Rarity.COMMON)
-		var fallback_color: String = ThemeTextHelper.get_rarity_color_hex(fallback_name)
-		return "[color=%s]%s[/color]" % [fallback_color, fallback_name]
+	if rarity_names.is_empty():
+		rarity_names.append(TraitDefinition.rarity_name_from_value(TraitDefinition.Rarity.COMMON))
 
-	return ", ".join(rarity_parts)
+	return rarity_names
+
+
+func _get_trait_purchase_help_detail(cost_text: String, vertex_text: String) -> String:
+	return "Current cost: %s Squares. The cost rises after each purchase.\n\nGain: %s Vertices and permanently add one random Trait to a random square.\n\nPossible rarities for the current grid: %s." % [
+		cost_text,
+		vertex_text,
+		", ".join(_get_possible_rarity_names()),
+	]
 		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
