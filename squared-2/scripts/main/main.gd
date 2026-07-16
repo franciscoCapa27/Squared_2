@@ -3,7 +3,6 @@ extends Control
 @onready var squares_label: Label = %SquaresLabel
 @onready var vertices_label: Label = %VerticesLabel
 @onready var trait_purchase_button: Button = %BuyTraitButton
-@onready var trait_purchase_title: Label = %BuyTraitTitle
 @onready var trait_purchase_description: Label = %BuyTraitDescription
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
@@ -97,7 +96,6 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_resource_label(squares_label)
 	ThemeTextHelper.apply_resource_label(vertices_label)
 	ThemeTextHelper.apply_body_label(story_label)
-	ThemeTextHelper.apply_panel_title(trait_purchase_title)
 	ThemeTextHelper.apply_body_label(trait_purchase_description)
 	ThemeTextHelper.apply_detail_label(trait_purchase_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
