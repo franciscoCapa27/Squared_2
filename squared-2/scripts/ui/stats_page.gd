@@ -1,8 +1,6 @@
 extends Control
 class_name StatsPage
 
-const CONTEXTUAL_HELP_SCENE: PackedScene = preload("res://scenes/ui/ContextualHelp.tscn")
-
 @onready var stats_title_label: Label = %StatsTitle
 @onready var stats_description: RichTextLabel = %StatsDescription
 @onready var stats_list: VBoxContainer = %StatsList
@@ -169,11 +167,6 @@ func _add_stat_row(rows: VBoxContainer, definition: Array) -> void:
 	_stat_value_labels[definition[0]] = value_label
 	row.add_child(value_label)
 
-	var help_button: ContextualHelp = CONTEXTUAL_HELP_SCENE.instantiate() as ContextualHelp
-	help_button.help_title = definition[3]
-	help_button.help_detail = definition[2]
-	help_button.tooltip_text = "%s\n%s" % [definition[3], definition[2]]
-	row.add_child(help_button)
 
 
 func _set_stat_value(stat_id: String, value: String) -> void:

@@ -1,8 +1,6 @@
 extends PanelContainer
 class_name SquareDetailsPanel
 
-const CONTEXTUAL_HELP_SCENE: PackedScene = preload("res://scenes/ui/ContextualHelp.tscn")
-
 @onready var selected_square_title: CollapsiblePanelHeader = %SelectedSquareTitle
 @onready var selected_square_details: ScrollContainer = %SelectedSquareDetails
 @onready var details_content: VBoxContainer = %SquareDetailsContent
@@ -75,21 +73,15 @@ func _rebuild_details(square_data: SquareData) -> void:
 	_add_section_title("Square")
 	_add_detail_row(
 		"Trait count",
-		NumberFormatter.integer_amount(square_data.get_trait_count()),
-		"Trait count",
-		"The total number of Trait instances currently carried by this square."
+		NumberFormatter.integer_amount(square_data.get_trait_count())
 	)
 	_add_detail_row(
 		"Current payout",
-		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data)),
-		"Current payout",
-		"The Squares this square would produce from a manual click right now, after its current Traits and run effects."
+		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data))
 	)
 	_add_detail_row(
 		"Respawn",
-		NumberFormatter.seconds(SquareCalculator.calculate_respawn_time(square_data)),
-		"Respawn time",
-		"How long this square takes to return after a click. Traits and run effects can change this duration."
+		NumberFormatter.seconds(SquareCalculator.calculate_respawn_time(square_data))
 	)
 
 	_add_section_title("Trait Families")
@@ -119,9 +111,7 @@ func _add_section_title(title_text: String) -> void:
 
 func _add_detail_row(
 	label_text: String,
-	value_text: String,
-	help_title: String,
-	help_detail: String
+	value_text: String
 ) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
 	row.custom_minimum_size.y = 24.0
@@ -141,11 +131,6 @@ func _add_detail_row(
 	ThemeTextHelper.apply_primary_label(value_label)
 	row.add_child(value_label)
 
-	var help_button: ContextualHelp = CONTEXTUAL_HELP_SCENE.instantiate() as ContextualHelp
-	help_button.help_title = help_title
-	help_button.help_detail = help_detail
-	row.add_child(help_button)
-
 
 func _add_family_summary(family_info: Dictionary) -> void:
 	var family_box: VBoxContainer = VBoxContainer.new()
@@ -160,11 +145,6 @@ func _add_family_summary(family_info: Dictionary) -> void:
 	family_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ThemeTextHelper.apply_body_label(family_label)
 	family_header.add_child(family_label)
-
-	var help_button: ContextualHelp = CONTEXTUAL_HELP_SCENE.instantiate() as ContextualHelp
-	help_button.help_title = family_info["title"]
-	help_button.help_detail = family_info["help_detail"]
-	family_header.add_child(help_button)
 
 	var effects_label: Label = Label.new()
 	effects_label.text = family_info["effects_text"]
@@ -226,11 +206,7 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 
 		result.append({
 			"title": title,
-			"effects_text": effects_text,
-			"help_detail": "This family contains %s Trait instance(s). The Roman rank shows the family stack count; the rarity is the highest rarity currently present.\n\nEffects:\n%s" % [
-				NumberFormatter.integer_amount(int(family_info["count"])),
-				effects_text
-			]
+			"effects_text": effects_text
 		})
 
 	return result
