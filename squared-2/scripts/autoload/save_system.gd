@@ -4,6 +4,7 @@ const SAVE_VERSION := 1
 const SAVE_PATH := "user://savegame.json"
 const MIN_AUTOSAVE_INTERVAL_SECONDS := 5.0
 const DEFAULT_AUTOSAVE_INTERVAL_SECONDS := 60.0
+const DEFAULT_THEME_ID := "void_dark"
 
 signal save_loaded()
 signal save_saved()
@@ -13,6 +14,7 @@ signal save_settings_changed()
 
 var autosave_enabled: bool = true
 var autosave_interval_seconds: float = DEFAULT_AUTOSAVE_INTERVAL_SECONDS
+var theme_id: String = DEFAULT_THEME_ID
 var autosave_elapsed_seconds: float = 0.0
 var is_applying_save_data: bool = false
 
@@ -85,6 +87,7 @@ func hard_reset() -> void:
 
 	var preserved_autosave_enabled: bool = autosave_enabled
 	var preserved_autosave_interval_seconds: float = autosave_interval_seconds
+	var preserved_theme_id: String = theme_id
 
 	GameState.reset_to_new_game()
 	PassiveSystem.reset_to_new_game()
@@ -94,6 +97,7 @@ func hard_reset() -> void:
 
 	autosave_enabled = preserved_autosave_enabled
 	autosave_interval_seconds = preserved_autosave_interval_seconds
+	theme_id = preserved_theme_id
 	autosave_elapsed_seconds = 0.0
 
 	save_game()
@@ -149,7 +153,8 @@ func _build_save_data() -> Dictionary:
 		"version": SAVE_VERSION,
 		"settings": {
 			"autosave_enabled": autosave_enabled,
-			"autosave_interval_seconds": autosave_interval_seconds
+			"autosave_interval_seconds": autosave_interval_seconds,
+			"theme_id": theme_id
 		},
 		"game_state": GameState.to_save_dict(),
 		"passive_system": PassiveSystem.to_save_dict(),
@@ -214,6 +219,10 @@ func _apply_settings_save_data(settings_data: Dictionary) -> void:
 		autosave_interval_seconds
 	)
 
+	var loaded_theme_id: String = str(settings_data.get("theme_id", DEFAULT_THEME_ID))
+	if ThemeSystem.load_theme_by_id(loaded_theme_id):
+		theme_id = loaded_theme_id
+
 	autosave_elapsed_seconds = 0.0
 	save_settings_changed.emit()
 	
@@ -228,6 +237,15 @@ func set_autosave_enabled(value: bool) -> void:
 func set_autosave_interval_seconds(value: float) -> void:
 	autosave_interval_seconds = max(MIN_AUTOSAVE_INTERVAL_SECONDS, value)
 	autosave_elapsed_seconds = 0.0
+	save_settings_changed.emit()
+	save_game()
+
+
+func set_theme_id(value: String) -> void:
+	if not ThemeSystem.get_available_theme_ids().has(value):
+		return
+
+	theme_id = value
 	save_settings_changed.emit()
 	save_game()
 

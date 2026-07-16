@@ -9,6 +9,11 @@ const HARD_RESET_CONFIRM_SECONDS := 5.0
 @onready var autosave_enabled_check_box: CheckBox = %AutosaveEnabledCheckBox
 @onready var autosave_interval_spin_box: SpinBox = %AutosaveIntervalSpinBox
 @onready var cheat_square_value_check_box: CheckBox = %CheatSquareValueCheckBox
+@onready var theme_option_button: OptionButton = %ThemeOptionButton
+@onready var options_title_label: Label = %OptionsTitle
+@onready var theme_label: Label = %ThemeLabel
+@onready var autosave_title_label: Label = %AutosaveTitle
+@onready var autosave_interval_label: Label = %AutosaveIntervalLabel
 
 @onready var save_button: Button = %SaveButton
 @onready var export_save_button: Button = %ExportSaveButton
@@ -25,6 +30,8 @@ func _ready() -> void:
 	autosave_enabled_check_box.toggled.connect(_on_autosave_enabled_toggled)
 	autosave_interval_spin_box.value_changed.connect(_on_autosave_interval_changed)
 	cheat_square_value_check_box.toggled.connect(_on_cheat_square_value_toggled)
+	theme_option_button.item_selected.connect(_on_theme_selected)
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
 
 	save_button.pressed.connect(_on_save_button_pressed)
 	export_save_button.pressed.connect(_on_export_save_button_pressed)
@@ -38,6 +45,8 @@ func _ready() -> void:
 	SaveSystem.save_settings_changed.connect(_on_save_settings_changed)
 
 	_sync_from_save_system()
+	_populate_theme_options()
+	_apply_theme()
 
 
 func _process(delta: float) -> void:
@@ -62,8 +71,24 @@ func _sync_from_save_system() -> void:
 	autosave_interval_spin_box.value = SaveSystem.get_autosave_interval_seconds()
 	autosave_interval_spin_box.editable = SaveSystem.autosave_enabled
 	cheat_square_value_check_box.button_pressed = GameState.cheat_square_value_enabled
+	_select_theme_option(SaveSystem.theme_id)
 
 	is_syncing_controls = false
+
+
+func _populate_theme_options() -> void:
+	theme_option_button.clear()
+	for theme_id: String in ThemeSystem.get_available_theme_ids():
+		theme_option_button.add_item(ThemeSystem.get_theme_display_name(theme_id))
+		theme_option_button.set_item_metadata(theme_option_button.item_count - 1, theme_id)
+	_select_theme_option(ThemeSystem.get_theme_id())
+
+
+func _select_theme_option(theme_id: String) -> void:
+	for index: int in theme_option_button.item_count:
+		if str(theme_option_button.get_item_metadata(index)) == theme_id:
+			theme_option_button.select(index)
+			return
 
 
 func _on_autosave_enabled_toggled(enabled: bool) -> void:
@@ -96,6 +121,35 @@ func _on_cheat_square_value_toggled(enabled: bool) -> void:
 		options_status_label.text = "Cheat enabled: Squares are worth x100."
 	else:
 		options_status_label.text = "Cheat disabled: normal Square values restored."
+
+
+func _on_theme_selected(index: int) -> void:
+	if is_syncing_controls:
+		return
+
+	var selected_theme_id: String = str(theme_option_button.get_item_metadata(index))
+	if not ThemeSystem.load_theme_by_id(selected_theme_id):
+		return
+
+	SaveSystem.set_theme_id(selected_theme_id)
+	options_status_label.text = "Theme set to %s." % ThemeSystem.get_theme_display_name(selected_theme_id)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
+
+
+func _apply_theme() -> void:
+	ThemeButtonHelper.apply_button_theme(save_button)
+	ThemeButtonHelper.apply_button_theme(export_save_button)
+	ThemeButtonHelper.apply_button_theme(import_save_button)
+	ThemeButtonHelper.apply_button_theme(hard_reset_button)
+	ThemeTextHelper.apply_page_title(options_title_label)
+	ThemeTextHelper.apply_body_label(theme_label)
+	ThemeTextHelper.apply_body_label(autosave_title_label)
+	ThemeTextHelper.apply_body_label(autosave_interval_label)
+	ThemeTextHelper.apply_body_label(options_status_label)
+	theme_option_button.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
 
 
 func _on_save_button_pressed() -> void:

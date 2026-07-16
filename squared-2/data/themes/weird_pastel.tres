@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "weird_pastel"
+display_name = "Weird Pastel"
+background = Color(0.94, 0.88, 0.96, 1)
+background_subtle = Color(0.82, 0.94, 0.91, 1)
+surface = Color(1, 0.96, 0.82, 0.96)
+surface_soft = Color(0.88, 0.96, 0.98, 1)
+surface_strong = Color(1, 0.75, 0.82, 1)
+border = Color(0.42, 0.25, 0.5, 0.65)
+border_soft = Color(0.5, 0.36, 0.58, 0.45)
+border_strong = Color(0.95, 0.3, 0.52, 0.9)
+text_primary = Color(0.2, 0.1, 0.26, 1)
+text_secondary = Color(0.31, 0.16, 0.35, 1)
+text_muted = Color(0.43, 0.29, 0.45, 1)
+accent_primary = Color(0.95, 0.3, 0.52, 1)
+accent_secondary = Color(0.05, 0.62, 0.62, 1)
+success = Color(0.12, 0.52, 0.3, 1)
+warning = Color(0.78, 0.45, 0.06, 1)
+danger = Color(0.78, 0.12, 0.22, 1)
+panel_corner_radius = 20
+card_corner_radius = 16
+button_corner_radius = 14
+panel_border_width = 2
+card_border_width = 2
+button_border_width = 2
+disabled_opacity = 0.5
+hover_brightness = 1.08
+pressed_brightness = 0.88
+screen_margin = 24
+panel_gap = 18
+section_gap = 20
+card_gap = 12
+inner_margin = 16
+grid_gap = 16
+trait_purchase_gap = 34
+font_size_resource = 16
+font_size_page_title = 19
+font_size_panel_title = 16
+font_size_card_title = 14
+font_size_body = 13
+font_size_detail = 12
+font_size_button = 13
+font_size_tiny = 10
+compact_text_scale = 0.9

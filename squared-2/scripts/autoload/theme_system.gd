@@ -3,6 +3,16 @@ extends Node
 signal theme_changed()
 
 const DEFAULT_THEME_PATH := "res://data/themes/void_dark.tres"
+const THEME_PATHS := {
+	"void_dark": DEFAULT_THEME_PATH,
+	"paper_light": "res://data/themes/paper_light.tres",
+	"weird_pastel": "res://data/themes/weird_pastel.tres"
+}
+const THEME_DISPLAY_NAMES := {
+	"void_dark": "Void Dark",
+	"paper_light": "Paper Light",
+	"weird_pastel": "Weird Pastel"
+}
 
 var active_theme: UIThemeDefinition
 
@@ -11,19 +21,36 @@ func _ready() -> void:
 	load_theme(DEFAULT_THEME_PATH)
 
 
-func load_theme(theme_path: String) -> void:
+func load_theme(theme_path: String) -> bool:
 	var resource: Resource = load(theme_path)
 
 	if resource == null:
 		push_error("Failed to load UI theme: %s" % theme_path)
-		return
+		return false
 
 	if not resource is UIThemeDefinition:
 		push_error("Resource is not a UIThemeDefinition: %s" % theme_path)
-		return
+		return false
 
 	active_theme = resource as UIThemeDefinition
 	theme_changed.emit()
+	return true
+
+
+func get_available_theme_ids() -> Array[String]:
+	return ["void_dark", "paper_light", "weird_pastel"]
+
+
+func get_theme_display_name(theme_id: String) -> String:
+	return str(THEME_DISPLAY_NAMES.get(theme_id, theme_id))
+
+
+func load_theme_by_id(theme_id: String) -> bool:
+	if not THEME_PATHS.has(theme_id):
+		return false
+
+	var theme_path: String = str(THEME_PATHS[theme_id])
+	return load_theme(theme_path)
 
 
 func get_theme_id() -> String:
