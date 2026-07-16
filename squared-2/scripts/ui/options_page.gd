@@ -6,6 +6,9 @@ signal hard_reset_completed()
 
 const HARD_RESET_CONFIRM_SECONDS := 5.0
 
+@onready var options_margin: MarginContainer = $OptionsMargin
+@onready var options_v_box: VBoxContainer = $OptionsMargin/OptionsVBox
+
 @onready var autosave_enabled_check_box: CheckBox = %AutosaveEnabledCheckBox
 @onready var autosave_interval_spin_box: SpinBox = %AutosaveIntervalSpinBox
 @onready var cheat_square_value_check_box: CheckBox = %CheatSquareValueCheckBox
@@ -143,10 +146,21 @@ func _on_theme_changed() -> void:
 
 
 func _apply_theme() -> void:
+	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+	ThemeLayoutHelper.apply_margin(options_margin, "inner_margin")
+	ThemeLayoutHelper.apply_box_separation(options_v_box, "section_gap")
+
 	ThemeButtonHelper.apply_button_theme(save_button)
 	ThemeButtonHelper.apply_button_theme(export_save_button)
 	ThemeButtonHelper.apply_button_theme(import_save_button)
 	ThemeButtonHelper.apply_button_theme(hard_reset_button)
+	ThemeButtonHelper.apply_button_theme(theme_option_button)
+	_apply_control_text(autosave_enabled_check_box)
+	_apply_control_text(autosave_interval_spin_box)
+	_apply_control_text(cheat_square_value_check_box)
+	_apply_control_text(autosave_interval_spin_box.get_line_edit())
+	_apply_text_edit_theme(export_save_text)
+	_apply_text_edit_theme(import_save_text)
 	ThemeTextHelper.apply_page_title(options_title_label)
 	ThemeTextHelper.apply_body_label(theme_label)
 	ThemeTextHelper.apply_body_label(autosave_title_label)
@@ -155,7 +169,24 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_body_label(save_data_title_label)
 	ThemeTextHelper.apply_body_label(hard_reset_title_label)
 	ThemeTextHelper.apply_body_label(options_status_label)
-	theme_option_button.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+
+
+func _apply_control_text(control: Control) -> void:
+	if control == null:
+		return
+
+	control.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+	control.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("body"))
+
+
+func _apply_text_edit_theme(text_edit: TextEdit) -> void:
+	if text_edit == null:
+		return
+
+	text_edit.add_theme_stylebox_override("normal", ThemeSystem.make_card_style())
+	text_edit.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
+	text_edit.add_theme_color_override("font_placeholder_color", ThemeSystem.get_color("text_muted"))
+	text_edit.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("body"))
 
 
 func _on_save_button_pressed() -> void:
