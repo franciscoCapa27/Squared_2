@@ -460,57 +460,63 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
+[node name="OptionsScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll" unique_id=1947092701]
 layout_mode = 2
 custom_minimum_size = Vector2(520, 0)
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
-[node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
+[node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox" unique_id=1922031564]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Options"
 
-[node name="ThemeRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+[node name="ThemeRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ThemeLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow"]
+[node name="ThemeLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/ThemeRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Theme:"
 
-[node name="ThemeOptionButton" type="OptionButton" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow" unique_id=123456789]
+[node name="ThemeOptionButton" type="OptionButton" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/ThemeRow" unique_id=123456789]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ThemeHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+[node name="ThemeHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/ThemeRow" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 size_flags_horizontal = 0
 help_title = "Themes"
 help_detail = "Choose the visual theme for the game. The choice is saved with your settings and applies immediately."
 
-[node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
+[node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox" unique_id=1283299912]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Autosave"
 
-[node name="AutosaveEnabledCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=983546635]
+[node name="AutosaveRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AutosaveEnabledCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/AutosaveRow" unique_id=983546635]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Enable Autosave"
 
-[node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
+[node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/AutosaveRow" unique_id=200793610]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Interval seconds:"
 
-[node name="AutosaveIntervalSpinBox" type="SpinBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=993040792]
+[node name="AutosaveIntervalSpinBox" type="SpinBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/AutosaveRow" unique_id=993040792]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 5.0
@@ -518,86 +524,104 @@ max_value = 3600.0
 step = 5.0
 value = 60.0
 
-[node name="AutosaveHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+[node name="AutosaveHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/AutosaveRow" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 size_flags_horizontal = 0
 help_title = "Autosave"
 help_detail = "Autosave stores your current progression at the selected interval. Disable it when testing manual save and import flows."
 
-[node name="TestingTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+[node name="TestingTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Testing"
 
-[node name="TestingHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+[node name="TestingRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CheatSquareValueCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/TestingRow" unique_id=1846051492]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Cheat: Squares x100"
+
+[node name="TestingHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/TestingRow" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 size_flags_horizontal = 0
 help_title = "Testing controls"
 help_detail = "Testing controls are for development playtesting and do not add new player settings."
 
-[node name="CheatSquareValueCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1846051492]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Cheat: Squares x100"
-
-[node name="SaveDataTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+[node name="SaveDataTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Save data"
 
-[node name="SaveDataHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+[node name="SaveActionsRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveActionsRow" unique_id=921981563]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Game"
+
+[node name="ExportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveActionsRow" unique_id=352066836]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Export Save"
+
+[node name="ImportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveActionsRow" unique_id=782817519]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Import Save"
+
+[node name="SaveDataHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveActionsRow" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 size_flags_horizontal = 0
 help_title = "Save data"
 help_detail = "Save stores your current game. Export copies a portable save string, and Import loads a save string you paste below."
 
-[node name="SaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
-unique_name_in_owner = true
+[node name="SaveTextRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
 layout_mode = 2
-text = "Save Game"
+theme_override_constants/separation = 8
 
-[node name="ExportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=352066836]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Export Save"
-
-[node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
+[node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveTextRow" unique_id=1004516296]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "Exported save string appears here."
 
-[node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
+[node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/SaveTextRow" unique_id=75042349]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "Paste save string here."
 
-[node name="ImportSaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=782817519]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Import Save"
-
-[node name="HardResetSeparator" type="HSeparator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+[node name="HardResetSeparator" type="HSeparator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
 layout_mode = 2
 
-[node name="HardResetTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+[node name="HardResetRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HardResetTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/HardResetRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Danger zone"
 
-[node name="HardResetHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+[node name="HardResetHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox/HardResetRow" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 size_flags_horizontal = 0
 help_title = "Hard Reset"
 help_detail = "Hard Reset permanently erases saved progression and returns the game to a new-game state. Click twice to confirm."
 
-[node name="HardResetButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
+[node name="HardResetButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox" unique_id=1050900557]
 unique_name_in_owner = true
 layout_mode = 2
 text = "HARD RESET"
 
-[node name="OptionsStatusLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1495484838]
+[node name="OptionsStatusLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll/OptionsVBox" unique_id=1495484838]
 unique_name_in_owner = true
 layout_mode = 2
 text = " "
