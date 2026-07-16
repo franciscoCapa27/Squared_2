@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://4i0ph053usmd"]
 
 [ext_resource type="Script" uid="uid://dxhs3fk0j8wls" path="res://scripts/ui/run_upgrade_card.gd" id="1_i0pfe"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="2_contextual_help"]
 
 [node name="RunUpgradeCard" type="PanelContainer" unique_id=1711378834]
 offset_right = 40.0
@@ -14,10 +15,20 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=140386213]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1578494593]
+[node name="TitleRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1578494593]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TitleRow" unique_id=1578494593]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 autowrap_mode = 3
+
+[node name="DetailHelp" parent="MarginContainer/VBoxContainer/TitleRow" instance=ExtResource("2_contextual_help")]
+unique_name_in_owner = true
+layout_mode = 2
+help_title = "Run Upgrade"
 
 [node name="CategoryLevelLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1822474060]
 unique_name_in_owner = true
