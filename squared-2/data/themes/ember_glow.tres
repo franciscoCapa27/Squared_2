@@ -22,4 +22,12 @@ accent_secondary = Color(1, 0.74, 0.18, 1)
 success = Color(0.35, 0.88, 0.40, 1)
 warning = Color(1, 0.67, 0.12, 1)
 danger = Color(1, 0.20, 0.12, 1)
-
+font_size_resource = 14
+font_size_page_title = 16
+font_size_panel_title = 14
+font_size_card_title = 13
+font_size_body = 11
+font_size_detail = 10
+font_size_button = 11
+font_size_tiny = 8
+compact_text_scale = 0.84

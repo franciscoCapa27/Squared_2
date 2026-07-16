@@ -5,22 +5,38 @@ signal vertex_upgrade_purchased(upgrade_id: String)
 
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
 @onready var vertex_upgrade_list: VBoxContainer = %VertexUpgradeList
+@onready var vertex_shop_title: Label = %VertexShopTitle
 
 var vertex_upgrade_card_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeCard.tscn")
 var vertex_upgrade_cards: Dictionary = {}
 
 
 func _ready() -> void:
+	ThemeSystem.theme_changed.connect(_on_theme_changed)
+	_apply_theme()
 	refresh()
 
 
 func refresh() -> void:
 	_rebuild_vertex_upgrade_list()
+	for card: VertexUpgradeCard in vertex_upgrade_cards.values():
+		card.refresh()
+
+
+func _apply_theme() -> void:
+	if vertex_shop_title == null:
+		return
+	ThemeTextHelper.apply_page_title(vertex_shop_title)
+	ThemeTextHelper.apply_body_rich_text(vertex_shop_description)
+
+
+func _on_theme_changed() -> void:
+	_apply_theme()
 
 
 func _rebuild_vertex_upgrade_list() -> void:
 	for child: Node in vertex_upgrade_list.get_children():
-		child.queue_free()
+		child.free()
 
 	vertex_upgrade_cards.clear()
 
