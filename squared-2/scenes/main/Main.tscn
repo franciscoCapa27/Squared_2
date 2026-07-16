@@ -72,6 +72,7 @@ theme_override_constants/separation = 16
 alignment = 1
 
 [node name="ResourceCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1461184511]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
 size_flags_horizontal = 0
@@ -118,7 +119,6 @@ text = "There is a square."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
-clip_text = true
 
 [node name="NavigationCluster" type="HBoxContainer" parent="RootMargin/MainVBox/TopBar/TopBarMargin/TopBarHBox" unique_id=1420093174]
 unique_name_in_owner = true
@@ -297,15 +297,9 @@ target = NodePath("../GridCenter/GridVBox/UpgradeGridButton")
 [node name="GridCenter" type="CenterContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage" unique_id=847906112]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -312.0
-offset_top = -308.0
-offset_right = 312.0
-offset_bottom = 308.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
@@ -340,7 +334,6 @@ size_flags_vertical = 4
 
 [node name="BuyTraitPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=721662999]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -383,12 +376,13 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Reset your run to gain permanent bonuses."
 
-[node name="BuyTraitDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=246128059]
+[node name="BuyTraitDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
-custom_minimum_size = Vector2(0, 64)
-text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
+bbcode_enabled = true
+text = "Cost: 15 Squares • Gain: 1 Vertices\nPossible rarities: Common"
+fit_content = true
 
 [node name="BuyTraitButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" unique_id=126762251]
 unique_name_in_owner = true
@@ -400,9 +394,10 @@ disabled = true
 text = "Buy Trait"
 
 [node name="BuyTraitHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" instance=ExtResource("10_contextual_help")]
+unique_name_in_owner = true
 layout_mode = 2
 help_title = "Buy Trait"
-help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
+help_detail = "Buy Trait spends Squares to grant Vertices and permanently add a random Trait to a random square. Open this help for current cost, gain, and rarity availability."
 
 [node name="VertexShopPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
@@ -449,14 +444,13 @@ fit_content = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
+horizontal_scroll_mode = 1
+vertical_scroll_mode = 1
+follow_focus = true
 
-[node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
+[node name="VertexUpgradeCanvas" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
 
 [node name="OptionsPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=996618759]
 unique_name_in_owner = true
@@ -484,7 +478,6 @@ horizontal_scroll_mode = 0
 
 [node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsScroll" unique_id=1947092701]
 layout_mode = 2
-custom_minimum_size = Vector2(520, 0)
 size_flags_horizontal = 3
 theme_override_constants/separation = 8
 
@@ -662,8 +655,7 @@ grow_vertical = 2
 
 [node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
 layout_mode = 2
-custom_minimum_size = Vector2(520, 0)
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 
 [node name="AchievementsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1908525422]
 layout_mode = 2
@@ -676,11 +668,29 @@ text = "Permanent accomplishments with small gameplay rewards."
 
 [node name="AchievementListScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=160560265]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="AchievementList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
+[node name="AchievementGrid" type="GridContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+
+[node name="AchievementSelectionDetail" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1749602009]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "Select an achievement to inspect its current state."
+fit_content = true
+
+[node name="AchievementDetailHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage" instance=ExtResource("10_contextual_help")]
+unique_name_in_owner = true
+visible = false
+help_title = "Achievement"
+help_detail = "Achievement details"
 
 [node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
 unique_name_in_owner = true
@@ -714,8 +724,7 @@ horizontal_scroll_mode = 0
 
 [node name="StatsContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin/StatsScroll" unique_id=152981672]
 layout_mode = 2
-custom_minimum_size = Vector2(520, 0)
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
 [node name="StatsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin/StatsScroll/StatsContent" unique_id=152981673]
@@ -784,18 +793,23 @@ offset_bottom = 8.0
 grow_horizontal = 0
 grow_vertical = 2
 
-[node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
+[node name="SelectedSquareDetails" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
-bbcode_enabled = true
-text = "No square selected."
+horizontal_scroll_mode = 0
+
+[node name="SquareDetailsContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox/SelectedSquareDetails" unique_id=195294755]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 help_title = "Selected square"
-help_detail = "This panel shows the selected square's identity, values, Traits, and active effects."
+help_detail = "A square's title is shaped by its Trait families. The title favors the strongest family identity and uses another family when one is present, while the details below keep the full factual Trait history visible."
 
 [node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=682771557]
 unique_name_in_owner = true

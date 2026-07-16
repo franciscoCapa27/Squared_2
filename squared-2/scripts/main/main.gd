@@ -1,9 +1,13 @@
 extends Control
 
+const COMPACT_LAYOUT_MAX_WIDTH := 900.0
+
 @onready var squares_label: Label = %SquaresLabel
 @onready var vertices_label: Label = %VerticesLabel
 @onready var trait_purchase_button: Button = %BuyTraitButton
 @onready var trait_purchase_description: Label = %BuyTraitDescription
+@onready var trait_purchase_details: RichTextLabel = %BuyTraitDetails
+@onready var trait_purchase_help: ContextualHelp = %BuyTraitHelp
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
@@ -34,13 +38,16 @@ var passives_story_shown: bool = false
 @onready var root_margin: MarginContainer = %RootMargin
 @onready var main_v_box: VBoxContainer = %MainVBox
 @onready var top_bar: PanelContainer = %TopBar
+@onready var top_bar_margin: MarginContainer = %TopBarMargin
+@onready var top_bar_hbox: HBoxContainer = %TopBarHBox
+@onready var resource_cluster: HBoxContainer = %ResourceCluster
+@onready var navigation_cluster: HBoxContainer = %NavigationCluster
 @onready var body_h_box: HBoxContainer = %BodyHBox
 @onready var left_panel: VBoxContainer = %LeftPanel
 @onready var right_panel: VBoxContainer = %RightPanel
 @onready var center_page_root: Control = %CenterPageRoot
 
 @onready var trait_purchase_panel: PanelContainer = %BuyTraitPanel
-@onready var trait_purchase_details: Label = %BuyTraitDetails
 
 @onready var achievement_summary_panel: PanelContainer = %AchievementSummaryPanel
 @onready var achievement_summary_label: Label = %AchievementSummaryLabel
@@ -53,10 +60,17 @@ var passives_story_shown: bool = false
 @onready var square_details_feature_visibility: FeaturePanelVisibility = %SquareDetailsFeatureVisibility
 @onready var achievement_summary_feature_visibility: FeaturePanelVisibility = %AchievementSummaryFeatureVisibility
 
+var _compact_layout_active: bool = false
+var _compact_top_vbox: VBoxContainer = null
+var _compact_navigation_vbox: VBoxContainer = null
+var _compact_body_scroll: ScrollContainer = null
+var _compact_body_vbox: VBoxContainer = null
+
 func _ready() -> void:
 	_connect_global_signals()
 	_connect_ui_signals()
 	_connect_page_signals()
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 	_apply_theme()
 
@@ -69,6 +83,8 @@ func _ready() -> void:
 		_refresh_all_ui()
 	else:
 		_initialize_new_game_ui()
+
+	call_deferred("_apply_responsive_layout")
 
 
 # ------------------------------------------------------------------------------
@@ -97,17 +113,152 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_resource_label(vertices_label)
 	ThemeTextHelper.apply_body_label(story_label)
 	ThemeTextHelper.apply_body_label(trait_purchase_description)
-	ThemeTextHelper.apply_detail_label(trait_purchase_details)
+	ThemeTextHelper.apply_detail_rich_text(trait_purchase_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
 	story_panel.add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 	ThemeLayoutHelper.apply_margin(story_margin, "inner_margin")
 	ThemeTextHelper.apply_detail_label(story_label)
+	if _compact_layout_active:
+		_apply_compact_spacing()
 
 func _on_theme_changed() -> void:
 	_apply_theme()
+
+
+func _on_viewport_size_changed() -> void:
+	_apply_responsive_layout()
+
+
+func _apply_responsive_layout() -> void:
+	var should_use_compact_layout: bool = get_viewport_rect().size.x < COMPACT_LAYOUT_MAX_WIDTH
+	if should_use_compact_layout == _compact_layout_active:
+		return
+
+	_compact_layout_active = should_use_compact_layout
+	if _compact_layout_active:
+		_enter_compact_layout()
+	else:
+		_exit_compact_layout()
+
+
+func _enter_compact_layout() -> void:
+	_apply_compact_spacing()
+
+	_compact_top_vbox = VBoxContainer.new()
+	_compact_top_vbox.name = "CompactTopVBox"
+	_compact_top_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ThemeLayoutHelper.apply_box_separation(_compact_top_vbox, "card_gap")
+	top_bar_margin.add_child(_compact_top_vbox)
+	top_bar_margin.move_child(_compact_top_vbox, 0)
+
+	top_bar_hbox.remove_child(resource_cluster)
+	top_bar_hbox.remove_child(story_panel)
+	top_bar_hbox.remove_child(navigation_cluster)
+	_compact_top_vbox.add_child(resource_cluster)
+	_compact_top_vbox.add_child(story_panel)
+
+	resource_cluster.custom_minimum_size = Vector2(0.0, resource_cluster.custom_minimum_size.y)
+	story_panel.custom_minimum_size = Vector2(0.0, story_panel.custom_minimum_size.y)
+	navigation_cluster.custom_minimum_size = Vector2(0.0, navigation_cluster.custom_minimum_size.y)
+
+	_compact_navigation_vbox = VBoxContainer.new()
+	_compact_navigation_vbox.name = "CompactNavigationVBox"
+	_compact_navigation_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ThemeLayoutHelper.apply_box_separation(_compact_navigation_vbox, "card_gap")
+	_compact_top_vbox.add_child(_compact_navigation_vbox)
+	for button: Button in _get_navigation_buttons():
+		navigation_cluster.remove_child(button)
+		button.custom_minimum_size = Vector2(0.0, button.custom_minimum_size.y)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_compact_navigation_vbox.add_child(button)
+
+	top_bar_hbox.visible = false
+
+	body_h_box.visible = false
+	_compact_body_scroll = ScrollContainer.new()
+	_compact_body_scroll.name = "CompactBodyScroll"
+	_compact_body_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_compact_body_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_compact_body_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_compact_body_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
+	main_v_box.add_child(_compact_body_scroll)
+	main_v_box.move_child(_compact_body_scroll, body_h_box.get_index())
+
+	_compact_body_vbox = VBoxContainer.new()
+	_compact_body_vbox.name = "CompactBodyVBox"
+	_compact_body_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ThemeLayoutHelper.apply_box_separation(_compact_body_vbox, "panel_gap")
+	_compact_body_scroll.add_child(_compact_body_vbox)
+	for panel: Control in [left_panel, center_page_root, right_panel]:
+		body_h_box.remove_child(panel)
+		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		_compact_body_vbox.add_child(panel)
+
+
+func _exit_compact_layout() -> void:
+	body_h_box.visible = true
+	for panel: Control in [left_panel, center_page_root, right_panel]:
+		_compact_body_vbox.remove_child(panel)
+		body_h_box.add_child(panel)
+
+	if _compact_body_scroll != null and is_instance_valid(_compact_body_scroll):
+		main_v_box.remove_child(_compact_body_scroll)
+		_compact_body_scroll.queue_free()
+	_compact_body_scroll = null
+	_compact_body_vbox = null
+
+	for button: Button in _get_navigation_buttons():
+		_compact_navigation_vbox.remove_child(button)
+		button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		navigation_cluster.add_child(button)
+	_restore_navigation_button_minimums()
+
+	_compact_top_vbox.remove_child(resource_cluster)
+	_compact_top_vbox.remove_child(story_panel)
+	_compact_top_vbox.remove_child(_compact_navigation_vbox)
+	top_bar_hbox.add_child(resource_cluster)
+	top_bar_hbox.add_child(story_panel)
+	top_bar_hbox.add_child(navigation_cluster)
+	resource_cluster.custom_minimum_size = Vector2(340.0, resource_cluster.custom_minimum_size.y)
+	story_panel.custom_minimum_size = Vector2(420.0, story_panel.custom_minimum_size.y)
+	navigation_cluster.custom_minimum_size = Vector2(340.0, navigation_cluster.custom_minimum_size.y)
+	top_bar_hbox.visible = true
+
+	_compact_navigation_vbox.queue_free()
+	_compact_navigation_vbox = null
+	_compact_top_vbox.queue_free()
+	_compact_top_vbox = null
+	_apply_theme()
+
+
+func _apply_compact_spacing() -> void:
+	var compact_margin: int = ThemeSystem.get_spacing("card_gap")
+	root_margin.add_theme_constant_override("margin_left", compact_margin)
+	root_margin.add_theme_constant_override("margin_top", compact_margin)
+	root_margin.add_theme_constant_override("margin_right", compact_margin)
+	root_margin.add_theme_constant_override("margin_bottom", compact_margin)
+
+
+func _get_navigation_buttons() -> Array[Button]:
+	return [
+		grid_tab_button,
+		stats_tab_button,
+		options_tab_button,
+		achievements_tab_button,
+	]
+
+
+func _restore_navigation_button_minimums() -> void:
+	grid_tab_button.custom_minimum_size = Vector2(120, 36)
+	stats_tab_button.custom_minimum_size = Vector2.ZERO
+	options_tab_button.custom_minimum_size = Vector2(120, 36)
+	achievements_tab_button.custom_minimum_size = Vector2(120, 36)
+
+
 func _connect_global_signals() -> void:
 	EventBus.squares_changed.connect(_on_squares_changed)
 	EventBus.vertices_changed.connect(_on_vertices_changed)
+	EventBus.grid_changed.connect(_on_grid_changed)
 	EventBus.story_message.connect(_on_story_message)
 
 	PassiveSystem.passive_pulsed.connect(_on_passive_pulsed)
@@ -295,6 +446,10 @@ func _on_vertices_changed(value: int) -> void:
 
 
 
+func _on_grid_changed() -> void:
+	_refresh_trait_purchase_panel()
+
+
 func _on_story_message(message: String) -> void:
 	story_label.text = message
 
@@ -305,11 +460,53 @@ func _refresh_trait_purchase_panel() -> void:
 	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
 	trait_purchase_button.text = "Buy Trait"
-	trait_purchase_details.text = "Cost: %s Squares • Gain %s Vertices • Add a permanent Trait • Keep this run" % [
+	trait_purchase_details.text = "Cost: %s Squares • Gain: %s Vertices\nPossible rarities: %s" % [
 		cost_text,
 		vertex_text,
+		_get_possible_rarities_rich_text(),
 	]
-	trait_purchase_description.text = "Spend Squares to gain Vertices and roll a random Trait. Nothing resets."
+	trait_purchase_description.text = "Spend Squares to permanently add a random Trait and gain Vertices."
+	trait_purchase_help.help_title = "Buy Trait"
+	trait_purchase_help.help_detail = _get_trait_purchase_help_detail(cost_text, vertex_text)
+	trait_purchase_help.tooltip_text = "%s\n%s" % [
+		trait_purchase_help.help_title,
+		trait_purchase_help.help_detail,
+	]
+
+
+func _get_possible_rarities_rich_text() -> String:
+	var rarity_parts: Array[String] = []
+
+	for rarity_name: String in _get_possible_rarity_names():
+		var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity_name)
+		rarity_parts.append("[color=%s]%s[/color]" % [rarity_color, rarity_name])
+
+	return ", ".join(rarity_parts)
+
+
+func _get_possible_rarity_names() -> Array[String]:
+	var rarity_names: Array[String] = []
+	var rarity_weights: Dictionary = TraitDatabase.get_rarity_weights_for_grid(GameState.grid_size)
+
+	for rarity_variant: Variant in rarity_weights.keys():
+		var rarity: int = int(rarity_variant)
+		if float(rarity_weights[rarity_variant]) <= 0.0:
+			continue
+
+		rarity_names.append(TraitDefinition.rarity_name_from_value(rarity))
+
+	if rarity_names.is_empty():
+		rarity_names.append(TraitDefinition.rarity_name_from_value(TraitDefinition.Rarity.COMMON))
+
+	return rarity_names
+
+
+func _get_trait_purchase_help_detail(cost_text: String, vertex_text: String) -> String:
+	return "Current cost: %s Squares. The cost rises after each purchase.\n\nGain: %s Vertices and permanently add one random Trait to a random square.\n\nPossible rarities for the current grid: %s." % [
+		cost_text,
+		vertex_text,
+		", ".join(_get_possible_rarity_names()),
+	]
 		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
@@ -354,6 +551,7 @@ func _on_vertex_upgrade_purchased(_upgrade_id: String) -> void:
 
 func _on_vertex_upgrades_changed() -> void:
 	_refresh_vertex_shop()
+	_refresh_trait_purchase_panel()
 	_refresh_passive_panel()
 	grid_page.refresh_buttons()
 	square_details_panel.refresh()

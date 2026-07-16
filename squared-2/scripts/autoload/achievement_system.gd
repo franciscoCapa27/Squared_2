@@ -3,13 +3,16 @@ extends Node
 signal achievement_unlocked(achievement_id: String)
 signal achievements_changed()
 
-var unlocked_achievements: Dictionary = {}
+var achievement_levels: Dictionary = {}
+var square_click_streak: int = 0
+var last_square_id: String = ""
 
 
 func _ready() -> void:
 	EventBus.squares_changed.connect(_on_any_progress_value_changed)
 	EventBus.vertices_changed.connect(_on_any_progress_value_changed)
 	EventBus.trait_purchase_changed.connect(_on_any_progress_value_changed)
+	EventBus.square_selected.connect(_on_square_selected)
 	EventBus.grid_changed.connect(_on_any_progress_changed)
 	EventBus.grid_upgraded.connect(_on_grid_upgraded)
 	EventBus.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
@@ -22,22 +25,33 @@ func _ready() -> void:
 
 
 func is_achievement_unlocked(achievement_id: String) -> bool:
-	return bool(unlocked_achievements.get(achievement_id, false))
+	return get_achievement_level(achievement_id) > 0
+
+
+func get_achievement_level(achievement_id: String) -> int:
+	return maxi(0, int(achievement_levels.get(achievement_id, 0)))
 
 
 func get_unlocked_count() -> int:
-	return unlocked_achievements.size()
+	var unlocked_count: int = 0
+	for achievement_id: Variant in achievement_levels.keys():
+		if get_achievement_level(str(achievement_id)) > 0:
+			unlocked_count += 1
+
+	return unlocked_count
 
 
 func check_all_achievements() -> void:
 	var any_unlocked: bool = false
 
 	for achievement: AchievementDefinition in AchievementDatabase.get_all_achievements():
-		if is_achievement_unlocked(achievement.id):
-			continue
+		var current_level: int = get_achievement_level(achievement.id)
+		while current_level < achievement.get_level_count():
+			if not _is_level_condition_met(achievement, current_level):
+				break
 
-		if _is_condition_met(achievement):
-			_unlock_achievement(achievement)
+			_unlock_achievement_level(achievement, current_level)
+			current_level += 1
 			any_unlocked = true
 
 	if any_unlocked:
@@ -51,7 +65,7 @@ func get_visible_achievements() -> Array[AchievementDefinition]:
 		if not achievement.is_visible_by_default:
 			continue
 
-		if achievement.hidden_until_unlocked and not is_achievement_unlocked(achievement.id):
+		if achievement.hidden_until_unlocked and get_achievement_level(achievement.id) <= 0:
 			continue
 
 		visible_achievements.append(achievement)
@@ -63,62 +77,107 @@ func get_progress_ratio(achievement: AchievementDefinition) -> float:
 	if achievement == null:
 		return 0.0
 
-	if is_achievement_unlocked(achievement.id):
+	var current_level: int = get_achievement_level(achievement.id)
+	var level_count: int = achievement.get_level_count()
+	if current_level >= level_count:
 		return 1.0
 
-	if achievement.threshold <= 0.0:
+	var next_threshold: float = achievement.get_threshold_for_level(current_level)
+	if next_threshold <= 0.0:
 		return 0.0
 
 	var current_value: float = _get_condition_current_value(achievement)
-	return clamp(current_value / achievement.threshold, 0.0, 1.0)
+	return clamp(current_value / next_threshold, 0.0, 1.0)
 
 
 func get_progress_text(achievement: AchievementDefinition) -> String:
 	if achievement == null:
 		return ""
 
-	if is_achievement_unlocked(achievement.id):
-		return "Unlocked"
+	var current_level: int = get_achievement_level(achievement.id)
+	var level_count: int = achievement.get_level_count()
+	if current_level >= level_count:
+		return "Level %s / %s · Complete" % [
+			NumberFormatter.integer_amount(level_count),
+			NumberFormatter.integer_amount(level_count),
+		]
 
 	var current_value: float = _get_condition_current_value(achievement)
+	var next_threshold: float = achievement.get_threshold_for_level(current_level)
 
-	return "%s / %s" % [
+	return "Level %s / %s · %s / %s to next" % [
+		NumberFormatter.integer_amount(current_level),
+		NumberFormatter.integer_amount(level_count),
 		NumberFormatter.amount(current_value),
-		NumberFormatter.amount(achievement.threshold)
+		NumberFormatter.amount(next_threshold),
+	]
+
+
+func get_level_text(achievement: AchievementDefinition) -> String:
+	if achievement == null:
+		return ""
+
+	return "Level %s / %s" % [
+		NumberFormatter.integer_amount(get_achievement_level(achievement.id)),
+		NumberFormatter.integer_amount(achievement.get_level_count()),
 	]
 
 func to_save_dict() -> Dictionary:
+	var legacy_unlocked_achievements: Dictionary = {}
+	for achievement_id: Variant in achievement_levels.keys():
+		if get_achievement_level(str(achievement_id)) > 0:
+			legacy_unlocked_achievements[str(achievement_id)] = true
+
 	return {
-		"unlocked_achievements": unlocked_achievements
+		"achievement_levels": achievement_levels.duplicate(),
+		"unlocked_achievements": legacy_unlocked_achievements,
+		"square_click_streak": square_click_streak,
+		"last_square_id": last_square_id,
 	}
 
 
 func from_save_dict(data: Dictionary) -> void:
-	var unlocked_variant: Variant = data.get("unlocked_achievements", {})
-
-	if unlocked_variant is Dictionary:
-		unlocked_achievements = unlocked_variant as Dictionary
+	achievement_levels.clear()
+	square_click_streak = maxi(0, int(data.get("square_click_streak", 0)))
+	last_square_id = str(data.get("last_square_id", ""))
+	var levels_variant: Variant = data.get("achievement_levels", null)
+	if levels_variant is Dictionary:
+		for achievement_id: Variant in (levels_variant as Dictionary).keys():
+			var level: int = int((levels_variant as Dictionary).get(achievement_id, 0))
+			if level > 0:
+				achievement_levels[str(achievement_id)] = level
 	else:
-		unlocked_achievements = {}
+		var unlocked_variant: Variant = data.get("unlocked_achievements", {})
+		if unlocked_variant is Dictionary:
+			for achievement_id: Variant in (unlocked_variant as Dictionary).keys():
+				var unlocked_value: Variant = (unlocked_variant as Dictionary).get(achievement_id, false)
+				if bool(unlocked_value):
+					achievement_levels[str(achievement_id)] = 1
 
 	achievements_changed.emit()
 
 
 func reset_to_new_game() -> void:
-	unlocked_achievements.clear()
+	achievement_levels.clear()
+	square_click_streak = 0
+	last_square_id = ""
 	achievements_changed.emit()
 
 
-func _unlock_achievement(achievement: AchievementDefinition) -> void:
-	unlocked_achievements[achievement.id] = true
-	_apply_rewards(achievement)
+func _unlock_achievement_level(achievement: AchievementDefinition, level_index: int) -> void:
+	var unlocked_level: int = level_index + 1
+	achievement_levels[achievement.id] = unlocked_level
+	_apply_rewards(achievement, level_index)
 
-	EventBus.story_message.emit("Achievement unlocked: %s" % achievement.display_name)
+	EventBus.story_message.emit("Achievement unlocked: %s — Level %s" % [
+		achievement.display_name,
+		NumberFormatter.integer_amount(unlocked_level),
+	])
 	achievement_unlocked.emit(achievement.id)
 
 
-func _is_condition_met(achievement: AchievementDefinition) -> bool:
-	return _get_condition_current_value(achievement) >= achievement.threshold
+func _is_level_condition_met(achievement: AchievementDefinition, level_index: int) -> bool:
+	return _get_condition_current_value(achievement) >= achievement.get_threshold_for_level(level_index)
 
 
 func _get_condition_current_value(achievement: AchievementDefinition) -> float:
@@ -147,12 +206,14 @@ func _get_condition_current_value(achievement: AchievementDefinition) -> float:
 			return GameState.get_permanent_stat_multiplier(achievement.target_stat)
 		AchievementDefinition.ConditionType.SCRIPT_HOOK:
 			return _get_script_hook_condition_value(achievement)
+		AchievementDefinition.ConditionType.SQUARE_CLICK_STREAK:
+			return float(square_click_streak)
 		_:
 			return 0.0
 
 
-func _apply_rewards(achievement: AchievementDefinition) -> void:
-	for reward: AchievementReward in achievement.rewards:
+func _apply_rewards(achievement: AchievementDefinition, level_index: int) -> void:
+	for reward: AchievementReward in achievement.get_rewards_for_level(level_index):
 		if reward == null:
 			continue
 
@@ -280,6 +341,19 @@ func _get_total_vertex_upgrade_currency_earned_approximation() -> int:
 func _get_script_hook_condition_value(achievement: AchievementDefinition) -> float:
 	push_warning("Achievement SCRIPT_HOOK condition not implemented: %s" % achievement.id)
 	return 0.0
+
+
+func _on_square_selected(square_id: String) -> void:
+	if last_square_id.is_empty():
+		last_square_id = square_id
+		square_click_streak = 1
+	elif square_id == last_square_id:
+		square_click_streak += 1
+	else:
+		last_square_id = square_id
+		square_click_streak = 0
+
+	check_all_achievements()
 
 
 func _on_progress_signal(_value: Variant = null) -> void:
