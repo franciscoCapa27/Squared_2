@@ -7,6 +7,7 @@ signal upgrade_requested(generator_id: String)
 @onready var status_label: Label = %StatusLabel
 @onready var progress_bar: ProgressBar = %ProgressBar
 @onready var upgrade_button: Button = %UpgradeButton
+@onready var detail_help: ContextualHelp = %DetailHelp
 
 var generator_id: String = ""
 var upgrade_request_pending: bool = false
@@ -39,6 +40,7 @@ func refresh() -> void:
 		status_label.text = "No generator data found."
 		progress_bar.visible = false
 		upgrade_button.visible = false
+		detail_help.visible = false
 		return
 
 	title_label.text = generator_instance.get_display_name()
@@ -47,7 +49,16 @@ func refresh() -> void:
 		status_label.text = "Locked"
 		progress_bar.visible = false
 		upgrade_button.visible = false
+		detail_help.visible = false
 		return
+
+	detail_help.visible = true
+	detail_help.help_title = generator_instance.get_display_name()
+	detail_help.help_detail = _get_detail_help(generator_instance)
+	detail_help.tooltip_text = "%s\n%s" % [
+		detail_help.help_title,
+		detail_help.help_detail
+	]
 
 	var is_active: bool = generator_instance.is_active()
 	var activity_state: String = "Active" if is_active else "Inactive"
@@ -91,6 +102,38 @@ func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String
 		NumberFormatter.seconds(generator_instance.get_current_interval_seconds()),
 		NumberFormatter.percent(generator_instance.get_current_extraction_rate())
 	]
+
+
+func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
+	var next_level_detail: String = "Next level: max level reached."
+	if generator_instance.level < generator_instance.get_max_level():
+		var next_level_instance: PassiveGeneratorInstance = PassiveGeneratorInstance.new(
+			generator_instance.definition
+		)
+		next_level_instance.level = generator_instance.level + 1
+		next_level_detail = "Next level: %s interval; %s extraction." % [
+			NumberFormatter.seconds(next_level_instance.get_current_interval_seconds()),
+			NumberFormatter.percent(next_level_instance.get_current_extraction_rate())
+		]
+
+	var last_pulse_detail: String = "None yet."
+	if generator_instance.last_target_square_id != "":
+		last_pulse_detail = "+%s Squares from %s." % [
+			NumberFormatter.amount(generator_instance.last_payout),
+			generator_instance.last_target_square_id
+		]
+
+	return (
+		"Current effect: %s\n" % _get_effect_summary(generator_instance)
+		+ "Interval: %s\n" % NumberFormatter.seconds(generator_instance.get_current_interval_seconds())
+		+ "Extraction: %s\n" % NumberFormatter.percent(generator_instance.get_current_extraction_rate())
+		+ "Targeting: %s\n" % _get_targeting_text(generator_instance)
+		+ "%s\n\n" % next_level_detail
+		+ "Last pulse: %s\n" % last_pulse_detail
+		+ "Pulses this run: %s\n" % NumberFormatter.integer_amount(generator_instance.lifetime_pulses)
+		+ "Squares generated this run: %s\n\n" % NumberFormatter.amount(generator_instance.lifetime_squares_generated)
+		+ "Run levels persist after buying a Trait. Activity resets on a new game."
+	)
 
 func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String:
 	if generator_instance == null or generator_instance.definition == null:
