@@ -21,6 +21,7 @@ const UPGRADE_SHARPENED_ORIGIN := "sharpened_origin"
 const ACHIEVEMENT_FIRST_CLICK := "first_click"
 const ACHIEVEMENT_FIRST_TRAIT_PURCHASE := "first_trait_purchase"
 const ACHIEVEMENT_FIRST_GENERATOR_UNLOCKED := "first_generator_unlocked"
+const ACHIEVEMENT_LUCKY_SEVENS := "lucky_sevens"
 
 # Trait family IDs.
 const TRAIT_FAMILY_DENSE := "dense"

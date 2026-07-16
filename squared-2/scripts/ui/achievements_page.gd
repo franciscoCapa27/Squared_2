@@ -127,6 +127,21 @@ func _get_icon_glyph(achievement: AchievementDefinition) -> String:
 
 
 func _get_reward_text(achievement: AchievementDefinition) -> String:
+	if not achievement.levels.is_empty():
+		var level_reward_lines: Array[String] = []
+		for level_index: int in achievement.levels.size():
+			var level_rewards: Array[AchievementReward] = achievement.get_rewards_for_level(level_index)
+			for reward: AchievementReward in level_rewards:
+				if reward == null:
+					continue
+
+				level_reward_lines.append("Level %s reward: %s" % [
+					NumberFormatter.integer_amount(level_index + 1),
+					_format_reward(reward),
+				])
+
+		return "\n".join(level_reward_lines) if not level_reward_lines.is_empty() else "Reward: None"
+
 	if achievement.rewards.is_empty():
 		return "Reward: None"
 
