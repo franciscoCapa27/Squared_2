@@ -14,6 +14,9 @@ const HARD_RESET_CONFIRM_SECONDS := 5.0
 @onready var theme_label: Label = %ThemeLabel
 @onready var autosave_title_label: Label = %AutosaveTitle
 @onready var autosave_interval_label: Label = %AutosaveIntervalLabel
+@onready var testing_title_label: Label = %TestingTitle
+@onready var save_data_title_label: Label = %SaveDataTitle
+@onready var hard_reset_title_label: Label = %HardResetTitle
 
 @onready var save_button: Button = %SaveButton
 @onready var export_save_button: Button = %ExportSaveButton
@@ -148,6 +151,9 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_body_label(theme_label)
 	ThemeTextHelper.apply_body_label(autosave_title_label)
 	ThemeTextHelper.apply_body_label(autosave_interval_label)
+	ThemeTextHelper.apply_body_label(testing_title_label)
+	ThemeTextHelper.apply_body_label(save_data_title_label)
+	ThemeTextHelper.apply_body_label(hard_reset_title_label)
 	ThemeTextHelper.apply_body_label(options_status_label)
 	theme_option_button.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
 

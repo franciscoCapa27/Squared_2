@@ -435,6 +435,12 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="ThemeHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Themes"
+help_detail = "Choose the visual theme for the game. The choice is saved with your settings and applies immediately."
+
 [node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
 unique_name_in_owner = true
 layout_mode = 2
@@ -462,10 +468,38 @@ max_value = 3600.0
 step = 5.0
 value = 60.0
 
+[node name="AutosaveHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Autosave"
+help_detail = "Autosave stores your current progression at the selected interval. Disable it when testing manual save and import flows."
+
+[node name="TestingTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Testing"
+
+[node name="TestingHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Testing controls"
+help_detail = "Testing controls are for development playtesting and do not add new player settings."
+
 [node name="CheatSquareValueCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1846051492]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Cheat: Squares x100"
+
+[node name="SaveDataTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save data"
+
+[node name="SaveDataHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Save data"
+help_detail = "Save stores your current game. Export copies a portable save string, and Import loads a save string you paste below."
 
 [node name="SaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
 unique_name_in_owner = true
@@ -493,6 +527,20 @@ placeholder_text = "Paste save string here."
 unique_name_in_owner = true
 layout_mode = 2
 text = "Import Save"
+
+[node name="HardResetSeparator" type="HSeparator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+layout_mode = 2
+
+[node name="HardResetTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Danger zone"
+
+[node name="HardResetHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Hard Reset"
+help_detail = "Hard Reset permanently erases saved progression and returns the game to a new-game state. Click twice to confirm."
 
 [node name="HardResetButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
 unique_name_in_owner = true
