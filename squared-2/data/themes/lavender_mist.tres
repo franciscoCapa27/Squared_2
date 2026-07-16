@@ -22,4 +22,3 @@ accent_secondary = Color(0.42, 0.78, 1, 1)
 success = Color(0.38, 0.88, 0.64, 1)
 warning = Color(1, 0.72, 0.38, 1)
 danger = Color(1, 0.38, 0.58, 1)
-
