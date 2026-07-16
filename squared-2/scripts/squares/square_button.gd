@@ -45,7 +45,7 @@ func _on_pressed() -> void:
 
 	square_clicked.emit(square_id)
 
-	var square_data := GameState.get_square(square_id)
+	var square_data: SquareData = GameState.get_square(square_id)
 	var respawn_time := 1.0
 
 	if square_data != null:

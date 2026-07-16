@@ -1,7 +1,7 @@
 extends PanelContainer
 class_name SquareDetailsPanel
 
-@onready var selected_square_title: Label = %SelectedSquareTitle
+@onready var selected_square_title: CollapsiblePanelHeader = %SelectedSquareTitle
 @onready var selected_square_details: RichTextLabel = %SelectedSquareDetails
 @onready var side_margin: MarginContainer = %RunUpgradesMargin
 @onready var side_v_box: VBoxContainer = %RunUpgradesVBox
@@ -18,11 +18,6 @@ func _apply_theme() -> void:
 
 	ThemeLayoutHelper.apply_margin(side_margin, "inner_margin")
 	ThemeLayoutHelper.apply_box_separation(side_v_box, "section_gap")
-	ThemeTextHelper.apply_auto_shrinking_title(
-		selected_square_title,
-		selected_square_title.text,
-		"panel_title"
-	)
 	ThemeTextHelper.apply_detail_rich_text(selected_square_details)
 
 
@@ -45,11 +40,7 @@ func refresh() -> void:
 		clear()
 		return
 
-	ThemeTextHelper.apply_auto_shrinking_title(
-		selected_square_title,
-		square_data.display_name,
-		"panel_title"
-	)
+	selected_square_title.set_title(square_data.display_name)
 	selected_square_details.text = _build_square_details_text(square_data)
 
 
@@ -62,7 +53,7 @@ func refresh_if_selected(square_id: String) -> void:
 
 func clear() -> void:
 	selected_square_id = ""
-	selected_square_title.text = "No square selected"
+	selected_square_title.set_title("No square selected")
 	selected_square_details.text = "Click a square to inspect it."
 
 
