@@ -82,9 +82,6 @@ func _apply_theme() -> void:
 	ThemeLayoutHelper.apply_box_separation(right_panel, "panel_gap")
 
 	top_bar.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	vertex_shop_page.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	options_page.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	achievements_page.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 	trait_purchase_panel.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
 	achievement_summary_panel.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
