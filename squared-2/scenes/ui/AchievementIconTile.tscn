@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/achievement_icon_tile.gd" id="1_achievement_icon_tile"]
+
+[node name="AchievementIconTile" type="Button"]
+custom_minimum_size = Vector2(84, 84)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+focus_mode = 2
+text = "✦"
+script = ExtResource("1_achievement_icon_tile")

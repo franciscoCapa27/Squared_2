@@ -663,8 +663,7 @@ grow_vertical = 2
 
 [node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
 layout_mode = 2
-custom_minimum_size = Vector2(520, 0)
-size_flags_horizontal = 4
+size_flags_horizontal = 3
 
 [node name="AchievementsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1908525422]
 layout_mode = 2
@@ -677,11 +676,23 @@ text = "Permanent accomplishments with small gameplay rewards."
 
 [node name="AchievementListScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=160560265]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
-[node name="AchievementList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
+[node name="AchievementGrid" type="GridContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox/AchievementListScroll" unique_id=1749602008]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+
+[node name="AchievementSelectionDetail" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1749602009]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "Select an achievement to inspect its current state."
+fit_content = true
 
 [node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
 unique_name_in_owner = true
