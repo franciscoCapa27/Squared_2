@@ -414,6 +414,7 @@ layout_mode = 2
 
 [node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
 unique_name_in_owner = true
@@ -422,6 +423,7 @@ text = "Options"
 
 [node name="ThemeRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="ThemeLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow"]
 unique_name_in_owner = true
@@ -445,6 +447,7 @@ text = "Enable Autosave"
 
 [node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
 unique_name_in_owner = true
@@ -476,13 +479,13 @@ text = "Export Save"
 
 [node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 placeholder_text = "Exported save string appears here."
 
 [node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 placeholder_text = "Paste save string here."
 
