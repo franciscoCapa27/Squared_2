@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 class_name VertexShopPage
 
 signal vertex_upgrade_purchased(upgrade_id: String)

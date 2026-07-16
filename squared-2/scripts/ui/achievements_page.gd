@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 class_name AchievementsPage
 
 @onready var achievements_description: RichTextLabel = %AchievementsDescription

@@ -149,7 +149,15 @@ func upgrade_generator(generator_id: String) -> bool:
 	if not generator_instance.can_level_up(GameState.squares):
 		return false
 
+	var cost: int = generator_instance.get_next_level_cost()
+	if not GameState.spend_squares(float(cost)):
+		return false
+
 	var upgraded: bool = generator_instance.level_up()
+	if not upgraded:
+		GameState.add_squares(float(cost))
+		return false
+
 	if upgraded:
 		EventBus.passive_generator_upgraded.emit(generator_id)
 
@@ -162,14 +170,6 @@ func upgrade_generator(generator_id: String) -> bool:
 					generator_instance.level
 				]
 			)
-	var cost: int = generator_instance.get_next_level_cost()
-	var spent: bool = GameState.spend_squares(float(cost))
-
-	if not spent:
-		return false
-
-	
-
 	passive_state_changed.emit()
 	return upgraded
 

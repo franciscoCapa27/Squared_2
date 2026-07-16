@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
 [ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
+[ext_resource type="PackedScene" path="res://scenes/ui/TriangleIndicator.tscn" id="11_triangle_indicator"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -194,6 +195,20 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../PassiveScroll")
 
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox/PassiveTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
 [node name="PassiveHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 help_title = "Passive generators"
@@ -225,6 +240,20 @@ text = "Achievements"
 alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../AchievementSummaryContent")
+
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="AchievementSummaryContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox"]
 layout_mode = 2
@@ -328,6 +357,20 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../BuyTraitContent")
 
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
 [node name="BuyTraitContent" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox"]
 layout_mode = 2
 
@@ -360,7 +403,7 @@ layout_mode = 2
 help_title = "Buy Trait"
 help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
 
-[node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
+[node name="VertexShopPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -399,7 +442,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="OptionsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=996618759]
+[node name="OptionsPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=996618759]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -414,6 +457,7 @@ layout_mode = 2
 
 [node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
 unique_name_in_owner = true
@@ -422,6 +466,7 @@ text = "Options"
 
 [node name="ThemeRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="ThemeLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow"]
 unique_name_in_owner = true
@@ -432,6 +477,12 @@ text = "Theme:"
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="ThemeHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Themes"
+help_detail = "Choose the visual theme for the game. The choice is saved with your settings and applies immediately."
 
 [node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
 unique_name_in_owner = true
@@ -445,6 +496,7 @@ text = "Enable Autosave"
 
 [node name="AutosaveIntervalRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=303656648]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
 unique_name_in_owner = true
@@ -459,10 +511,38 @@ max_value = 3600.0
 step = 5.0
 value = 60.0
 
+[node name="AutosaveHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Autosave"
+help_detail = "Autosave stores your current progression at the selected interval. Disable it when testing manual save and import flows."
+
+[node name="TestingTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Testing"
+
+[node name="TestingHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Testing controls"
+help_detail = "Testing controls are for development playtesting and do not add new player settings."
+
 [node name="CheatSquareValueCheckBox" type="CheckBox" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1846051492]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Cheat: Squares x100"
+
+[node name="SaveDataTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save data"
+
+[node name="SaveDataHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Save data"
+help_detail = "Save stores your current game. Export copies a portable save string, and Import loads a save string you paste below."
 
 [node name="SaveButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=921981563]
 unique_name_in_owner = true
@@ -476,13 +556,13 @@ text = "Export Save"
 
 [node name="ExportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1004516296]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 placeholder_text = "Exported save string appears here."
 
 [node name="ImportSaveText" type="TextEdit" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=75042349]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 120)
+custom_minimum_size = Vector2(0, 72)
 layout_mode = 2
 placeholder_text = "Paste save string here."
 
@@ -490,6 +570,20 @@ placeholder_text = "Paste save string here."
 unique_name_in_owner = true
 layout_mode = 2
 text = "Import Save"
+
+[node name="HardResetSeparator" type="HSeparator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+layout_mode = 2
+
+[node name="HardResetTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Danger zone"
+
+[node name="HardResetHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+size_flags_horizontal = 0
+help_title = "Hard Reset"
+help_detail = "Hard Reset permanently erases saved progression and returns the game to a new-game state. Click twice to confirm."
 
 [node name="HardResetButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1050900557]
 unique_name_in_owner = true
@@ -501,7 +595,7 @@ unique_name_in_owner = true
 layout_mode = 2
 text = " "
 
-[node name="AchievementsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=763072064]
+[node name="AchievementsPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=763072064]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -587,6 +681,20 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../SelectedSquareDetails")
 
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox/SelectedSquareTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
 [node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
@@ -621,6 +729,20 @@ text = "Upgrades"
 alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../RunUpgradeScroll")
+
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradesTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2
