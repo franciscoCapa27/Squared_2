@@ -205,7 +205,7 @@ func _open_achievement_detail() -> void:
 	detail_content.add_child(status_label)
 
 	var level_label: Label = Label.new()
-	level_label.text = "Level: Single-step achievement"
+	level_label.text = AchievementSystem.get_level_text(achievement)
 	ThemeTextHelper.apply_detail_label(level_label)
 	detail_content.add_child(level_label)
 
