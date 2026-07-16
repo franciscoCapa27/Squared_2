@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 class_name OptionsPage
 
 signal save_imported()
@@ -146,7 +146,6 @@ func _on_theme_changed() -> void:
 
 
 func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 	ThemeLayoutHelper.apply_margin(options_margin, "inner_margin")
 	ThemeLayoutHelper.apply_box_separation(options_v_box, "section_gap")
 
