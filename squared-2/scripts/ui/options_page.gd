@@ -7,7 +7,7 @@ signal hard_reset_completed()
 const HARD_RESET_CONFIRM_SECONDS := 5.0
 
 @onready var options_margin: MarginContainer = $OptionsMargin
-@onready var options_v_box: VBoxContainer = $OptionsMargin/OptionsVBox
+@onready var options_v_box: VBoxContainer = $OptionsMargin/OptionsScroll/OptionsVBox
 
 @onready var autosave_enabled_check_box: CheckBox = %AutosaveEnabledCheckBox
 @onready var autosave_interval_spin_box: SpinBox = %AutosaveIntervalSpinBox
