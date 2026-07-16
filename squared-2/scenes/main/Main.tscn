@@ -451,14 +451,11 @@ fit_content = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-horizontal_scroll_mode = 0
+horizontal_scroll_mode = 1
 
-[node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
+[node name="VertexUpgradeCanvas" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 12
 
 [node name="OptionsPage" type="Control" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=996618759]
 unique_name_in_owner = true
