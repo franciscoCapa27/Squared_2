@@ -17,6 +17,7 @@ var icon_glyph: String = "◇"
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	buy_button.pressed.connect(_on_buy_button_pressed)
+	gui_input.connect(_on_gui_input)
 	_apply_theme()
 
 
@@ -41,7 +42,10 @@ func refresh() -> void:
 		NumberFormatter.integer_amount(upgrade_definition.cost_vertices),
 	]
 	detail_help.help_title = upgrade_definition.display_name
-	detail_help.help_detail = VertexUpgradeDetails.get_detail_text(upgrade_definition)
+	detail_help.help_detail = "%s\n\n%s" % [
+		_get_buy_state_detail(is_purchased, can_buy),
+		VertexUpgradeDetails.get_detail_text(upgrade_definition),
+	]
 	detail_help.tooltip_text = "%s\n%s" % [detail_help.help_title, detail_help.help_detail]
 
 	if is_purchased:
@@ -58,6 +62,36 @@ func refresh() -> void:
 		buy_button.disabled = true
 
 
+func _get_buy_state_detail(is_purchased: bool, can_buy: bool) -> String:
+	if is_purchased:
+		return "Buy state: Owned. This upgrade's effects are active."
+
+	if can_buy:
+		return "Buy state: Ready. Buy is available."
+
+	var state_lines: Array[String] = []
+	var requirements_met: bool = upgrade_definition.requirements_are_met(
+		GameState.trait_purchase_count,
+		GameState.grid_size,
+		VertexUpgradeSystem.unlocked_vertex_upgrades
+	)
+	if not requirements_met:
+		state_lines.append("Buy state: Locked. Requirements are not met.")
+
+	if GameState.vertices < upgrade_definition.cost_vertices:
+		var shortfall: int = upgrade_definition.cost_vertices - GameState.vertices
+		state_lines.append("Need %s more Vertices (have %s / %s)." % [
+			NumberFormatter.integer_amount(shortfall),
+			NumberFormatter.integer_amount(GameState.vertices),
+			NumberFormatter.integer_amount(upgrade_definition.cost_vertices),
+		])
+
+	if state_lines.is_empty():
+		state_lines.append("Buy state: Locked. Another requirement is not met.")
+
+	return "\n".join(state_lines)
+
+
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 	ThemeTextHelper.apply_card_title(title_label)
@@ -70,6 +104,12 @@ func _apply_theme() -> void:
 
 func _on_theme_changed() -> void:
 	_apply_theme()
+
+
+func _on_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		detail_help.open_help()
+		accept_event()
 
 
 func _on_buy_button_pressed() -> void:

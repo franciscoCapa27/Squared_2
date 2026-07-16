@@ -7,9 +7,10 @@ static func get_detail_text(upgrade_definition: VertexUpgradeDefinition) -> Stri
 		return ""
 
 	var sections: Array[String] = []
+	sections.append(upgrade_definition.description)
 	sections.append("Cost: %s Vertices" % NumberFormatter.integer_amount(upgrade_definition.cost_vertices))
-	sections.append("[b]Requirements[/b]\n%s" % _get_requirement_text(upgrade_definition))
-	sections.append("[b]Effects[/b]\n%s" % _get_effects_text(upgrade_definition))
+	sections.append("Requirements:\n%s" % _get_requirement_text(upgrade_definition))
+	sections.append("Effects:\n%s" % _get_effects_text(upgrade_definition))
 
 	return "\n\n".join(sections)
 
