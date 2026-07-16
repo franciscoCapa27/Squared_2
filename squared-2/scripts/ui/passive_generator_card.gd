@@ -9,6 +9,7 @@ signal upgrade_requested(generator_id: String)
 @onready var upgrade_button: Button = %UpgradeButton
 
 var generator_id: String = ""
+var upgrade_request_pending: bool = false
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
@@ -49,7 +50,7 @@ func refresh() -> void:
 		return
 
 	upgrade_button.visible = true
-	upgrade_button.disabled = not PassiveSystem.can_upgrade_generator(generator_id)
+	upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_upgrade_generator(generator_id)
 
 	if generator_instance.level >= generator_instance.get_max_level():
 		upgrade_button.text = "Max Level"
@@ -124,7 +125,18 @@ func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String
 			return "Unknown"
 
 func _on_upgrade_button_pressed() -> void:
-	if generator_id == "":
+	if generator_id == "" or upgrade_request_pending:
 		return
 
+	upgrade_request_pending = true
+	upgrade_button.disabled = true
 	upgrade_requested.emit(generator_id)
+	call_deferred("_finish_upgrade_request")
+
+
+func _finish_upgrade_request() -> void:
+	if not is_instance_valid(self):
+		return
+
+	upgrade_request_pending = false
+	refresh()

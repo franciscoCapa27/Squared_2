@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "oceanic"
+display_name = "Oceanic"
+background = Color(0.008, 0.045, 0.075, 1)
+background_subtle = Color(0.012, 0.10, 0.14, 1)
+surface = Color(0.018, 0.15, 0.20, 0.96)
+surface_soft = Color(0.025, 0.21, 0.27, 1)
+surface_strong = Color(0.035, 0.31, 0.36, 1)
+border = Color(0.08, 0.45, 0.52, 0.7)
+border_soft = Color(0.05, 0.30, 0.36, 0.5)
+border_strong = Color(0.18, 0.82, 0.82, 0.95)
+text_primary = Color(0.84, 0.98, 0.96, 1)
+text_secondary = Color(0.52, 0.80, 0.80, 1)
+text_muted = Color(0.30, 0.56, 0.60, 1)
+accent_primary = Color(0.05, 0.78, 0.78, 1)
+accent_secondary = Color(0.18, 0.58, 1, 1)
+success = Color(0.30, 0.90, 0.60, 1)
+warning = Color(1, 0.75, 0.25, 1)
+danger = Color(1, 0.28, 0.35, 1)

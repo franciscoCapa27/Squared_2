@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "retro_terminal"
+display_name = "Retro Terminal"
+background = Color(0.005, 0.018, 0.008, 1)
+background_subtle = Color(0.012, 0.055, 0.018, 1)
+surface = Color(0.018, 0.10, 0.028, 0.96)
+surface_soft = Color(0.025, 0.15, 0.04, 1)
+surface_strong = Color(0.04, 0.23, 0.06, 1)
+border = Color(0.12, 0.58, 0.16, 0.7)
+border_soft = Color(0.07, 0.36, 0.10, 0.5)
+border_strong = Color(0.28, 1, 0.32, 0.95)
+text_primary = Color(0.70, 1, 0.70, 1)
+text_secondary = Color(0.42, 0.82, 0.44, 1)
+text_muted = Color(0.24, 0.54, 0.27, 1)
+accent_primary = Color(0.18, 1, 0.26, 1)
+accent_secondary = Color(0.22, 0.82, 0.72, 1)
+success = Color(0.35, 1, 0.38, 1)
+warning = Color(1, 0.86, 0.20, 1)
+danger = Color(1, 0.30, 0.22, 1)
