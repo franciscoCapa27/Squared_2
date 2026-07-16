@@ -453,10 +453,17 @@ grow_vertical = 2
 script = ExtResource("2_nha0i")
 
 [node name="OptionsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage" unique_id=2003489546]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="OptionsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin" unique_id=1947092701]
 layout_mode = 2
+custom_minimum_size = Vector2(520, 0)
+size_flags_horizontal = 4
 theme_override_constants/separation = 8
 
 [node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
@@ -606,10 +613,17 @@ grow_vertical = 2
 script = ExtResource("6_ko0rf")
 
 [node name="AchievementsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage" unique_id=37372204]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
 layout_mode = 2
+custom_minimum_size = Vector2(520, 0)
+size_flags_horizontal = 4
 
 [node name="AchievementsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1908525422]
 layout_mode = 2
