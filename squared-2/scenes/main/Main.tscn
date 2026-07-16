@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
 [ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -193,6 +194,11 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content_path = NodePath("../PassiveScroll")
 
+[node name="PassiveHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Passive generators"
+help_detail = "Passive generators produce Squares over time after the board awakens. Upgrade them here without replacing active clicking."
+
 [node name="PassiveScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1645222271]
 layout_mode = 2
 size_flags_vertical = 3
@@ -232,6 +238,11 @@ text = "0 / 0"
 unique_name_in_owner = true
 layout_mode = 2
 text = "View Achievements"
+
+[node name="AchievementSummaryHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryContent" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Achievements"
+help_detail = "Achievements record milestones and special discoveries across your geometric universe."
 
 [node name="CenterPageRoot" type="Control" parent="RootMargin/MainVBox/BodyHBox" unique_id=1585931205]
 unique_name_in_owner = true
@@ -339,6 +350,11 @@ text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
+
+[node name="BuyTraitHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Buy Trait"
+help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
 size_flags_horizontal = 8
 size_flags_vertical = 8
 disabled = true
@@ -563,6 +579,11 @@ size_flags_vertical = 3
 bbcode_enabled = true
 text = "No square selected."
 
+[node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Selected square"
+help_detail = "This panel shows the selected square's identity, values, Traits, and active effects."
+
 [node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=682771557]
 unique_name_in_owner = true
 layout_mode = 2
@@ -588,6 +609,11 @@ content_path = NodePath("../RunUpgradeScroll")
 [node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="RunUpgradesHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Run upgrades"
+help_detail = "Run upgrades improve the current run and reset when the next Buy Trait begins a new run."
 
 [node name="RunUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradeScroll" unique_id=1606221242]
 unique_name_in_owner = true

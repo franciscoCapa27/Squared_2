@@ -1,7 +1,7 @@
 extends Button
 class_name CollapsiblePanelHeader
 
-@export_node_path("Control") var content_path: NodePath
+@export var content_path: NodePath
 
 var _content: Control
 var _title_text: String
@@ -11,6 +11,8 @@ var _expanded: bool = true
 func _ready() -> void:
 	_title_text = text
 	_content = get_node_or_null(content_path) as Control
+	if _content == null and not content_path.is_empty():
+		push_warning("CollapsiblePanelHeader could not resolve content_path: %s" % content_path)
 	pressed.connect(_toggle_expanded)
 	ThemeButtonHelper.apply_button_theme(self)
 	_update_visual_state()
