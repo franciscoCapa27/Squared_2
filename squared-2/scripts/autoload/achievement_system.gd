@@ -4,12 +4,15 @@ signal achievement_unlocked(achievement_id: String)
 signal achievements_changed()
 
 var achievement_levels: Dictionary = {}
+var square_click_streak: int = 0
+var last_square_id: String = ""
 
 
 func _ready() -> void:
 	EventBus.squares_changed.connect(_on_any_progress_value_changed)
 	EventBus.vertices_changed.connect(_on_any_progress_value_changed)
 	EventBus.trait_purchase_changed.connect(_on_any_progress_value_changed)
+	EventBus.square_selected.connect(_on_square_selected)
 	EventBus.grid_changed.connect(_on_any_progress_changed)
 	EventBus.grid_upgraded.connect(_on_grid_upgraded)
 	EventBus.vertex_upgrade_purchased.connect(_on_vertex_upgrade_purchased)
@@ -128,11 +131,15 @@ func to_save_dict() -> Dictionary:
 	return {
 		"achievement_levels": achievement_levels.duplicate(),
 		"unlocked_achievements": legacy_unlocked_achievements,
+		"square_click_streak": square_click_streak,
+		"last_square_id": last_square_id,
 	}
 
 
 func from_save_dict(data: Dictionary) -> void:
 	achievement_levels.clear()
+	square_click_streak = maxi(0, int(data.get("square_click_streak", 0)))
+	last_square_id = str(data.get("last_square_id", ""))
 	var levels_variant: Variant = data.get("achievement_levels", null)
 	if levels_variant is Dictionary:
 		for achievement_id: Variant in (levels_variant as Dictionary).keys():
@@ -152,6 +159,8 @@ func from_save_dict(data: Dictionary) -> void:
 
 func reset_to_new_game() -> void:
 	achievement_levels.clear()
+	square_click_streak = 0
+	last_square_id = ""
 	achievements_changed.emit()
 
 
@@ -197,6 +206,8 @@ func _get_condition_current_value(achievement: AchievementDefinition) -> float:
 			return GameState.get_permanent_stat_multiplier(achievement.target_stat)
 		AchievementDefinition.ConditionType.SCRIPT_HOOK:
 			return _get_script_hook_condition_value(achievement)
+		AchievementDefinition.ConditionType.SQUARE_CLICK_STREAK:
+			return float(square_click_streak)
 		_:
 			return 0.0
 
@@ -330,6 +341,19 @@ func _get_total_vertex_upgrade_currency_earned_approximation() -> int:
 func _get_script_hook_condition_value(achievement: AchievementDefinition) -> float:
 	push_warning("Achievement SCRIPT_HOOK condition not implemented: %s" % achievement.id)
 	return 0.0
+
+
+func _on_square_selected(square_id: String) -> void:
+	if last_square_id.is_empty():
+		last_square_id = square_id
+		square_click_streak = 1
+	elif square_id == last_square_id:
+		square_click_streak += 1
+	else:
+		last_square_id = square_id
+		square_click_streak = 0
+
+	check_all_achievements()
 
 
 func _on_progress_signal(_value: Variant = null) -> void:

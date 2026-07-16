@@ -1,0 +1,69 @@
+[gd_resource type="Resource" script_class="AchievementDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://d3xcfqld3vjh7" path="res://scripts/resources/achievement_reward.gd" id="1_reward"]
+[ext_resource type="Script" uid="uid://wwnb5h1f6hlb" path="res://scripts/resources/achievement_definition.gd" id="2_definition"]
+[ext_resource type="Script" uid="uid://cb3ieskuaq6n5" path="res://scripts/resources/achievement_level.gd" id="3_level"]
+
+[sub_resource type="Resource" id="Reward1"]
+script = ExtResource("1_reward")
+reward_type = 1
+target_stat = "trait_luck"
+value = 1.0
+metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
+
+[sub_resource type="Resource" id="Reward2"]
+script = ExtResource("1_reward")
+reward_type = 1
+target_stat = "trait_luck"
+value = 2.0
+metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
+
+[sub_resource type="Resource" id="Reward3"]
+script = ExtResource("1_reward")
+reward_type = 1
+target_stat = "trait_luck"
+value = 3.0
+metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
+
+[sub_resource type="Resource" id="Reward4"]
+script = ExtResource("1_reward")
+reward_type = 1
+target_stat = "trait_luck"
+value = 4.0
+metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
+
+[sub_resource type="Resource" id="Level1"]
+script = ExtResource("3_level")
+threshold = 7.0
+rewards = Array[ExtResource("1_reward")]([SubResource("Reward1")])
+metadata/_custom_type_script = "uid://cb3ieskuaq6n5"
+
+[sub_resource type="Resource" id="Level2"]
+script = ExtResource("3_level")
+threshold = 77.0
+rewards = Array[ExtResource("1_reward")]([SubResource("Reward2")])
+metadata/_custom_type_script = "uid://cb3ieskuaq6n5"
+
+[sub_resource type="Resource" id="Level3"]
+script = ExtResource("3_level")
+threshold = 777.0
+rewards = Array[ExtResource("1_reward")]([SubResource("Reward3")])
+metadata/_custom_type_script = "uid://cb3ieskuaq6n5"
+
+[sub_resource type="Resource" id="Level4"]
+script = ExtResource("3_level")
+threshold = 7777.0
+rewards = Array[ExtResource("1_reward")]([SubResource("Reward4")])
+metadata/_custom_type_script = "uid://cb3ieskuaq6n5"
+
+[resource]
+script = ExtResource("2_definition")
+id = "lucky_sevens"
+display_name = "Lucky Sevens"
+description = "Click the same square seven times in a row. The streak grows when the same square answers again; another square breaks it."
+category = 7
+condition_type = 12
+hidden_until_unlocked = true
+sort_order = 40
+levels = Array[ExtResource("3_level")]([SubResource("Level1"), SubResource("Level2"), SubResource("Level3"), SubResource("Level4")])
+metadata/_custom_type_script = "uid://wwnb5h1f6hlb"
