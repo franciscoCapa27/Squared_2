@@ -151,7 +151,6 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_body_label(options_status_label)
 	theme_option_button.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
 
-
 func _on_save_button_pressed() -> void:
 	var saved: bool = SaveSystem.save_game()
 
