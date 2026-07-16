@@ -179,10 +179,10 @@ script = ExtResource("2_gyg6b")
 [node name="PassiveMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel" unique_id=245565415]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="PassiveVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin" unique_id=494201095]
 unique_name_in_owner = true
@@ -322,8 +322,8 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_filter = 2
-theme_override_constants/h_separation = 12
-theme_override_constants/v_separation = 12
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 
 [node name="UpgradeGridButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox" unique_id=225480493]
 unique_name_in_owner = true
@@ -410,6 +410,7 @@ grow_vertical = 2
 script = ExtResource("3_dc040")
 
 [node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage" unique_id=1648899683]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -422,9 +423,10 @@ theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
 [node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="VertexShopTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
 unique_name_in_owner = true
@@ -646,6 +648,7 @@ grow_vertical = 2
 script = ExtResource("6_ko0rf")
 
 [node name="AchievementsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage" unique_id=37372204]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -654,6 +657,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="AchievementsVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin" unique_id=1384093085]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -704,6 +708,7 @@ grow_vertical = 2
 script = ExtResource("9_stats")
 
 [node name="StatsMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage" unique_id=1731496513]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -725,7 +730,7 @@ horizontal_scroll_mode = 0
 [node name="StatsContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin/StatsScroll" unique_id=152981672]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 12
+theme_override_constants/separation = 8
 
 [node name="StatsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/StatsPage/StatsMargin/StatsScroll/StatsContent" unique_id=152981673]
 unique_name_in_owner = true
@@ -795,7 +800,7 @@ grow_vertical = 2
 
 [node name="SelectedSquareDetails" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 160)
+custom_minimum_size = Vector2(0, 120)
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
@@ -804,7 +809,7 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
 layout_mode = 2

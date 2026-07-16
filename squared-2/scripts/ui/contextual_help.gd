@@ -95,11 +95,11 @@ func _active_popup_setup(overlay: Control, custom_content: Control = null) -> vo
 	overlay.add_child(_popup)
 
 	var margin: MarginContainer = MarginContainer.new()
-	ThemeLayoutHelper.apply_margin(margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_margin(margin, "inner_margin")
 	_popup.add_child(margin)
 
 	var content: VBoxContainer = VBoxContainer.new()
-	ThemeLayoutHelper.apply_box_separation(content, "section_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(content, "section_gap")
 	margin.add_child(content)
 
 	var title_label: Label = Label.new()

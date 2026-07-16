@@ -39,6 +39,8 @@ const CANVAS_SIZE := Vector2(620, 660)
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
 @onready var vertex_upgrade_canvas: Control = %VertexUpgradeCanvas
 @onready var vertex_shop_title: Label = %VertexShopTitle
+@onready var vertex_shop_margin: MarginContainer = %VertexShopMargin
+@onready var vertex_shop_v_box: VBoxContainer = %VertexShopVBox
 
 var vertex_upgrade_node_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeNode.tscn")
 var vertex_upgrade_nodes: Dictionary = {}
@@ -72,6 +74,8 @@ func _apply_theme() -> void:
 
 	ThemeTextHelper.apply_page_title(vertex_shop_title)
 	ThemeTextHelper.apply_body_rich_text(vertex_shop_description)
+	ThemeLayoutHelper.apply_dense_margin(vertex_shop_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(vertex_shop_v_box, "section_gap")
 
 
 func _on_theme_changed() -> void:

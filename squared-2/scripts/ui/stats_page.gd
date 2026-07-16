@@ -6,6 +6,7 @@ const CONTEXTUAL_HELP_SCENE: PackedScene = preload("res://scenes/ui/ContextualHe
 @onready var stats_title_label: Label = %StatsTitle
 @onready var stats_description: RichTextLabel = %StatsDescription
 @onready var stats_list: VBoxContainer = %StatsList
+@onready var stats_margin: MarginContainer = %StatsMargin
 
 var _stat_value_labels: Dictionary = {}
 var _stat_name_labels: Array[Label] = []
@@ -127,7 +128,7 @@ func _add_stat_section(
 	definitions: Array[Array]
 ) -> void:
 	var section: VBoxContainer = VBoxContainer.new()
-	ThemeLayoutHelper.apply_box_separation(section, "section_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(section, "section_gap")
 	stats_list.add_child(section)
 
 	var section_title: Label = Label.new()
@@ -142,7 +143,7 @@ func _add_stat_section(
 	section.add_child(section_purpose)
 
 	var rows: VBoxContainer = VBoxContainer.new()
-	ThemeLayoutHelper.apply_box_separation(rows, "card_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(rows, "card_gap")
 	section.add_child(rows)
 
 	for definition: Array in definitions:
@@ -151,7 +152,7 @@ func _add_stat_section(
 
 func _add_stat_row(rows: VBoxContainer, definition: Array) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size.y = 28.0
+	row.custom_minimum_size.y = 24.0
 	rows.add_child(row)
 
 	var name_label: Label = Label.new()
@@ -193,6 +194,7 @@ func _apply_theme() -> void:
 	if stats_title_label == null:
 		return
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
+	ThemeLayoutHelper.apply_dense_margin(stats_margin, "inner_margin")
 	ThemeTextHelper.apply_page_title(stats_title_label)
 	ThemeTextHelper.apply_body_rich_text(stats_description)
 	for label: Label in _section_title_labels:

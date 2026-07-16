@@ -6,8 +6,8 @@ const CONTEXTUAL_HELP_SCENE: PackedScene = preload("res://scenes/ui/ContextualHe
 @onready var selected_square_title: CollapsiblePanelHeader = %SelectedSquareTitle
 @onready var selected_square_details: ScrollContainer = %SelectedSquareDetails
 @onready var details_content: VBoxContainer = %SquareDetailsContent
-@onready var side_margin: MarginContainer = %RunUpgradesMargin
-@onready var side_v_box: VBoxContainer = %RunUpgradesVBox
+@onready var side_margin: MarginContainer = %SideMargin
+@onready var side_v_box: VBoxContainer = %SideVbox
 
 var selected_square_id: String = ""
 
@@ -20,8 +20,8 @@ func _ready() -> void:
 
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	ThemeLayoutHelper.apply_margin(side_margin, "inner_margin")
-	ThemeLayoutHelper.apply_box_separation(side_v_box, "section_gap")
+	ThemeLayoutHelper.apply_dense_margin(side_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(side_v_box, "section_gap")
 
 
 func _on_theme_changed() -> void:
@@ -74,12 +74,6 @@ func _rebuild_details(square_data: SquareData) -> void:
 	_clear_details_content()
 	_add_section_title("Square")
 	_add_detail_row(
-		"Position",
-		"(%s, %s)" % [square_data.grid_x, square_data.grid_y],
-		"Square position",
-		"The selected square's coordinates on the current grid."
-	)
-	_add_detail_row(
 		"Trait count",
 		NumberFormatter.integer_amount(square_data.get_trait_count()),
 		"Trait count",
@@ -130,7 +124,7 @@ func _add_detail_row(
 	help_detail: String
 ) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size.y = 28.0
+	row.custom_minimum_size.y = 24.0
 	details_content.add_child(row)
 
 	var name_label: Label = Label.new()
@@ -155,7 +149,7 @@ func _add_detail_row(
 
 func _add_family_summary(family_info: Dictionary) -> void:
 	var family_box: VBoxContainer = VBoxContainer.new()
-	ThemeLayoutHelper.apply_box_separation(family_box, "section_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(family_box, "section_gap")
 	details_content.add_child(family_box)
 
 	var family_header: HBoxContainer = HBoxContainer.new()
@@ -203,7 +197,9 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 			int(family_info["max_rarity"]),
 			int(trait_iter.definition.rarity)
 		)
-		var effects: Array[String] = family_info["effects"] as Array[String]
+		var effects: Array[String] = []
+		for effect_variant: Variant in family_info["effects"] as Array:
+			effects.append(str(effect_variant))
 		for effect_line: String in trait_iter.get_effect_summary_lines():
 			if not effects.has(effect_line):
 				effects.append(effect_line)
@@ -218,7 +214,9 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 			_to_roman(int(family_info["count"])),
 			TraitDefinition.rarity_name_from_value(int(family_info["max_rarity"]))
 		]
-		var effects: Array[String] = family_info["effects"] as Array[String]
+		var effects: Array[String] = []
+		for effect_variant: Variant in family_info["effects"] as Array:
+			effects.append(str(effect_variant))
 		var effects_text: String = "No active effects."
 		if not effects.is_empty():
 			var effect_lines: Array[String] = []

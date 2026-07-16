@@ -92,10 +92,10 @@ func _ready() -> void:
 # ------------------------------------------------------------------------------
 func _apply_theme() -> void:
 	ThemeLayoutHelper.apply_margin(root_margin, "screen_margin")
-	ThemeLayoutHelper.apply_box_separation(main_v_box, "panel_gap")
-	ThemeLayoutHelper.apply_box_separation(body_h_box, "panel_gap")
-	ThemeLayoutHelper.apply_box_separation(left_panel, "panel_gap")
-	ThemeLayoutHelper.apply_box_separation(right_panel, "panel_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(main_v_box, "panel_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(body_h_box, "panel_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(left_panel, "panel_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(right_panel, "panel_gap")
 
 	top_bar.add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 	trait_purchase_panel.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
@@ -116,7 +116,7 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_detail_rich_text(trait_purchase_details)
 	ThemeTextHelper.apply_body_label(achievement_summary_label)
 	story_panel.add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
-	ThemeLayoutHelper.apply_margin(story_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_margin(story_margin, "inner_margin")
 	ThemeTextHelper.apply_detail_label(story_label)
 	if _compact_layout_active:
 		_apply_compact_spacing()
@@ -147,7 +147,7 @@ func _enter_compact_layout() -> void:
 	_compact_top_vbox = VBoxContainer.new()
 	_compact_top_vbox.name = "CompactTopVBox"
 	_compact_top_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ThemeLayoutHelper.apply_box_separation(_compact_top_vbox, "card_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(_compact_top_vbox, "card_gap")
 	top_bar_margin.add_child(_compact_top_vbox)
 	top_bar_margin.move_child(_compact_top_vbox, 0)
 
@@ -164,7 +164,7 @@ func _enter_compact_layout() -> void:
 	_compact_navigation_vbox = VBoxContainer.new()
 	_compact_navigation_vbox.name = "CompactNavigationVBox"
 	_compact_navigation_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ThemeLayoutHelper.apply_box_separation(_compact_navigation_vbox, "card_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(_compact_navigation_vbox, "card_gap")
 	_compact_top_vbox.add_child(_compact_navigation_vbox)
 	for button: Button in _get_navigation_buttons():
 		navigation_cluster.remove_child(button)
@@ -187,7 +187,7 @@ func _enter_compact_layout() -> void:
 	_compact_body_vbox = VBoxContainer.new()
 	_compact_body_vbox.name = "CompactBodyVBox"
 	_compact_body_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ThemeLayoutHelper.apply_box_separation(_compact_body_vbox, "panel_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(_compact_body_vbox, "panel_gap")
 	_compact_body_scroll.add_child(_compact_body_vbox)
 	for panel: Control in [left_panel, center_page_root, right_panel]:
 		body_h_box.remove_child(panel)
