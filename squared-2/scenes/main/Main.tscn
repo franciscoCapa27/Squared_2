@@ -350,15 +350,15 @@ text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+disabled = true
+text = "Buy Trait"
 
 [node name="BuyTraitHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 help_title = "Buy Trait"
 help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
-size_flags_horizontal = 8
-size_flags_vertical = 8
-disabled = true
-text = "Buy Trait"
 
 [node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
