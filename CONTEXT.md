@@ -199,3 +199,32 @@ _Avoid_: Passive unlock, idle opener, linear tutorial upgrade
 **Square Identity**:
 The early-game focus that individual squares become memorable through their own Traits, names, colors, and histories. During the First 2x2 Grid Era, Square Identity should matter more than grid or adjacency synergies.
 _Avoid_: Tile stats, board synergy, adjacency build
+
+
+**Panel Help**:
+The shared UI language for explaining systems without flooding the screen: concise purpose or effect text stays visible, while component-level `i` controls and hover tooltips reveal deeper detail.
+_Avoid_: Panel-sized essays, hidden required information, help buttons on every panel header
+
+**Collapsible Panel**:
+A gameplay-context panel whose title banner controls temporary expansion. Panels start expanded on load, and the player may collapse them without changing the underlying system.
+_Avoid_: Permanent hidden panels, mobile-only collapse, separate Collapse text buttons
+
+**Effect Summary**:
+A short player-facing sentence describing what a component does. The sentence is authored for identity, while only numeric slots update from live mechanics.
+_Avoid_: Raw stat dumps, dynamic sentence rewriting, vague purpose copy
+
+**Progression Tree**:
+The Vertex Shop presentation: an authored map of icon-only upgrade nodes connected by prerequisite paths, with each node opening a focused detail and purchase view.
+_Avoid_: Upgrade list, card wall, text inside map nodes
+
+**Progressive Tree Reveal**:
+The rule that the Vertex progression map reveals only the next layer of nodes. The root is visible first; buying a node reveals its direct children, which may then be locked, unaffordable, or available.
+_Avoid_: Showing the entire locked tree, hidden prerequisites, mutually exclusive branches
+
+**Achievement Grid**:
+The Achievement page presentation: a responsive, scrollable grid of square icon-only cards. Known achievements are visible from the start; hidden achievements occupy no slot until discovered.
+_Avoid_: Achievement list, titles inside tiles, hidden slots
+
+**Hidden Achievement**:
+An achievement that is absent from the Achievement Grid until its first level is unlocked. Once discovered, it behaves like any other achievement and exposes its level progression in its detail view.
+_Avoid_: Secret placeholder tile, permanently invisible achievement, undiscoverable reward
