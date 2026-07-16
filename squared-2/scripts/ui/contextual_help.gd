@@ -39,6 +39,10 @@ func _on_pressed() -> void:
 	_open_popup()
 
 
+func open_help() -> void:
+	_on_pressed()
+
+
 func _open_popup() -> void:
 	_active_help = self
 	_active_layer = CanvasLayer.new()
