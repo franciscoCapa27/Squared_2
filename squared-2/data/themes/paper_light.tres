@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "paper_light"
+display_name = "Paper Light"
+background = Color(0.94, 0.95, 0.98, 1)
+background_subtle = Color(0.88, 0.9, 0.95, 1)
+surface = Color(1, 1, 1, 0.96)
+surface_soft = Color(0.97, 0.98, 1, 1)
+surface_strong = Color(0.84, 0.88, 0.98, 1)
+border = Color(0.38, 0.45, 0.62, 0.55)
+border_soft = Color(0.55, 0.61, 0.74, 0.45)
+border_strong = Color(0.25, 0.35, 0.72, 0.8)
+text_primary = Color(0.09, 0.12, 0.22, 1)
+text_secondary = Color(0.22, 0.27, 0.4, 1)
+text_muted = Color(0.4, 0.45, 0.56, 1)
+accent_primary = Color(0.3, 0.34, 0.78, 1)
+accent_secondary = Color(0.1, 0.53, 0.72, 1)
+success = Color(0.08, 0.48, 0.3, 1)
+warning = Color(0.7, 0.4, 0.05, 1)
+danger = Color(0.7, 0.15, 0.2, 1)
+panel_corner_radius = 12
+card_corner_radius = 9
+button_corner_radius = 9
+panel_border_width = 1
+card_border_width = 1
+button_border_width = 1
+disabled_opacity = 0.45
+hover_brightness = 1.15
+pressed_brightness = 0.85
+screen_margin = 10
+panel_gap = 8
+section_gap = 8
+card_gap = 6
+inner_margin = 8
+grid_gap = 8
+trait_purchase_gap = 12
+font_size_resource = 14
+font_size_page_title = 16
+font_size_panel_title = 14
+font_size_card_title = 13
+font_size_body = 11
+font_size_detail = 10
+font_size_button = 11
+font_size_tiny = 8
+compact_text_scale = 0.84

@@ -4,7 +4,7 @@ class_name PassivePanel
 signal passive_generator_upgraded(generator_id: String)
 
 @onready var passive_generator_list: VBoxContainer = %PassiveGeneratorList
-@onready var passive_title: Label = %PassiveTitle
+@onready var passive_title: CollapsiblePanelHeader = %PassiveTitle
 @onready var passive_margin: MarginContainer = %PassiveMargin
 @onready var passive_v_box: VBoxContainer = %PassiveVBox
 
@@ -93,10 +93,7 @@ func _apply_theme() -> void:
 	ThemeLayoutHelper.apply_margin(passive_margin, "inner_margin")
 	ThemeLayoutHelper.apply_box_separation(passive_v_box, "card_gap")
 
-	ThemeTextHelper.apply_panel_title(passive_title)
-
 	passive_title.clip_text = true
-	passive_title.autowrap_mode = TextServer.AUTOWRAP_OFF
 
 
 func _on_theme_changed() -> void:

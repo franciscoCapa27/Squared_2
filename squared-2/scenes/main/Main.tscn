@@ -10,6 +10,8 @@
 [ext_resource type="Script" uid="uid://8mmn8xlnp7rn" path="res://scripts/ui/achievements_page.gd" id="6_ko0rf"]
 [ext_resource type="Script" uid="uid://byja7u42vbuc" path="res://scripts/ui/square_details_panel.gd" id="6_sjxhf"]
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
+[ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -184,10 +186,18 @@ theme_override_constants/margin_bottom = 16
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="PassiveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622]
+[node name="PassiveTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=203293622 node_paths=PackedStringArray("content")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Passives"
+alignment = 0
+script = ExtResource("9_collapsible")
+content = NodePath("../PassiveScroll")
+
+[node name="PassiveHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Passive generators"
+help_detail = "Passive generators produce Squares over time after the board awakens. Upgrade them here without replacing active clicking."
 
 [node name="PassiveScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" unique_id=1645222271]
 layout_mode = 2
@@ -209,19 +219,30 @@ layout_mode = 2
 [node name="AchievementSummaryVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin" unique_id=1792072269]
 layout_mode = 2
 
-[node name="AchievementSummaryTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=1959977698]
+[node name="AchievementSummaryTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=1959977698 node_paths=PackedStringArray("content")]
 layout_mode = 2
 text = "Achievements"
+alignment = 0
+script = ExtResource("9_collapsible")
+content = NodePath("../AchievementSummaryContent")
 
-[node name="AchievementSummaryLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=1107125221]
+[node name="AchievementSummaryContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox"]
+layout_mode = 2
+
+[node name="AchievementSummaryLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryContent" unique_id=1107125221]
 unique_name_in_owner = true
 layout_mode = 2
 text = "0 / 0"
 
-[node name="AchievementSummaryButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox" unique_id=2144275133]
+[node name="AchievementSummaryButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryContent" unique_id=2144275133]
 unique_name_in_owner = true
 layout_mode = 2
 text = "View Achievements"
+
+[node name="AchievementSummaryHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryContent" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Achievements"
+help_detail = "Achievements record milestones and special discoveries across your geometric universe."
 
 [node name="CenterPageRoot" type="Control" parent="RootMargin/MainVBox/BodyHBox" unique_id=1585931205]
 unique_name_in_owner = true
@@ -296,30 +317,36 @@ size_flags_horizontal = 4
 [node name="BuyTraitMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel" unique_id=1318115022]
 layout_mode = 2
 
-[node name="BuyTraitHBox" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin" unique_id=1862153416]
+[node name="BuyTraitVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin"]
 layout_mode = 2
 
-[node name="BuyTraitTextVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox" unique_id=1706788438]
-layout_mode = 2
-
-[node name="BuyTraitTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=118207868]
+[node name="BuyTraitTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox" unique_id=118207868 node_paths=PackedStringArray("content")]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Buy Trait"
+alignment = 0
+script = ExtResource("9_collapsible")
+content = NodePath("../BuyTraitContent")
 
-[node name="BuyTraitDescription" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=1988103486]
+[node name="BuyTraitContent" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox"]
+layout_mode = 2
+
+[node name="BuyTraitTextVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" unique_id=1706788438]
+layout_mode = 2
+
+[node name="BuyTraitDescription" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=1988103486]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Reset your run to gain permanent bonuses."
 
-[node name="BuyTraitDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox/BuyTraitTextVBox" unique_id=246128059]
+[node name="BuyTraitDetails" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent/BuyTraitTextVBox" unique_id=246128059]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 custom_minimum_size = Vector2(0, 64)
 text = "Gain Vertices • A square gains a permanent Trait • Keep this run"
 
-[node name="BuyTraitButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitHBox" unique_id=126762251]
+[node name="BuyTraitButton" type="Button" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" unique_id=126762251]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
@@ -327,6 +354,11 @@ size_flags_horizontal = 8
 size_flags_vertical = 8
 disabled = true
 text = "Buy Trait"
+
+[node name="BuyTraitHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitContent" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Buy Trait"
+help_detail = "Buy Trait spends Squares to grant Vertices and add a permanent random Trait to the selected square."
 
 [node name="VertexShopPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=1217666360]
 unique_name_in_owner = true
@@ -384,10 +416,25 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="OptionsTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1922031564]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Options"
 
+[node name="ThemeRow" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox"]
+layout_mode = 2
+
+[node name="ThemeLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Theme:"
+
+[node name="ThemeOptionButton" type="OptionButton" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/ThemeRow" unique_id=123456789]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="AutosaveTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox" unique_id=1283299912]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Autosave"
 
@@ -400,6 +447,7 @@ text = "Enable Autosave"
 layout_mode = 2
 
 [node name="AutosaveIntervalLabel" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/OptionsPage/OptionsMargin/OptionsVBox/AutosaveIntervalRow" unique_id=200793610]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Interval seconds:"
 
@@ -530,13 +578,14 @@ layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 12
 
-[node name="SelectedSquareTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402]
+[node name="SelectedSquareTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=324483402 node_paths=PackedStringArray("content")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 18
 text = "Selected Square"
-clip_text = true
+alignment = 0
+script = ExtResource("9_collapsible")
+content = NodePath("../SelectedSquareDetails")
 
 [node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
@@ -545,6 +594,11 @@ layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
 text = "No square selected."
+
+[node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Selected square"
+help_detail = "This panel shows the selected square's identity, values, Traits, and active effects."
 
 [node name="RunUpgradesPanel" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel" unique_id=682771557]
 unique_name_in_owner = true
@@ -560,16 +614,22 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="RunUpgradesTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904]
+[node name="RunUpgradesTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904 node_paths=PackedStringArray("content")]
 layout_mode = 2
 size_flags_vertical = 0
-theme_override_font_sizes/font_size = 18
-text = "Upgrades
-"
+text = "Upgrades"
+alignment = 0
+script = ExtResource("9_collapsible")
+content = NodePath("../RunUpgradeScroll")
 
 [node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="RunUpgradesHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" instance=ExtResource("10_contextual_help")]
+layout_mode = 2
+help_title = "Run upgrades"
+help_detail = "Run upgrades improve the current run and reset when the next Buy Trait begins a new run."
 
 [node name="RunUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradeScroll" unique_id=1606221242]
 unique_name_in_owner = true
