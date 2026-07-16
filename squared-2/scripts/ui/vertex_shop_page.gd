@@ -9,6 +9,7 @@ signal vertex_upgrade_purchased(upgrade_id: String)
 
 var vertex_upgrade_card_scene: PackedScene = preload("res://scenes/ui/VertexUpgradeCard.tscn")
 var vertex_upgrade_cards: Dictionary = {}
+var refresh_queued: bool = false
 
 
 func _ready() -> void:
@@ -19,9 +20,11 @@ func _ready() -> void:
 
 
 func refresh() -> void:
-	_rebuild_vertex_upgrade_list()
-	for card: VertexUpgradeCard in vertex_upgrade_cards.values():
-		card.refresh()
+	if refresh_queued:
+		return
+
+	refresh_queued = true
+	call_deferred("_rebuild_vertex_upgrade_list")
 
 
 func _apply_theme() -> void:
@@ -36,8 +39,10 @@ func _on_theme_changed() -> void:
 
 
 func _rebuild_vertex_upgrade_list() -> void:
+	refresh_queued = false
+
 	for child: Node in vertex_upgrade_list.get_children():
-		child.free()
+		child.queue_free()
 
 	vertex_upgrade_cards.clear()
 
