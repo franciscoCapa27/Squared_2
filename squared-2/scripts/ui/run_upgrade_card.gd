@@ -7,6 +7,7 @@ signal buy_requested(upgrade_id: String)
 @onready var category_level_label: Label = %CategoryLevelLabel
 @onready var description_label: Label = %DescriptionLabel
 @onready var buy_button: Button = %BuyButton
+@onready var detail_help: ContextualHelp = %DetailHelp
 
 var upgrade_definition: RunUpgradeDefinition
 
@@ -37,6 +38,7 @@ func setup(upgrade: RunUpgradeDefinition) -> void:
 
 func refresh() -> void:
 	if upgrade_definition == null:
+		detail_help.visible = false
 		return
 
 	var current_level: int = RunUpgradeSystem.get_run_upgrade_level(upgrade_definition.id)
@@ -46,6 +48,13 @@ func refresh() -> void:
 	var cost: float = upgrade_definition.get_cost_for_next_level(current_level)
 
 	title_label.text = upgrade_definition.display_name
+	detail_help.visible = true
+	detail_help.help_title = upgrade_definition.display_name
+	detail_help.help_detail = _get_detail_text(current_level)
+	detail_help.tooltip_text = "%s\n%s" % [
+		detail_help.help_title,
+		detail_help.help_detail
+	]
 	category_level_label.text = "%s • Level %s / %s" % [
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(current_level),
@@ -66,6 +75,28 @@ func refresh() -> void:
 	else:
 		buy_button.text = "Need %s Squares" % NumberFormatter.cost(cost)
 		buy_button.disabled = true
+
+
+func _get_detail_text(current_level: int) -> String:
+	var cost_text: String = "Max level reached."
+	if current_level < upgrade_definition.max_level:
+		cost_text = "Next level cost: %s Squares." % NumberFormatter.cost(
+			upgrade_definition.get_cost_for_next_level(current_level)
+		)
+
+	return (
+		"Current level: %s / %s\n\n" % [
+			NumberFormatter.integer_amount(current_level),
+			NumberFormatter.integer_amount(upgrade_definition.max_level)
+		]
+		+ "Requirements\n%s\n\n" % _get_requirement_text()
+		+ "Effects per level\n%s\n\n" % _get_effect_text()
+		+ "Cost progression\n%s Each level scales by %s from the previous level.\n\n" % [
+			cost_text,
+			NumberFormatter.multiplier(upgrade_definition.cost_multiplier)
+		]
+		+ "Run Upgrade levels persist after buying a Trait and reset when starting a new game."
+	)
 
 func _get_requirement_text() -> String:
 	if upgrade_definition == null:
