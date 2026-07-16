@@ -5,8 +5,7 @@ signal buy_requested(upgrade_id: String)
 
 @onready var title_label: Label = %TitleLabel
 @onready var category_level_label: Label = %CategoryLevelLabel
-@onready var description_label: RichTextLabel = %DescriptionLabel
-@onready var detail_label: RichTextLabel = %DetailLabel
+@onready var description_label: Label = %DescriptionLabel
 @onready var buy_button: Button = %BuyButton
 
 var upgrade_definition: RunUpgradeDefinition
@@ -23,8 +22,7 @@ func _apply_theme() -> void:
 
 	ThemeTextHelper.apply_card_title(title_label)
 	ThemeTextHelper.apply_detail_label(category_level_label)
-	ThemeTextHelper.apply_detail_rich_text(description_label)
-	ThemeTextHelper.apply_detail_rich_text(detail_label)
+	ThemeTextHelper.apply_body_label(description_label)
 	ThemeButtonHelper.apply_button_theme(buy_button)
 
 
@@ -55,7 +53,6 @@ func refresh() -> void:
 	]
 
 	description_label.text = upgrade_definition.description
-	detail_label.text = _get_detail_text()
 
 	if not is_unlocked:
 		buy_button.text = "Locked"
@@ -69,14 +66,6 @@ func refresh() -> void:
 	else:
 		buy_button.text = "Need %s Squares" % NumberFormatter.cost(cost)
 		buy_button.disabled = true
-
-
-func _get_detail_text() -> String:
-	return "[b]Requirements[/b]\n%s\n\n[b]Effects per Level[/b]\n%s" % [
-		_get_requirement_text(),
-		_get_effect_text()
-	]
-
 
 func _get_requirement_text() -> String:
 	if upgrade_definition == null:

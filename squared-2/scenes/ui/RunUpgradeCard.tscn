@@ -24,15 +24,10 @@ unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 
-[node name="DescriptionLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1982718839]
+[node name="DescriptionLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1982718839]
 unique_name_in_owner = true
 layout_mode = 2
-bbcode_enabled = true
-
-[node name="DetailLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1944793933]
-unique_name_in_owner = true
-layout_mode = 2
-bbcode_enabled = true
+autowrap_mode = 3
 
 [node name="BuyButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1216677951]
 unique_name_in_owner = true
