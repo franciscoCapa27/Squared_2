@@ -61,26 +61,97 @@ func _build_square_details_text(square_data: SquareData) -> String:
 	var manual_payout: float = SquareCalculator.calculate_manual_payout(square_data)
 	var respawn_time: float = SquareCalculator.calculate_respawn_time(square_data)
 
-	var trait_stack_text: String = square_data.get_family_stack_summary()
-
-	if trait_stack_text == "":
-		trait_stack_text = "None"
-
-	var trait_effect_text: String = square_data.get_trait_effect_summary_text()
-
-	if trait_effect_text == "":
-		trait_effect_text = "No active trait effects."
-
 	return (
-		"Base Value                                      %s\n" % NumberFormatter.amount(square_data.base_value)
-		+ "Manual Value                                  %s\n" % NumberFormatter.amount(manual_payout)
-		+ "Respawn Time                                  %s\n\n" % NumberFormatter.seconds(respawn_time)
-		+ "Traits\n%s\n\n" % trait_stack_text
-		+ "Main Effects\n%s" % trait_effect_text
+		"Position: (%s, %s)\n" % [square_data.grid_x, square_data.grid_y]
+		+ "Trait count: %s\n" % NumberFormatter.integer_amount(square_data.get_trait_count())
+		+ "Current payout: %s\n" % NumberFormatter.amount(manual_payout)
+		+ "Respawn: %s\n\n" % NumberFormatter.seconds(respawn_time)
+		+ "Trait Families\n%s" % _build_family_summary_text(square_data)
 	)
 
-func _format_string_array(values: Array[String]) -> String:
-	if values.is_empty():
+
+func _build_family_summary_text(square_data: SquareData) -> String:
+	if square_data.traits.is_empty():
 		return "None"
 
-	return ", ".join(values)
+	var family_groups: Dictionary = {}
+	for trait_iter: TraitInstance in square_data.traits:
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var family_key: String = trait_iter.definition.family_id.strip_edges()
+		if family_key == "":
+			family_key = trait_iter.definition.id
+
+		if not family_groups.has(family_key):
+			family_groups[family_key] = {
+				"display_name": _get_family_display_name(trait_iter),
+				"count": 0,
+				"max_rarity": -1,
+				"effects": []
+			}
+
+		var family_info: Dictionary = family_groups[family_key]
+		family_info["count"] = int(family_info["count"]) + 1
+		family_info["max_rarity"] = maxi(
+			int(family_info["max_rarity"]),
+			int(trait_iter.definition.rarity)
+		)
+		var effects: Array[String] = family_info["effects"] as Array[String]
+		for effect_line: String in trait_iter.get_effect_summary_lines():
+			if not effects.has(effect_line):
+				effects.append(effect_line)
+		family_info["effects"] = effects
+		family_groups[family_key] = family_info
+
+	var lines: Array[String] = []
+	for family_key: String in family_groups.keys():
+		var family_info: Dictionary = family_groups[family_key]
+		var rarity_name: String = TraitDefinition.rarity_name_from_value(
+			int(family_info["max_rarity"])
+		)
+		lines.append(
+			"%s %s (%s)" % [
+				family_info["display_name"],
+				_to_roman(int(family_info["count"])),
+				rarity_name
+			]
+		)
+
+		var effects: Array[String] = family_info["effects"] as Array[String]
+		if effects.is_empty():
+			lines.append("  No active effects.")
+			continue
+
+		for effect_line: String in effects:
+			lines.append("  %s" % effect_line)
+
+	return "\n".join(lines)
+
+
+func _get_family_display_name(trait_iter: TraitInstance) -> String:
+	var family_display_name: String = trait_iter.definition.family_display_name.strip_edges()
+	if family_display_name != "":
+		return family_display_name
+
+	if trait_iter.definition.family_id.strip_edges() != "":
+		return trait_iter.definition.family_id
+
+	return trait_iter.definition.id
+
+
+func _to_roman(value: int) -> String:
+	var remaining: int = maxi(1, value)
+	var result: String = ""
+	var numerals: Array[Array] = [
+		[1000, "M"], [900, "CM"], [500, "D"], [400, "CD"],
+		[100, "C"], [90, "XC"], [50, "L"], [40, "XL"],
+		[10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]
+	]
+
+	for numeral: Array in numerals:
+		while remaining >= int(numeral[0]):
+			result += numeral[1]
+			remaining -= int(numeral[0])
+
+	return result
