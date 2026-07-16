@@ -15,6 +15,7 @@ func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	_apply_theme()
 	refresh()
+	call_deferred("refresh")
 
 
 func refresh() -> void:
@@ -41,6 +42,9 @@ func _rebuild_vertex_upgrade_list() -> void:
 	vertex_upgrade_cards.clear()
 
 	var visible_upgrades: Array[VertexUpgradeDefinition] = VertexUpgradeDatabase.get_visible_upgrades()
+	if visible_upgrades.is_empty() and VertexUpgradeDatabase.all_upgrades.is_empty():
+		VertexUpgradeDatabase.load_upgrades()
+		visible_upgrades = VertexUpgradeDatabase.get_visible_upgrades()
 
 	if visible_upgrades.is_empty():
 		vertex_shop_description.text = "No Vertex upgrades available yet."

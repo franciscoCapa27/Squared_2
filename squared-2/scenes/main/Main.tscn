@@ -415,10 +415,21 @@ grow_vertical = 2
 script = ExtResource("3_dc040")
 
 [node name="VertexShopMargin" type="MarginContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage" unique_id=1648899683]
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
 [node name="VertexShopVBox" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin" unique_id=225540824]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
 
 [node name="VertexShopTitle" type="Label" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1050020084]
 unique_name_in_owner = true
@@ -428,6 +439,7 @@ text = "Vertex Shop"
 [node name="VertexShopDescription" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=734586641]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 8
 bbcode_enabled = true
 text = "Spend Vertices on permanent systems."
@@ -435,7 +447,9 @@ fit_content = true
 
 [node name="VertexUpgradesScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox" unique_id=1910849744]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="VertexUpgradeList" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/VertexShopPage/VertexShopMargin/VertexShopVBox/VertexUpgradesScroll" unique_id=1599572958]
 unique_name_in_owner = true
