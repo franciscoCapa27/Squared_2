@@ -13,6 +13,7 @@ static var _active_help: ContextualHelp
 static var _active_layer: CanvasLayer
 
 var _popup: PanelContainer
+var _popup_centered: bool = false
 
 
 func _ready() -> void:
@@ -43,8 +44,19 @@ func open_help() -> void:
 	_on_pressed()
 
 
+func open_centered_detail(popup_title: String, custom_content: Control) -> void:
+	help_title = popup_title
+	_close_active()
+	_open_popup_with_content(custom_content, true)
+
+
 func _open_popup() -> void:
+	_open_popup_with_content(null, false)
+
+
+func _open_popup_with_content(custom_content: Control, centered: bool) -> void:
 	_active_help = self
+	_popup_centered = centered
 	_active_layer = CanvasLayer.new()
 	_active_layer.layer = 100
 	get_tree().root.add_child(_active_layer)
@@ -61,12 +73,12 @@ func _open_popup() -> void:
 	_popup.name = "ContextualHelpPopup"
 	_popup.mouse_filter = Control.MOUSE_FILTER_STOP
 	_popup.gui_input.connect(_on_popup_gui_input)
-	_active_popup_setup(overlay)
+	_active_popup_setup(overlay, custom_content)
 	_apply_popup_theme()
 	_position_popup.call_deferred()
 
 
-func _active_popup_setup(overlay: Control) -> void:
+func _active_popup_setup(overlay: Control, custom_content: Control = null) -> void:
 	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
 	var available_width: float = maxf(0.0, viewport_size.x - POPUP_MARGIN * 2.0)
 	var available_height: float = maxf(0.0, viewport_size.y - POPUP_MARGIN * 2.0)
@@ -100,16 +112,24 @@ func _active_popup_setup(overlay: Control) -> void:
 	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	content.add_child(detail_scroll)
 
-	var detail_label: Label = Label.new()
-	detail_label.text = help_detail
-	detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	detail_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	detail_label.custom_minimum_size = Vector2(
-		maxf(0.0, popup_width - ThemeSystem.get_spacing("inner_margin") * 2.0),
-		0.0
-	)
-	ThemeTextHelper.apply_body_label(detail_label)
-	detail_scroll.add_child(detail_label)
+	if custom_content != null:
+		custom_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		custom_content.custom_minimum_size = Vector2(
+			maxf(0.0, popup_width - ThemeSystem.get_spacing("inner_margin") * 2.0),
+			0.0
+		)
+		detail_scroll.add_child(custom_content)
+	else:
+		var detail_label: Label = Label.new()
+		detail_label.text = help_detail
+		detail_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		detail_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		detail_label.custom_minimum_size = Vector2(
+			maxf(0.0, popup_width - ThemeSystem.get_spacing("inner_margin") * 2.0),
+			0.0
+		)
+		ThemeTextHelper.apply_body_label(detail_label)
+		detail_scroll.add_child(detail_label)
 
 
 func _position_popup() -> void:
@@ -121,6 +141,12 @@ func _position_popup() -> void:
 	var popup_size: Vector2 = _popup.size
 	var x: float = trigger_rect.position.x
 	var y: float = trigger_rect.end.y + POPUP_GAP
+
+	if _popup_centered:
+		x = viewport_rect.position.x + (viewport_rect.size.x - popup_size.x) * 0.5
+		y = viewport_rect.position.y + (viewport_rect.size.y - popup_size.y) * 0.5
+		_popup.position = Vector2(floor(x), floor(y))
+		return
 
 	if y + popup_size.y > viewport_rect.end.y - POPUP_MARGIN:
 		y = trigger_rect.position.y - popup_size.y - POPUP_GAP
@@ -155,6 +181,7 @@ func _close_active() -> void:
 	_active_layer = null
 	_active_help = null
 	_popup = null
+	_popup_centered = false
 
 
 func _get_explanation() -> String:

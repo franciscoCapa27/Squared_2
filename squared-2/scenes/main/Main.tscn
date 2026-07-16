@@ -694,6 +694,12 @@ bbcode_enabled = true
 text = "Select an achievement to inspect its current state."
 fit_content = true
 
+[node name="AchievementDetailHelp" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage" instance=ExtResource("10_contextual_help")]
+unique_name_in_owner = true
+visible = false
+help_title = "Achievement"
+help_detail = "Achievement details"
+
 [node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
 unique_name_in_owner = true
 visible = false
