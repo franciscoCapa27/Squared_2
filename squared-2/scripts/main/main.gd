@@ -29,7 +29,7 @@ var passives_story_shown: bool = false
 @onready var run_upgrades_panel: RunUpgradesPanel = %RunUpgradesPanel
 
 @onready var stats_tab_button: Button = %StatsTabButton
-@onready var stats_page: Control = %StatsPage
+@onready var stats_page: StatsPage = %StatsPage
 
 @onready var root_margin: MarginContainer = %RootMargin
 @onready var main_v_box: VBoxContainer = %MainVBox
@@ -271,6 +271,7 @@ func _on_achievements_tab_pressed() -> void:
 
 func _on_stats_tab_pressed() -> void:
 	_show_center_page("stats")
+	stats_page.refresh()
 # ------------------------------------------------------------------------------
 # Resource Labels / Story
 # ------------------------------------------------------------------------------
