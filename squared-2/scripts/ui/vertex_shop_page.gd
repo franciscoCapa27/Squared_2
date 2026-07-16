@@ -13,6 +13,14 @@ const TREE_CHILDREN := {
 		GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER,
 	],
 }
+const TREE_PREREQUISITES := {
+	GameIds.UPGRADE_GEOMETRIC_INTUITION: [GameIds.UPGRADE_SHARPENED_ORIGIN],
+	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: [GameIds.UPGRADE_SHARPENED_ORIGIN],
+	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: [
+		GameIds.UPGRADE_SHARPENED_ORIGIN,
+		GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR,
+	],
+}
 const TREE_POSITIONS := {
 	GameIds.UPGRADE_SHARPENED_ORIGIN: Vector2(300, 32),
 	GameIds.UPGRADE_GEOMETRIC_INTUITION: Vector2(32, 248),
@@ -114,13 +122,15 @@ func _is_node_revealed(upgrade_id: String) -> bool:
 	if upgrade_id == ROOT_UPGRADE_ID:
 		return true
 
-	for parent_id_variant: Variant in TREE_CHILDREN.keys():
-		var parent_id: String = str(parent_id_variant)
-		var child_ids: Array = TREE_CHILDREN[parent_id]
-		if child_ids.has(upgrade_id):
-			return VertexUpgradeSystem.has_vertex_upgrade(parent_id)
+	var prerequisites: Array = TREE_PREREQUISITES.get(upgrade_id, [])
+	if prerequisites.is_empty():
+		return false
 
-	return false
+	for prerequisite_variant: Variant in prerequisites:
+		if not VertexUpgradeSystem.has_vertex_upgrade(str(prerequisite_variant)):
+			return false
+
+	return true
 
 
 func _add_visible_connections() -> void:
