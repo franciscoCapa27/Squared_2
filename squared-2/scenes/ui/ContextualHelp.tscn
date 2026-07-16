@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/contextual_help.gd" id="1_contextual_help"]
+
+[node name="ContextualHelp" type="Button"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+focus_mode = 0
+text = "i"
+script = ExtResource("1_contextual_help")
