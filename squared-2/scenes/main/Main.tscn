@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://vlq180vt2gmu" path="res://scripts/ui/run_upgrades_panel.gd" id="8_ko0rf"]
 [ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
+[ext_resource type="PackedScene" path="res://scenes/ui/TriangleIndicator.tscn" id="11_triangle_indicator"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -194,6 +195,20 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../PassiveScroll")
 
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox/PassiveTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
 [node name="PassiveHelp" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/PassivePanel/PassiveMargin/PassiveVBox" instance=ExtResource("10_contextual_help")]
 layout_mode = 2
 help_title = "Passive generators"
@@ -225,6 +240,20 @@ text = "Achievements"
 alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../AchievementSummaryContent")
+
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox/AchievementSummaryTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="AchievementSummaryContent" type="VBoxContainer" parent="RootMargin/MainVBox/BodyHBox/LeftPanel/AchievementSummaryPanel/AchievementSummaryMargin/AchievementSummaryVBox"]
 layout_mode = 2
@@ -327,6 +356,20 @@ text = "Buy Trait"
 alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../BuyTraitContent")
+
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox/BuyTraitTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="BuyTraitContent" type="HBoxContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/GridPage/GridCenter/GridVBox/BuyTraitPanel/BuyTraitMargin/BuyTraitVBox"]
 layout_mode = 2
@@ -638,6 +681,20 @@ alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../SelectedSquareDetails")
 
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox/SelectedSquareTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
+
 [node name="SelectedSquareDetails" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" unique_id=195294754]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 160)
@@ -672,6 +729,20 @@ text = "Upgrades"
 alignment = 0
 script = ExtResource("9_collapsible")
 content = NodePath("../RunUpgradeScroll")
+
+[node name="TriangleIndicator" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox/RunUpgradesTitle" instance=ExtResource("11_triangle_indicator")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -8.0
+offset_right = -8.0
+offset_bottom = 8.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="RunUpgradeScroll" type="ScrollContainer" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=612396319]
 layout_mode = 2

@@ -3,6 +3,8 @@ class_name CollapsiblePanelHeader
 
 @export var content: Control
 
+@onready var triangle_indicator: TriangleIndicator = $TriangleIndicator
+
 var _content: Control
 var _title_text: String
 var _expanded: bool = true
@@ -29,6 +31,7 @@ func _toggle_expanded() -> void:
 
 
 func _update_visual_state() -> void:
-	text = "%s  %s" % ["▼" if _expanded else "▶", _title_text]
+	text = _title_text
+	triangle_indicator.set_expanded(_expanded)
 	if _content != null:
 		_content.visible = _expanded
