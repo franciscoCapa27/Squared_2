@@ -7,6 +7,7 @@ const GRID_GAP := 12.0
 @onready var achievements_description: RichTextLabel = %AchievementsDescription
 @onready var achievement_grid: GridContainer = %AchievementGrid
 @onready var achievement_selection_detail: RichTextLabel = %AchievementSelectionDetail
+@onready var achievement_detail_help: ContextualHelp = %AchievementDetailHelp
 
 var achievement_tile_scene: PackedScene = preload("res://scenes/ui/AchievementIconTile.tscn")
 var achievement_tiles: Dictionary = {}
@@ -178,6 +179,68 @@ func _format_stat_name(stat_id: String) -> String:
 func _on_achievement_selected(achievement_id: String) -> void:
 	selected_achievement_id = achievement_id
 	refresh()
+	_open_achievement_detail()
+
+
+func _open_achievement_detail() -> void:
+	var achievement: AchievementDefinition = AchievementDatabase.get_achievement(selected_achievement_id)
+	if achievement == null or not achievement_tiles.has(selected_achievement_id):
+		return
+
+	var detail_content: VBoxContainer = VBoxContainer.new()
+	ThemeLayoutHelper.apply_box_separation(detail_content, "section_gap")
+
+	var description_label: Label = Label.new()
+	description_label.text = achievement.description
+	description_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	description_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ThemeTextHelper.apply_body_label(description_label)
+	detail_content.add_child(description_label)
+
+	var status_label: Label = Label.new()
+	status_label.text = "Status: %s" % (
+		"Unlocked" if AchievementSystem.is_achievement_unlocked(achievement.id) else "Locked"
+	)
+	ThemeTextHelper.apply_detail_label(status_label)
+	detail_content.add_child(status_label)
+
+	var level_label: Label = Label.new()
+	level_label.text = "Level: Single-step achievement"
+	ThemeTextHelper.apply_detail_label(level_label)
+	detail_content.add_child(level_label)
+
+	var progress_bar: ProgressBar = ProgressBar.new()
+	progress_bar.custom_minimum_size = Vector2(0, 12)
+	progress_bar.max_value = 1.0
+	progress_bar.value = AchievementSystem.get_progress_ratio(achievement)
+	progress_bar.show_percentage = false
+	progress_bar.add_theme_stylebox_override("background", ThemeSystem.make_style_box(
+		ThemeSystem.get_color("surface_soft"),
+		ThemeSystem.get_color("border_soft"),
+		8,
+		1
+	))
+	progress_bar.add_theme_stylebox_override("fill", ThemeSystem.make_style_box(
+		ThemeSystem.get_color("accent_primary"),
+		ThemeSystem.get_color("accent_primary"),
+		8,
+		0
+	))
+	detail_content.add_child(progress_bar)
+
+	var progress_label: Label = Label.new()
+	progress_label.text = "Progress: %s" % AchievementSystem.get_progress_text(achievement)
+	ThemeTextHelper.apply_detail_label(progress_label)
+	detail_content.add_child(progress_label)
+
+	var reward_label: Label = Label.new()
+	reward_label.text = _get_reward_text(achievement)
+	reward_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	reward_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ThemeTextHelper.apply_body_label(reward_label)
+	detail_content.add_child(reward_label)
+
+	achievement_detail_help.open_centered_detail(achievement.display_name, detail_content)
 
 
 func _on_achievement_unlocked(_achievement_id: String) -> void:
