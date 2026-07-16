@@ -7,7 +7,6 @@ const COMPACT_LAYOUT_MAX_WIDTH := 900.0
 @onready var trait_purchase_button: Button = %BuyTraitButton
 @onready var trait_purchase_description: Label = %BuyTraitDescription
 @onready var trait_purchase_details: RichTextLabel = %BuyTraitDetails
-@onready var trait_purchase_help: ContextualHelp = %BuyTraitHelp
 @onready var story_label: Label = %StoryLabel
 @onready var story_panel: PanelContainer = %StoryPanel
 @onready var story_margin: MarginContainer = %StoryMargin
@@ -466,12 +465,6 @@ func _refresh_trait_purchase_panel() -> void:
 		_get_possible_rarities_rich_text(),
 	]
 	trait_purchase_description.text = "Spend Squares to permanently add a random Trait and gain Vertices."
-	trait_purchase_help.help_title = "Buy Trait"
-	trait_purchase_help.help_detail = _get_trait_purchase_help_detail(cost_text, vertex_text)
-	trait_purchase_help.tooltip_text = "%s\n%s" % [
-		trait_purchase_help.help_title,
-		trait_purchase_help.help_detail,
-	]
 
 
 func _get_possible_rarities_rich_text() -> String:
@@ -500,14 +493,6 @@ func _get_possible_rarity_names() -> Array[String]:
 
 	return rarity_names
 
-
-func _get_trait_purchase_help_detail(cost_text: String, vertex_text: String) -> String:
-	return "Current cost: %s Squares. The cost rises after each purchase.\n\nGain: %s Vertices and permanently add one random Trait to a random square.\n\nPossible rarities for the current grid: %s." % [
-		cost_text,
-		vertex_text,
-		", ".join(_get_possible_rarity_names()),
-	]
-		
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
 	var total_count: int = AchievementDatabase.get_all_achievements().size()
