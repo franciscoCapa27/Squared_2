@@ -196,7 +196,7 @@ func _build_trait_purchase_reveal_text(
 	new_square_title: String
 ) -> String:
 	var rarity: String = trait_rarity_display.to_lower()
-	var rarity_color: String = _get_reveal_rarity_color(rarity)
+	var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity)
 	var old_title: String = previous_square_title if previous_square_title != "" else "Square"
 
 	return "[center][color=%s][font_size=13]%s · %s[/font_size]\n[font_size=10]%s[/font_size]\n[font_size=10]→ %s[/font_size][/color][/center]" % [
@@ -206,17 +206,3 @@ func _build_trait_purchase_reveal_text(
 		old_title,
 		new_square_title
 	]
-
-
-func _get_reveal_rarity_color(rarity: String) -> String:
-	match rarity:
-		"uncommon":
-			return "#7ee2b8"
-		"rare":
-			return "#c79aff"
-		"epic":
-			return "#ff9bd6"
-		"legendary":
-			return "#ffd37a"
-		_:
-			return "#d5dde7"

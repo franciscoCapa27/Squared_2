@@ -83,6 +83,20 @@ static func apply_detail_rich_text(label: RichTextLabel) -> void:
 	)
 
 
+static func get_rarity_color_hex(rarity: String) -> String:
+	match rarity.to_lower():
+		"uncommon":
+			return "#7ee2b8"
+		"rare":
+			return "#c79aff"
+		"epic":
+			return "#ff9bd6"
+		"legendary":
+			return "#ffd37a"
+		_:
+			return "#d5dde7"
+
+
 static func apply_primary_label(label: Label) -> void:
 	_apply_label(
 		label,
