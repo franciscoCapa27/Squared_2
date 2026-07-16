@@ -6,12 +6,32 @@ const DEFAULT_THEME_PATH := "res://data/themes/void_dark.tres"
 const THEME_PATHS := {
 	"void_dark": DEFAULT_THEME_PATH,
 	"paper_light": "res://data/themes/paper_light.tres",
-	"weird_pastel": "res://data/themes/weird_pastel.tres"
+	"weird_pastel": "res://data/themes/weird_pastel.tres",
+	"ember_glow": "res://data/themes/ember_glow.tres",
+	"oceanic": "res://data/themes/oceanic.tres",
+	"lavender_mist": "res://data/themes/lavender_mist.tres",
+	"forest_moss": "res://data/themes/forest_moss.tres",
+	"sunset_coral": "res://data/themes/sunset_coral.tres",
+	"monochrome_ice": "res://data/themes/monochrome_ice.tres",
+	"retro_terminal": "res://data/themes/retro_terminal.tres",
+	"desert_dusk": "res://data/themes/desert_dusk.tres",
+	"neon_arcade": "res://data/themes/neon_arcade.tres",
+	"solarized_day": "res://data/themes/solarized_day.tres"
 }
 const THEME_DISPLAY_NAMES := {
 	"void_dark": "Void Dark",
 	"paper_light": "Paper Light",
-	"weird_pastel": "Weird Pastel"
+	"weird_pastel": "Weird Pastel",
+	"ember_glow": "Ember Glow",
+	"oceanic": "Oceanic",
+	"lavender_mist": "Lavender Mist",
+	"forest_moss": "Forest Moss",
+	"sunset_coral": "Sunset Coral",
+	"monochrome_ice": "Monochrome Ice",
+	"retro_terminal": "Retro Terminal",
+	"desert_dusk": "Desert Dusk",
+	"neon_arcade": "Neon Arcade",
+	"solarized_day": "Solarized Day"
 }
 
 var active_theme: UIThemeDefinition
@@ -38,7 +58,21 @@ func load_theme(theme_path: String) -> bool:
 
 
 func get_available_theme_ids() -> Array[String]:
-	return ["void_dark", "paper_light", "weird_pastel"]
+	return [
+		"void_dark",
+		"paper_light",
+		"weird_pastel",
+		"ember_glow",
+		"oceanic",
+		"lavender_mist",
+		"forest_moss",
+		"sunset_coral",
+		"monochrome_ice",
+		"retro_terminal",
+		"desert_dusk",
+		"neon_arcade",
+		"solarized_day"
+	]
 
 
 func get_theme_display_name(theme_id: String) -> String:

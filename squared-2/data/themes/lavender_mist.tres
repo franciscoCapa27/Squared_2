@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "lavender_mist"
+display_name = "Lavender Mist"
+background = Color(0.16, 0.13, 0.23, 1)
+background_subtle = Color(0.24, 0.19, 0.34, 1)
+surface = Color(0.31, 0.25, 0.43, 0.96)
+surface_soft = Color(0.39, 0.31, 0.52, 1)
+surface_strong = Color(0.50, 0.39, 0.64, 1)
+border = Color(0.67, 0.53, 0.82, 0.7)
+border_soft = Color(0.48, 0.37, 0.61, 0.5)
+border_strong = Color(0.88, 0.69, 1, 0.95)
+text_primary = Color(0.97, 0.93, 1, 1)
+text_secondary = Color(0.80, 0.73, 0.91, 1)
+text_muted = Color(0.59, 0.51, 0.71, 1)
+accent_primary = Color(0.78, 0.48, 1, 1)
+accent_secondary = Color(0.42, 0.78, 1, 1)
+success = Color(0.38, 0.88, 0.64, 1)
+warning = Color(1, 0.72, 0.38, 1)
+danger = Color(1, 0.38, 0.58, 1)
+

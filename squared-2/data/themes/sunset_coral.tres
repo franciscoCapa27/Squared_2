@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "sunset_coral"
+display_name = "Sunset Coral"
+background = Color(0.20, 0.055, 0.075, 1)
+background_subtle = Color(0.34, 0.10, 0.11, 1)
+surface = Color(0.46, 0.15, 0.15, 0.96)
+surface_soft = Color(0.58, 0.21, 0.18, 1)
+surface_strong = Color(0.72, 0.30, 0.21, 1)
+border = Color(0.90, 0.42, 0.30, 0.7)
+border_soft = Color(0.67, 0.25, 0.21, 0.5)
+border_strong = Color(1, 0.68, 0.36, 0.95)
+text_primary = Color(1, 0.94, 0.82, 1)
+text_secondary = Color(0.98, 0.72, 0.58, 1)
+text_muted = Color(0.72, 0.43, 0.36, 1)
+accent_primary = Color(1, 0.47, 0.27, 1)
+accent_secondary = Color(1, 0.76, 0.30, 1)
+success = Color(0.36, 0.86, 0.48, 1)
+warning = Color(1, 0.75, 0.18, 1)
+danger = Color(1, 0.20, 0.22, 1)
+

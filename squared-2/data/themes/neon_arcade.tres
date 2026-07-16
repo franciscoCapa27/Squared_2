@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="UIThemeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/resources/ui_theme_definition.gd" id="1_theme"]
+
+[resource]
+script = ExtResource("1_theme")
+id = "neon_arcade"
+display_name = "Neon Arcade"
+background = Color(0.025, 0.005, 0.09, 1)
+background_subtle = Color(0.09, 0.012, 0.20, 1)
+surface = Color(0.16, 0.02, 0.28, 0.96)
+surface_soft = Color(0.23, 0.03, 0.40, 1)
+surface_strong = Color(0.34, 0.04, 0.56, 1)
+border = Color(0.68, 0.12, 0.82, 0.7)
+border_soft = Color(0.40, 0.05, 0.55, 0.5)
+border_strong = Color(1, 0.20, 0.82, 0.95)
+text_primary = Color(0.98, 0.90, 1, 1)
+text_secondary = Color(0.76, 0.58, 0.92, 1)
+text_muted = Color(0.48, 0.32, 0.64, 1)
+accent_primary = Color(1, 0.12, 0.72, 1)
+accent_secondary = Color(0.10, 0.88, 1, 1)
+success = Color(0.24, 1, 0.68, 1)
+warning = Color(1, 0.82, 0.16, 1)
+danger = Color(1, 0.22, 0.35, 1)
+
