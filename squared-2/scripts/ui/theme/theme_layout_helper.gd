@@ -30,6 +30,33 @@ static func apply_box_separation(
 	)
 
 
+static func apply_dense_margin(
+	margin_container: MarginContainer,
+	margin_id: String = "inner_margin"
+) -> void:
+	if margin_container == null:
+		return
+
+	var spacing: int = maxi(6, ThemeSystem.get_spacing(margin_id) - 6)
+	margin_container.add_theme_constant_override("margin_left", spacing)
+	margin_container.add_theme_constant_override("margin_top", spacing)
+	margin_container.add_theme_constant_override("margin_right", spacing)
+	margin_container.add_theme_constant_override("margin_bottom", spacing)
+
+
+static func apply_dense_box_separation(
+	box_container: BoxContainer,
+	spacing_id: String = "section_gap"
+) -> void:
+	if box_container == null:
+		return
+
+	box_container.add_theme_constant_override(
+		"separation",
+		maxi(4, ThemeSystem.get_spacing(spacing_id) - 4)
+	)
+
+
 static func apply_grid_separation(grid_container: GridContainer) -> void:
 	if grid_container == null:
 		return

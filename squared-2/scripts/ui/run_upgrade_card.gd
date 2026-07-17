@@ -4,10 +4,12 @@ class_name RunUpgradeCard
 signal buy_requested(upgrade_id: String)
 
 @onready var title_label: Label = %TitleLabel
+@onready var icon_label: Label = %IconLabel
 @onready var category_level_label: Label = %CategoryLevelLabel
 @onready var description_label: RichTextLabel = %DescriptionLabel
-@onready var detail_label: RichTextLabel = %DetailLabel
+@onready var progress_bar: ProgressBar = %ProgressBar
 @onready var buy_button: Button = %BuyButton
+@onready var detail_help: ContextualHelp = %DetailHelp
 
 var upgrade_definition: RunUpgradeDefinition
 
@@ -22,9 +24,9 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
 	ThemeTextHelper.apply_card_title(title_label)
+	ThemeTextHelper.apply_primary_label(icon_label)
 	ThemeTextHelper.apply_detail_label(category_level_label)
-	ThemeTextHelper.apply_detail_rich_text(description_label)
-	ThemeTextHelper.apply_detail_rich_text(detail_label)
+	ThemeTextHelper.apply_body_rich_text(description_label)
 	ThemeButtonHelper.apply_button_theme(buy_button)
 
 
@@ -39,6 +41,7 @@ func setup(upgrade: RunUpgradeDefinition) -> void:
 
 func refresh() -> void:
 	if upgrade_definition == null:
+		detail_help.visible = false
 		return
 
 	var current_level: int = RunUpgradeSystem.get_run_upgrade_level(upgrade_definition.id)
@@ -48,14 +51,30 @@ func refresh() -> void:
 	var cost: float = upgrade_definition.get_cost_for_next_level(current_level)
 
 	title_label.text = upgrade_definition.display_name
-	category_level_label.text = "%s • Level %s / %s" % [
+	icon_label.text = _get_icon_glyph()
+	detail_help.visible = true
+	detail_help.help_title = upgrade_definition.display_name
+	detail_help.help_detail = _get_detail_text(current_level)
+	detail_help.tooltip_text = "%s\n%s" % [
+		detail_help.help_title,
+		detail_help.help_detail
+	]
+	category_level_label.text = "%s/%s" % [
+		NumberFormatter.integer_amount(current_level),
+		NumberFormatter.integer_amount(upgrade_definition.max_level),
+	]
+	description_label.text = "[b]%s[/b]\n%s" % [
+		upgrade_definition.get_category_name(),
+		upgrade_definition.description,
+	]
+	progress_bar.value = float(current_level) / float(maxi(1, upgrade_definition.max_level))
+	progress_bar.visible = true
+	# Keep the category in the tooltip-friendly detail content while the card stays compact.
+	category_level_label.tooltip_text = "%s • Level %s / %s" % [
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(current_level),
 		NumberFormatter.integer_amount(upgrade_definition.max_level)
 	]
-
-	description_label.text = upgrade_definition.description
-	detail_label.text = _get_detail_text()
 
 	if not is_unlocked:
 		buy_button.text = "Locked"
@@ -71,12 +90,38 @@ func refresh() -> void:
 		buy_button.disabled = true
 
 
-func _get_detail_text() -> String:
-	return "[b]Requirements[/b]\n%s\n\n[b]Effects per Level[/b]\n%s" % [
-		_get_requirement_text(),
-		_get_effect_text()
-	]
+func _get_icon_glyph() -> String:
+	match upgrade_definition.category:
+		RunUpgradeDefinition.UpgradeCategory.PASSIVE:
+			return "◌"
+		RunUpgradeDefinition.UpgradeCategory.RESPAWN:
+			return "◒"
+		RunUpgradeDefinition.UpgradeCategory.MANUAL:
+			return "✦"
+		_:
+			return "◇"
 
+
+func _get_detail_text(current_level: int) -> String:
+	var cost_text: String = "Max level reached."
+	if current_level < upgrade_definition.max_level:
+		cost_text = "Next level cost: %s Squares." % NumberFormatter.cost(
+			upgrade_definition.get_cost_for_next_level(current_level)
+		)
+
+	return (
+		"Current level: %s / %s\n\n" % [
+			NumberFormatter.integer_amount(current_level),
+			NumberFormatter.integer_amount(upgrade_definition.max_level)
+		]
+		+ "Requirements\n%s\n\n" % _get_requirement_text()
+		+ "Effects per level\n%s\n\n" % _get_effect_text()
+		+ "Cost progression\n%s Each level scales by %s from the previous level.\n\n" % [
+			cost_text,
+			NumberFormatter.multiplier(upgrade_definition.cost_multiplier)
+		]
+		+ "Run Upgrade levels persist after buying a Trait and reset when starting a new game."
+	)
 
 func _get_requirement_text() -> String:
 	if upgrade_definition == null:

@@ -1,0 +1,55 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/vertex_upgrade_node.gd" id="1_vertex_upgrade_node"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="2_contextual_help"]
+
+[node name="VertexUpgradeNode" type="PanelContainer"]
+custom_minimum_size = Vector2(160, 92)
+size_flags_vertical = 0
+script = ExtResource("1_vertex_upgrade_node")
+
+[node name="NodeMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="NodeVBox" type="VBoxContainer" parent="NodeMargin"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TitleRow" type="HBoxContainer" parent="NodeMargin/NodeVBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="IconLabel" type="Label" parent="NodeMargin/NodeVBox/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "◇"
+
+[node name="TitleLabel" type="Label" parent="NodeMargin/NodeVBox/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+autowrap_mode = 3
+
+[node name="DetailHelp" parent="NodeMargin/NodeVBox/TitleRow" instance=ExtResource("2_contextual_help")]
+unique_name_in_owner = true
+layout_mode = 2
+help_title = "Vertex upgrade"
+
+[node name="CategoryCostLabel" type="Label" parent="NodeMargin/NodeVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="StateLabel" type="Label" parent="NodeMargin/NodeVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BuyButton" type="Button" parent="NodeMargin/NodeVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+text = "Locked"

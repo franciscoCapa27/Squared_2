@@ -146,8 +146,8 @@ func _on_theme_changed() -> void:
 
 
 func _apply_theme() -> void:
-	ThemeLayoutHelper.apply_margin(options_margin, "inner_margin")
-	ThemeLayoutHelper.apply_box_separation(options_v_box, "section_gap")
+	ThemeLayoutHelper.apply_dense_margin(options_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(options_v_box, "section_gap")
 
 	ThemeButtonHelper.apply_button_theme(save_button)
 	ThemeButtonHelper.apply_button_theme(export_save_button)

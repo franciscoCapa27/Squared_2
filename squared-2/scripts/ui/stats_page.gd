@@ -1,10 +1,19 @@
 extends Control
 class_name StatsPage
 
-@onready var stats_label: RichTextLabel = %StatsLabel
+@onready var stats_title_label: Label = %StatsTitle
+@onready var stats_description: RichTextLabel = %StatsDescription
+@onready var stats_list: VBoxContainer = %StatsList
+@onready var stats_margin: MarginContainer = %StatsMargin
+
+var _stat_value_labels: Dictionary = {}
+var _stat_name_labels: Array[Label] = []
+var _section_title_labels: Array[Label] = []
+var _section_purpose_labels: Array[Label] = []
 
 
 func _ready() -> void:
+	_build_stat_list()
 	EventBus.squares_changed.connect(_on_state_changed)
 	EventBus.vertices_changed.connect(_on_state_changed)
 	EventBus.trait_purchase_changed.connect(_on_trait_purchase_changed)
@@ -50,48 +59,121 @@ func refresh() -> void:
 		passive_pulses += generator_instance.lifetime_pulses
 		passive_squares += generator_instance.lifetime_squares_generated
 
-	stats_label.text = "[font_size=%d][color=%s]Run[/color][/font_size]\n" % [
-		ThemeSystem.get_font_size("panel_title"),
-		ThemeSystem.get_color("text_primary").to_html(false)
-	]
-	stats_label.text += _format_stat_lines([
-		["Squares held", NumberFormatter.amount(GameState.squares)],
-		["Manual clicks", NumberFormatter.integer_amount(run_manual_clicks)],
-		["Passive clicks", NumberFormatter.integer_amount(run_passive_clicks)],
-		["Squares generated", NumberFormatter.amount(run_squares_generated)],
-		["Grid", "%sx%s" % [GameState.grid_size, GameState.grid_size]],
-		["Traits on squares", NumberFormatter.integer_amount(traited_squares)]
-	])
-	stats_label.text += "\n[font_size=%d][color=%s]Lifetime[/color][/font_size]\n" % [
-		ThemeSystem.get_font_size("panel_title"),
-		ThemeSystem.get_color("text_primary").to_html(false)
-	]
-	stats_label.text += _format_stat_lines([
-		["Squares generated", NumberFormatter.amount(lifetime_squares_generated)],
-		["Manual clicks", NumberFormatter.integer_amount(lifetime_manual_clicks)],
-		["Passive clicks", NumberFormatter.integer_amount(lifetime_passive_clicks)],
-		["Passive pulses", NumberFormatter.integer_amount(passive_pulses)],
-		["Passive Squares generated", NumberFormatter.amount(passive_squares)],
-		["Highest single payout", NumberFormatter.amount(highest_single_payout)],
-		["Buy Trait purchases", NumberFormatter.integer_amount(GameState.trait_purchase_count)],
-		["Vertices held", NumberFormatter.integer_amount(GameState.vertices)],
-		["Vertex upgrades", NumberFormatter.integer_amount(_get_purchased_upgrade_count())],
-		["Achievements", "%s / %s" % [
-			AchievementSystem.get_unlocked_count(),
-			AchievementDatabase.get_all_achievements().size()
-		]]
+	_set_stat_value("run_squares_held", NumberFormatter.amount(GameState.squares))
+	_set_stat_value("run_manual_clicks", NumberFormatter.integer_amount(run_manual_clicks))
+	_set_stat_value("run_passive_clicks", NumberFormatter.integer_amount(run_passive_clicks))
+	_set_stat_value("run_squares_generated", NumberFormatter.amount(run_squares_generated))
+	_set_stat_value("run_grid", "%sx%s" % [GameState.grid_size, GameState.grid_size])
+	_set_stat_value("run_traited_squares", NumberFormatter.integer_amount(traited_squares))
+
+	_set_stat_value("lifetime_squares_generated", NumberFormatter.amount(lifetime_squares_generated))
+	_set_stat_value("lifetime_manual_clicks", NumberFormatter.integer_amount(lifetime_manual_clicks))
+	_set_stat_value("lifetime_passive_clicks", NumberFormatter.integer_amount(lifetime_passive_clicks))
+	_set_stat_value("lifetime_passive_pulses", NumberFormatter.integer_amount(passive_pulses))
+	_set_stat_value("lifetime_passive_squares", NumberFormatter.amount(passive_squares))
+	_set_stat_value("lifetime_highest_single_payout", NumberFormatter.amount(highest_single_payout))
+	_set_stat_value("lifetime_trait_purchases", NumberFormatter.integer_amount(GameState.trait_purchase_count))
+	_set_stat_value("lifetime_vertices_held", NumberFormatter.integer_amount(GameState.vertices))
+	_set_stat_value("lifetime_vertex_upgrades", NumberFormatter.integer_amount(_get_purchased_upgrade_count()))
+	_set_stat_value("lifetime_achievements", "%s / %s" % [
+		AchievementSystem.get_unlocked_count(),
+		AchievementDatabase.get_all_achievements().size()
 	])
 
 
-func _format_stat_lines(lines: Array) -> String:
-	var result: Array[String] = []
-	for line: Array in lines:
-		result.append("[color=%s]%s:[/color] %s" % [
-			ThemeSystem.get_color("text_secondary").to_html(false),
-			line[0],
-			line[1]
-		])
-	return "\n".join(result) + "\n"
+func _build_stat_list() -> void:
+	for child: Node in stats_list.get_children():
+		child.queue_free()
+
+	_stat_value_labels.clear()
+	_stat_name_labels.clear()
+	_section_title_labels.clear()
+	_section_purpose_labels.clear()
+
+	_add_stat_section(
+		"Run",
+		"Current run activity and current-board values.",
+		[
+			["run_squares_held", "Squares held", "Current Squares total for this run.", "Current Squares"],
+			["run_manual_clicks", "Manual clicks", "Manual clicks recorded during this run.", "Manual clicks"],
+			["run_passive_clicks", "Passive clicks", "Passive generator clicks recorded during this run.", "Passive clicks"],
+			["run_squares_generated", "Squares generated", "Squares produced by manual and passive clicks during this run.", "Squares generated"],
+			["run_grid", "Grid", "The current grid width and height.", "Grid size"],
+			["run_traited_squares", "Traits on squares", "How many current squares have at least one Trait.", "Traits on squares"]
+		]
+	)
+	_add_stat_section(
+		"Lifetime",
+		"Cumulative totals and progression kept for this universe.",
+		[
+			["lifetime_squares_generated", "Squares generated", "Total Squares produced across all runs.", "Lifetime Squares generated"],
+			["lifetime_manual_clicks", "Manual clicks", "Total manual clicks recorded across all runs.", "Lifetime manual clicks"],
+			["lifetime_passive_clicks", "Passive clicks", "Total passive generator clicks recorded across all runs.", "Lifetime passive clicks"],
+			["lifetime_passive_pulses", "Passive pulses", "Total times passive generators have paid out.", "Passive pulses"],
+			["lifetime_passive_squares", "Passive Squares generated", "Total Squares produced by passive generators.", "Passive Squares generated"],
+			["lifetime_highest_single_payout", "Highest single payout", "The largest one-time Squares payout recorded from any click.", "Highest single payout"],
+			["lifetime_trait_purchases", "Buy Trait purchases", "The total number of Buy Trait purchases made.", "Buy Trait purchases"],
+			["lifetime_vertices_held", "Vertices held", "Current Vertices total.", "Current Vertices"],
+			["lifetime_vertex_upgrades", "Vertex upgrades", "The total number of Vertex upgrade purchases made.", "Vertex upgrades"],
+			["lifetime_achievements", "Achievements", "Unlocked achievements compared with the total available.", "Achievements"]
+		]
+	)
+
+
+func _add_stat_section(
+	title: String,
+	purpose: String,
+	definitions: Array[Array]
+) -> void:
+	var section: VBoxContainer = VBoxContainer.new()
+	ThemeLayoutHelper.apply_dense_box_separation(section, "section_gap")
+	stats_list.add_child(section)
+
+	var section_title: Label = Label.new()
+	section_title.text = title
+	_section_title_labels.append(section_title)
+	section.add_child(section_title)
+
+	var section_purpose: Label = Label.new()
+	section_purpose.text = purpose
+	section_purpose.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_section_purpose_labels.append(section_purpose)
+	section.add_child(section_purpose)
+
+	var rows: VBoxContainer = VBoxContainer.new()
+	ThemeLayoutHelper.apply_dense_box_separation(rows, "card_gap")
+	section.add_child(rows)
+
+	for definition: Array in definitions:
+		_add_stat_row(rows, definition)
+
+
+func _add_stat_row(rows: VBoxContainer, definition: Array) -> void:
+	var row: HBoxContainer = HBoxContainer.new()
+	row.custom_minimum_size.y = 24.0
+	rows.add_child(row)
+
+	var name_label: Label = Label.new()
+	name_label.text = "%s:" % definition[1]
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_stat_name_labels.append(name_label)
+	row.add_child(name_label)
+
+	var value_label: Label = Label.new()
+	value_label.text = "0"
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stat_value_labels[definition[0]] = value_label
+	row.add_child(value_label)
+
+
+
+func _set_stat_value(stat_id: String, value: String) -> void:
+	var value_label: Label = _stat_value_labels.get(stat_id) as Label
+	if value_label == null:
+		return
+	value_label.text = value
 
 
 func _get_purchased_upgrade_count() -> int:
@@ -102,10 +184,20 @@ func _get_purchased_upgrade_count() -> int:
 
 
 func _apply_theme() -> void:
-	if stats_label == null:
+	if stats_title_label == null:
 		return
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
-	ThemeTextHelper.apply_body_rich_text(stats_label)
+	ThemeLayoutHelper.apply_dense_margin(stats_margin, "inner_margin")
+	ThemeTextHelper.apply_page_title(stats_title_label)
+	ThemeTextHelper.apply_body_rich_text(stats_description)
+	for label: Label in _section_title_labels:
+		ThemeTextHelper.apply_panel_title(label)
+	for label: Label in _section_purpose_labels:
+		ThemeTextHelper.apply_detail_label(label)
+	for label: Label in _stat_name_labels:
+		ThemeTextHelper.apply_body_label(label)
+	for value_label: Label in _stat_value_labels.values():
+		ThemeTextHelper.apply_primary_label(value_label)
 	refresh()
 
 

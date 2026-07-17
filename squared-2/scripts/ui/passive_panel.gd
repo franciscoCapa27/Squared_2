@@ -90,8 +90,8 @@ func _on_passive_state_changed() -> void:
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 
-	ThemeLayoutHelper.apply_margin(passive_margin, "inner_margin")
-	ThemeLayoutHelper.apply_box_separation(passive_v_box, "card_gap")
+	ThemeLayoutHelper.apply_dense_margin(passive_margin, "inner_margin")
+	ThemeLayoutHelper.apply_dense_box_separation(passive_v_box, "card_gap")
 
 	passive_title.clip_text = true
 
