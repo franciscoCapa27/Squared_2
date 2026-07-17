@@ -23,6 +23,11 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 6
 
+[node name="IconLabel" type="Label" parent="MarginContainer/VBoxContainer/TitleRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "◇"
+
 [node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer/TitleRow" unique_id=1578494593]
 unique_name_in_owner = true
 layout_mode = 2
@@ -31,18 +36,29 @@ autowrap_mode = 3
 
 [node name="DetailHelp" parent="MarginContainer/VBoxContainer/TitleRow" instance=ExtResource("2_contextual_help")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 help_title = "Run Upgrade"
 
-[node name="CategoryLevelLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1822474060]
+[node name="CategoryLevelLabel" type="Label" parent="MarginContainer/VBoxContainer/TitleRow" unique_id=1822474060]
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 3
 
-[node name="DescriptionLabel" type="Label" parent="MarginContainer/VBoxContainer" unique_id=1982718839]
+[node name="DescriptionLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer" unique_id=1982718839]
 unique_name_in_owner = true
 layout_mode = 2
-autowrap_mode = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="ProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer" unique_id=1982718840]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
 
 [node name="BuyButton" type="Button" parent="MarginContainer/VBoxContainer" unique_id=1216677951]
 unique_name_in_owner = true

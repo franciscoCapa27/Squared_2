@@ -22,10 +22,10 @@ const TREE_PREREQUISITES := {
 	],
 }
 const TREE_POSITIONS := {
-	GameIds.UPGRADE_SHARPENED_ORIGIN: Vector2(300, 32),
-	GameIds.UPGRADE_GEOMETRIC_INTUITION: Vector2(32, 248),
-	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: Vector2(368, 248),
-	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: Vector2(368, 464),
+	GameIds.UPGRADE_SHARPENED_ORIGIN: Vector2(230, 24),
+	GameIds.UPGRADE_GEOMETRIC_INTUITION: Vector2(24, 184),
+	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: Vector2(436, 184),
+	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: Vector2(436, 344),
 }
 const NODE_ICONS := {
 	GameIds.UPGRADE_SHARPENED_ORIGIN: "◇",
@@ -33,8 +33,8 @@ const NODE_ICONS := {
 	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: "◌",
 	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: "◎",
 }
-const NODE_SIZE := Vector2(220, 150)
-const CANVAS_SIZE := Vector2(620, 660)
+const NODE_SIZE := Vector2(160, 92)
+const CANVAS_SIZE := Vector2(620, 460)
 
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription
 @onready var vertex_upgrade_canvas: Control = %VertexUpgradeCanvas
@@ -104,7 +104,7 @@ func _rebuild_vertex_upgrade_tree() -> void:
 		vertex_shop_description.text = "No Vertex progression is available yet."
 		return
 
-	vertex_shop_description.text = "Spend Vertices along a permanent progression path. Select an i for details."
+	vertex_shop_description.text = "Spend Vertices along a permanent progression path. Lines show required precedence."
 
 	for upgrade_id_variant: Variant in TREE_POSITIONS.keys():
 		var upgrade_id: String = str(upgrade_id_variant)
@@ -132,18 +132,7 @@ func _rebuild_vertex_upgrade_tree() -> void:
 
 
 func _is_node_revealed(upgrade_id: String) -> bool:
-	if upgrade_id == ROOT_UPGRADE_ID:
-		return true
-
-	var prerequisites: Array = TREE_PREREQUISITES.get(upgrade_id, [])
-	if prerequisites.is_empty():
-		return false
-
-	for prerequisite_variant: Variant in prerequisites:
-		if not VertexUpgradeSystem.has_vertex_upgrade(str(prerequisite_variant)):
-			return false
-
-	return true
+	return TREE_POSITIONS.has(upgrade_id)
 
 
 func _add_visible_connections() -> void:

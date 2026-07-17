@@ -1,12 +1,13 @@
 extends Control
 class_name AchievementsPage
 
+signal tracked_achievement_changed(achievement_id: String)
+
 const TILE_SIZE := 72.0
 const GRID_GAP := 8.0
 
 @onready var achievements_description: RichTextLabel = %AchievementsDescription
 @onready var achievement_grid: GridContainer = %AchievementGrid
-@onready var achievement_selection_detail: RichTextLabel = %AchievementSelectionDetail
 @onready var achievements_margin: MarginContainer = %AchievementsMargin
 @onready var achievements_v_box: VBoxContainer = %AchievementsVBox
 
@@ -14,6 +15,9 @@ var achievement_tile_scene: PackedScene = preload("res://scenes/ui/AchievementIc
 var achievement_tiles: Dictionary = {}
 var visible_achievement_ids: Dictionary = {}
 var selected_achievement_id: String = ""
+var tracked_achievement_id: String = ""
+var achievement_popup_layer: CanvasLayer
+var achievement_popup: PanelContainer
 
 
 func _ready() -> void:
@@ -40,7 +44,6 @@ func refresh() -> void:
 		tile.set_selected(achievement_id == selected_achievement_id)
 
 	_update_description()
-	_update_selection_detail()
 	_update_grid_columns()
 
 
@@ -94,24 +97,6 @@ func _update_description() -> void:
 		unlocked_count,
 		total_count,
 	]
-
-
-func _update_selection_detail() -> void:
-	var achievement: AchievementDefinition = AchievementDatabase.get_achievement(selected_achievement_id)
-	if achievement == null or not achievement_tiles.has(selected_achievement_id):
-		achievement_selection_detail.text = "Select an achievement to inspect its current state."
-		return
-
-	var unlocked: bool = AchievementSystem.is_achievement_unlocked(achievement.id)
-	achievement_selection_detail.text = "[b]%s[/b]\n%s\n\n%s • %s\n%s\n%s" % [
-		achievement.display_name,
-		achievement.description,
-		achievement.get_category_name(),
-		"Unlocked" if unlocked else "Locked",
-		AchievementSystem.get_progress_text(achievement),
-		_get_reward_text(achievement),
-	]
-
 
 func _get_icon_glyph(achievement: AchievementDefinition) -> String:
 	match achievement.category:
@@ -197,6 +182,105 @@ func _format_stat_name(stat_id: String) -> String:
 func _on_achievement_selected(achievement_id: String) -> void:
 	selected_achievement_id = achievement_id
 	refresh()
+	_open_achievement_popup()
+
+
+func get_tracked_summary() -> String:
+	if tracked_achievement_id == "":
+		return ""
+
+	var achievement: AchievementDefinition = AchievementDatabase.get_achievement(tracked_achievement_id)
+	if achievement == null:
+		return ""
+
+	return "Tracked: %s\n%s" % [
+		achievement.display_name,
+		AchievementSystem.get_progress_text(achievement),
+	]
+
+
+func _open_achievement_popup() -> void:
+	var achievement: AchievementDefinition = AchievementDatabase.get_achievement(selected_achievement_id)
+	if achievement == null:
+		return
+
+	_close_achievement_popup()
+	achievement_popup_layer = CanvasLayer.new()
+	achievement_popup_layer.layer = 100
+	get_tree().root.add_child(achievement_popup_layer)
+
+	var overlay: Control = Control.new()
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	overlay.gui_input.connect(_on_achievement_popup_overlay_input)
+	achievement_popup_layer.add_child(overlay)
+
+	achievement_popup = PanelContainer.new()
+	achievement_popup.custom_minimum_size = Vector2(340.0, 240.0)
+	achievement_popup.size = achievement_popup.custom_minimum_size
+	achievement_popup.position = (get_viewport().get_visible_rect().size - achievement_popup.size) * 0.5
+	achievement_popup.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
+	overlay.add_child(achievement_popup)
+
+	var margin: MarginContainer = MarginContainer.new()
+	ThemeLayoutHelper.apply_dense_margin(margin, "inner_margin")
+	achievement_popup.add_child(margin)
+	var content: VBoxContainer = VBoxContainer.new()
+	ThemeLayoutHelper.apply_dense_box_separation(content, "section_gap")
+	margin.add_child(content)
+
+	var title_label: Label = Label.new()
+	title_label.text = achievement.display_name
+	ThemeTextHelper.apply_panel_title(title_label)
+	content.add_child(title_label)
+
+	var detail_label: RichTextLabel = RichTextLabel.new()
+	detail_label.bbcode_enabled = true
+	detail_label.fit_content = true
+	detail_label.text = "[b]%s[/b]\n%s\n\n%s • %s\n%s\n%s" % [
+		achievement.get_category_name(),
+		achievement.description,
+		"Unlocked" if AchievementSystem.is_achievement_unlocked(achievement.id) else "Locked",
+		AchievementSystem.get_level_text(achievement),
+		AchievementSystem.get_progress_text(achievement),
+		_get_reward_text(achievement),
+	]
+	ThemeTextHelper.apply_body_rich_text(detail_label)
+	content.add_child(detail_label)
+
+	var action_row: HBoxContainer = HBoxContainer.new()
+	action_row.alignment = BoxContainer.ALIGNMENT_END
+	content.add_child(action_row)
+
+	var track_button: Button = Button.new()
+	track_button.text = "Untrack" if tracked_achievement_id == achievement.id else "Track achievement"
+	track_button.pressed.connect(_on_track_button_pressed.bind(achievement.id))
+	ThemeButtonHelper.apply_button_theme(track_button)
+	action_row.add_child(track_button)
+
+	var close_button: Button = Button.new()
+	close_button.text = "Close"
+	close_button.pressed.connect(_close_achievement_popup)
+	ThemeButtonHelper.apply_button_theme(close_button)
+	action_row.add_child(close_button)
+
+
+func _on_track_button_pressed(achievement_id: String) -> void:
+	tracked_achievement_id = "" if tracked_achievement_id == achievement_id else achievement_id
+	tracked_achievement_changed.emit(tracked_achievement_id)
+	_close_achievement_popup()
+
+
+func _on_achievement_popup_overlay_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		_close_achievement_popup()
+
+
+func _close_achievement_popup() -> void:
+	if achievement_popup_layer != null and is_instance_valid(achievement_popup_layer):
+		achievement_popup_layer.queue_free()
+	achievement_popup_layer = null
+	achievement_popup = null
 
 
 func _on_achievement_unlocked(_achievement_id: String) -> void:
