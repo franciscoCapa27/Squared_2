@@ -70,13 +70,11 @@ func refresh() -> void:
 	icon_label.text = "◌"
 
 	var is_active: bool = generator_instance.is_active()
-	var activity_state: String = "Active" if is_active else "Inactive"
 	var last_payout: String = "Last payout: —"
 	if generator_instance.last_target_square_id != "":
 		last_payout = "Last payout: [b]+%s[/b] Squares" % NumberFormatter.amount(generator_instance.last_payout)
-	status_label.text = "%s · %s\n%s" % [
-		activity_state,
-		_get_effect_summary(generator_instance),
+	status_label.text = "%s\n%s" % [
+		_get_compact_description(generator_instance),
 		last_payout,
 	]
 
@@ -103,6 +101,13 @@ func refresh() -> void:
 
 	progress_bar.visible = true
 	progress_bar.value = generator_instance.get_progress_ratio()
+
+
+func _get_compact_description(generator_instance: PassiveGeneratorInstance) -> String:
+	if not generator_instance.is_active():
+		return "Inactive"
+
+	return "Clicks %s." % _get_targeting_text(generator_instance)
 
 
 func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String:
