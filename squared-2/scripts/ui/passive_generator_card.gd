@@ -23,8 +23,8 @@ func _ready() -> void:
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
-	ThemeTextHelper.apply_primary_label(title_label)
-	ThemeTextHelper.apply_body_rich_text(status_label)
+	ThemeTextHelper.apply_card_title(title_label)
+	ThemeTextHelper.apply_detail_rich_text(status_label)
 	ThemeTextHelper.apply_detail_label(level_label)
 	ThemeTextHelper.apply_primary_label(icon_label)
 	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
@@ -74,8 +74,7 @@ func refresh() -> void:
 	var last_payout: String = "Last payout: —"
 	if generator_instance.last_target_square_id != "":
 		last_payout = "Last payout: [b]+%s[/b] Squares" % NumberFormatter.amount(generator_instance.last_payout)
-	status_label.text = "%s · %s\n%s\n%s" % [
-		"[b]%s[/b]" % generator_instance.definition.description,
+	status_label.text = "%s · %s\n%s" % [
 		activity_state,
 		_get_effect_summary(generator_instance),
 		last_payout,
