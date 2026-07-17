@@ -23,8 +23,8 @@ func _ready() -> void:
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
-	ThemeTextHelper.apply_primary_label(title_label)
-	ThemeTextHelper.apply_body_rich_text(status_label)
+	ThemeTextHelper.apply_card_title(title_label)
+	ThemeTextHelper.apply_detail_rich_text(status_label)
 	ThemeTextHelper.apply_detail_label(level_label)
 	ThemeTextHelper.apply_primary_label(icon_label)
 	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
@@ -70,14 +70,11 @@ func refresh() -> void:
 	icon_label.text = "◌"
 
 	var is_active: bool = generator_instance.is_active()
-	var activity_state: String = "Active" if is_active else "Inactive"
 	var last_payout: String = "Last payout: —"
 	if generator_instance.last_target_square_id != "":
 		last_payout = "Last payout: [b]+%s[/b] Squares" % NumberFormatter.amount(generator_instance.last_payout)
-	status_label.text = "%s · %s\n%s\n%s" % [
-		"[b]%s[/b]" % generator_instance.definition.description,
-		activity_state,
-		_get_effect_summary(generator_instance),
+	status_label.text = "%s\n%s" % [
+		_get_compact_description(generator_instance),
 		last_payout,
 	]
 
@@ -104,6 +101,13 @@ func refresh() -> void:
 
 	progress_bar.visible = true
 	progress_bar.value = generator_instance.get_progress_ratio()
+
+
+func _get_compact_description(generator_instance: PassiveGeneratorInstance) -> String:
+	if not generator_instance.is_active():
+		return "Inactive"
+
+	return "Clicks %s." % _get_targeting_text(generator_instance)
 
 
 func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String:
