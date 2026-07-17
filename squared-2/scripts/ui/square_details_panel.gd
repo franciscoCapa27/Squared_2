@@ -6,6 +6,7 @@ class_name SquareDetailsPanel
 @onready var details_content: VBoxContainer = %SquareDetailsContent
 @onready var side_margin: MarginContainer = %SideMargin
 @onready var side_v_box: VBoxContainer = %SideVbox
+@onready var selected_square_help: ContextualHelp = %SelectedSquareHelp
 
 var selected_square_id: String = ""
 
@@ -43,6 +44,11 @@ func refresh() -> void:
 		return
 
 	selected_square_title.set_title(square_data.display_name)
+	selected_square_help.help_detail = _get_square_help_detail(square_data)
+	selected_square_help.tooltip_text = "%s\n%s" % [
+		selected_square_help.help_title,
+		selected_square_help.help_detail,
+	]
 	_rebuild_details(square_data)
 
 
@@ -56,6 +62,7 @@ func refresh_if_selected(square_id: String) -> void:
 func clear() -> void:
 	selected_square_id = ""
 	selected_square_title.set_title("No square selected")
+	selected_square_help.help_detail = "Select a square to inspect every Trait and modifier on it."
 	_rebuild_empty_details()
 
 
@@ -114,7 +121,8 @@ func _add_detail_row(
 	value_text: String
 ) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size.y = 24.0
+	row.custom_minimum_size.y = 20.0
+	row.add_theme_constant_override("separation", 4)
 	details_content.add_child(row)
 
 	var name_label: Label = Label.new()
@@ -125,32 +133,17 @@ func _add_detail_row(
 
 	var value_label: Label = Label.new()
 	value_label.text = value_text
-	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	value_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ThemeTextHelper.apply_primary_label(value_label)
 	row.add_child(value_label)
 
 
 func _add_family_summary(family_info: Dictionary) -> void:
-	var family_box: VBoxContainer = VBoxContainer.new()
-	ThemeLayoutHelper.apply_dense_box_separation(family_box, "section_gap")
-	details_content.add_child(family_box)
-
-	var family_header: HBoxContainer = HBoxContainer.new()
-	family_box.add_child(family_header)
-
 	var family_label: Label = Label.new()
 	family_label.text = family_info["title"]
 	family_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ThemeTextHelper.apply_body_label(family_label)
-	family_header.add_child(family_label)
-
-	var effects_label: Label = Label.new()
-	effects_label.text = family_info["effects_text"]
-	effects_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	ThemeTextHelper.apply_detail_label(effects_label)
-	family_box.add_child(effects_label)
+	details_content.add_child(family_label)
 
 
 func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
@@ -192,24 +185,33 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 		var title: String = "%s %s (%s)" % [
 			family_info["display_name"],
 			_to_roman(int(family_info["count"])),
-			TraitDefinition.rarity_name_from_value(int(family_info["max_rarity"]))
+			TraitDefinition.rarity_name_from_value(int(family_info["max_rarity"])).to_lower()
 		]
-		var effects: Array[String] = []
-		for effect_variant: Variant in family_info["effects"] as Array:
-			effects.append(str(effect_variant))
-		var effects_text: String = "No active effects."
-		if not effects.is_empty():
-			var effect_lines: Array[String] = []
-			for effect_line: String in effects:
-				effect_lines.append("• %s" % effect_line)
-			effects_text = "\n".join(effect_lines)
 
 		result.append({
-			"title": title,
-			"effects_text": effects_text
+			"title": title
 		})
 
 	return result
+
+
+func _get_square_help_detail(square_data: SquareData) -> String:
+	var lines: Array[String] = []
+	for trait_iter: TraitInstance in square_data.traits:
+		if trait_iter == null or trait_iter.definition == null:
+			continue
+
+		var trait_title: String = trait_iter.definition.get_stack_display_name()
+		if trait_iter.stack_index > 1:
+			trait_title += " #%s" % trait_iter.stack_index
+		lines.append("%s (%s)" % [trait_title, trait_iter.definition.get_rarity_name().to_lower()])
+		for effect_line: String in trait_iter.get_effect_summary_lines():
+			lines.append("  %s" % effect_line)
+
+	if lines.is_empty():
+		return "This square has no Traits or modifiers yet."
+
+	return "Traits and modifiers:\n%s" % "\n".join(lines)
 
 
 func _get_family_display_name(trait_iter: TraitInstance) -> String:

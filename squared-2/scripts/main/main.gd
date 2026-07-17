@@ -288,6 +288,7 @@ func _connect_page_signals() -> void:
 
 	options_page.save_imported.connect(_on_options_save_imported)
 	options_page.hard_reset_completed.connect(_on_options_hard_reset_completed)
+	achievements_page.tracked_achievement_changed.connect(_on_tracked_achievement_changed)
 
 func _initialize_new_game_ui() -> void:
 	_refresh_labels()
@@ -497,10 +498,23 @@ func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
 	var total_count: int = AchievementDatabase.get_all_achievements().size()
 
+	var tracked_summary: String = achievements_page.get_tracked_summary()
+	if tracked_summary != "":
+		achievement_summary_label.text = "%s / %s unlocked\n%s" % [
+			NumberFormatter.integer_amount(unlocked_count),
+			NumberFormatter.integer_amount(total_count),
+			tracked_summary,
+		]
+		return
+
 	achievement_summary_label.text = "%s / %s unlocked" % [
 		NumberFormatter.integer_amount(unlocked_count),
 		NumberFormatter.integer_amount(total_count)
 	]
+
+
+func _on_tracked_achievement_changed(_achievement_id: String) -> void:
+	_refresh_achievement_summary()
 # ------------------------------------------------------------------------------
 # Player Actions
 # ------------------------------------------------------------------------------

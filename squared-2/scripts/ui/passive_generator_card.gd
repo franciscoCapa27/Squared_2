@@ -4,7 +4,9 @@ class_name PassiveGeneratorCard
 signal upgrade_requested(generator_id: String)
 
 @onready var title_label: Label = %TitleLabel
-@onready var status_label: Label = %StatusLabel
+@onready var level_label: Label = %LevelLabel
+@onready var icon_label: Label = %IconLabel
+@onready var status_label: RichTextLabel = %StatusLabel
 @onready var progress_bar: ProgressBar = %ProgressBar
 @onready var upgrade_button: Button = %UpgradeButton
 @onready var detail_help: ContextualHelp = %DetailHelp
@@ -22,7 +24,10 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
 	ThemeTextHelper.apply_primary_label(title_label)
-	ThemeTextHelper.apply_body_label(status_label)
+	ThemeTextHelper.apply_body_rich_text(status_label)
+	ThemeTextHelper.apply_detail_label(level_label)
+	ThemeTextHelper.apply_primary_label(icon_label)
+	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
 	ThemeButtonHelper.apply_button_theme(upgrade_button)
 
 
@@ -37,6 +42,7 @@ func refresh() -> void:
 
 	if generator_instance == null:
 		title_label.text = "Unknown Generator"
+		level_label.text = "—"
 		status_label.text = "No generator data found."
 		progress_bar.visible = false
 		upgrade_button.visible = false
@@ -47,6 +53,7 @@ func refresh() -> void:
 
 	if not generator_instance.is_unlocked:
 		status_label.text = "Locked"
+		level_label.text = "0/%s" % generator_instance.get_max_level()
 		progress_bar.visible = false
 		upgrade_button.visible = false
 		detail_help.visible = false
@@ -59,16 +66,19 @@ func refresh() -> void:
 		detail_help.help_title,
 		detail_help.help_detail
 	]
+	level_label.text = "%s/%s" % [generator_instance.level, generator_instance.get_max_level()]
+	icon_label.text = "◌"
 
 	var is_active: bool = generator_instance.is_active()
 	var activity_state: String = "Active" if is_active else "Inactive"
-	var effect_prefix: String = "" if is_active else "When active: "
-	status_label.text = "Level %s / %s · %s\n%s%s" % [
-		generator_instance.level,
-		generator_instance.get_max_level(),
+	var last_payout: String = "Last payout: —"
+	if generator_instance.last_target_square_id != "":
+		last_payout = "Last payout: [b]+%s[/b] Squares" % NumberFormatter.amount(generator_instance.last_payout)
+	status_label.text = "%s · %s\n%s\n%s" % [
+		"[b]%s[/b]" % generator_instance.definition.description,
 		activity_state,
-		effect_prefix,
-		_get_effect_summary(generator_instance)
+		_get_effect_summary(generator_instance),
+		last_payout,
 	]
 
 	upgrade_button.visible = true
@@ -77,7 +87,7 @@ func refresh() -> void:
 	if generator_instance.level >= generator_instance.get_max_level():
 		upgrade_button.text = "Max Level"
 	else:
-		upgrade_button.text = "Buy Level %s — %s Squares" % [
+		upgrade_button.text = "Buy %s · %s" % [
 			generator_instance.level + 1,
 			NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
 		]
@@ -97,7 +107,7 @@ func refresh() -> void:
 
 
 func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String:
-	return "Lightly clicks %s every %s at %s strength." % [
+	return "Clicks %s every [b]%s[/b] at [b]%s[/b] strength." % [
 		_get_targeting_text(generator_instance),
 		NumberFormatter.seconds(generator_instance.get_current_interval_seconds()),
 		NumberFormatter.percent(generator_instance.get_current_extraction_rate())

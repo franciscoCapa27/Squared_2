@@ -637,13 +637,6 @@ size_flags_horizontal = 3
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
 
-[node name="AchievementSelectionDetail" type="RichTextLabel" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot/AchievementsPage/AchievementsMargin/AchievementsVBox" unique_id=1749602009]
-unique_name_in_owner = true
-layout_mode = 2
-bbcode_enabled = true
-text = "Select an achievement to inspect its current state."
-fit_content = true
-
 [node name="StatsPage" type="PanelContainer" parent="RootMargin/MainVBox/BodyHBox/CenterPageRoot" unique_id=658308862]
 unique_name_in_owner = true
 visible = false
@@ -757,9 +750,10 @@ horizontal_scroll_mode = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 2
 
 [node name="SelectedSquareHelp" parent="RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel/SideMargin/SideVbox" instance=ExtResource("10_contextual_help")]
+unique_name_in_owner = true
 layout_mode = 2
 help_title = "Selected square"
 help_detail = "This overview explains every value shown for the selected square: Trait count is the number of Trait instances it carries; current payout is what a manual click would produce now; respawn is the time until it returns after clicking; and Trait Families group its Traits by family, showing each group's stack rank, highest rarity, and combined effects."
