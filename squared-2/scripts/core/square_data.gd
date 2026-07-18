@@ -203,7 +203,7 @@ func _rebuild_tags() -> void:
 func _rebuild_visual_profile() -> void:
 	var profile := VisualProfile.new()
 
-	# Start with per‑trait material contributions.
+	# Start with per-trait material contributions.
 	profile.edge_complexity = min(10, traits.size())
 
 	var rarity_score := 0
@@ -229,7 +229,7 @@ func _rebuild_visual_profile() -> void:
 	profile.distortion_level = clamp(profile.distortion_level, 0, 10)
 
 	# --------------------------------------------------------------------
-	# Family‑material identity overlay (issue #68).
+	# Family-material identity overlay (issue #68).
 	# --------------------------------------------------------------------
 	var family_groups := {}
 	for trait_iter in traits:
@@ -296,16 +296,16 @@ func _get_color_for_dominant_tag(tag: String) -> Color:
 		"corruption":
 			return Color(0.65, 1.0, 0.65, 1.0)
 		# --------------------------------------------------------------------
-		# Family‑tag colours (issue #68).
+		# Family-tag colours (issue #68).
 		# --------------------------------------------------------------------
 		"quick":
 			return Color(0.2, 0.6, 1.0, 1.0)       # bright electric blue
 		"dense":
-			return Color(0.9, 0.4, 0.15, 1.0)     # warm heavy orange‑brown
+			return Color(0.9, 0.4, 0.15, 1.0)     # warm heavy orange-brown
 		"glimmer":
 			return Color(1.0, 0.85, 0.4, 1.0)     # luminous gold
 		"patient":
-			return Color(0.5, 0.5, 1.0, 1.0)      # soft purple‑blue
+			return Color(0.5, 0.5, 1.0, 1.0)      # soft purple-blue
 		_:
 			if traits.size() > 0:
 				return Color(0.85, 0.85, 1.0, 1.0)

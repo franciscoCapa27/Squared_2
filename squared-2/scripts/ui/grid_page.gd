@@ -191,7 +191,7 @@ func _refresh_upgrade_button() -> void:
 	var next_grid_size: int = GameState.get_next_grid_size()
 	var cost: float = GameState.get_grid_upgrade_cost()
 
-	upgrade_grid_button.text = "Open %sx%s Grid — %s Squares" % [
+	upgrade_grid_button.text = "Open %sx%s Grid - %s Squares" % [
 		next_grid_size,
 		next_grid_size,
 		NumberFormatter.cost(cost)

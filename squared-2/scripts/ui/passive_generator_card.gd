@@ -5,7 +5,7 @@ signal upgrade_requested(generator_id: String)
 
 @onready var title_label: Label = %TitleLabel
 @onready var level_label: Label = %LevelLabel
-@onready var icon_label: Label = %IconLabel
+@onready var icon_label: PolygonIcon = %IconLabel
 @onready var status_label: RichTextLabel = %StatusLabel
 @onready var progress_bar: ProgressBar = %ProgressBar
 @onready var upgrade_button: Button = %UpgradeButton
@@ -26,8 +26,7 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_card_title(title_label)
 	ThemeTextHelper.apply_detail_rich_text(status_label)
 	ThemeTextHelper.apply_detail_label(level_label)
-	ThemeTextHelper.apply_primary_label(icon_label)
-	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
+	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 	ThemeButtonHelper.apply_button_theme(upgrade_button)
 
 
@@ -42,7 +41,7 @@ func refresh() -> void:
 
 	if generator_instance == null:
 		title_label.text = "Unknown Generator"
-		level_label.text = "—"
+		level_label.text = "-"
 		status_label.text = "No generator data found."
 		progress_bar.visible = false
 		upgrade_button.visible = false
@@ -67,10 +66,11 @@ func refresh() -> void:
 		detail_help.help_detail
 	]
 	level_label.text = "%s/%s" % [generator_instance.level, generator_instance.get_max_level()]
-	icon_label.text = "◌"
+	icon_label.set_icon_kind("passive")
+	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 
 	var is_active: bool = generator_instance.is_active()
-	var last_payout: String = "Last payout: —"
+	var last_payout: String = "Last payout: -"
 	if generator_instance.last_target_square_id != "":
 		last_payout = "Last payout: [b]+%s[/b] Squares" % NumberFormatter.amount(generator_instance.last_payout)
 	status_label.text = "%s\n%s" % [
@@ -84,7 +84,7 @@ func refresh() -> void:
 	if generator_instance.level >= generator_instance.get_max_level():
 		upgrade_button.text = "Max Level"
 	else:
-		upgrade_button.text = "Buy %s · %s" % [
+		upgrade_button.text = "Buy %s - %s" % [
 			generator_instance.level + 1,
 			NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
 		]

@@ -28,10 +28,10 @@ const TREE_POSITIONS := {
 	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: Vector2(436, 344),
 }
 const NODE_ICONS := {
-	GameIds.UPGRADE_SHARPENED_ORIGIN: "◇",
-	GameIds.UPGRADE_GEOMETRIC_INTUITION: "✧",
-	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: "◌",
-	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: "◎",
+	GameIds.UPGRADE_SHARPENED_ORIGIN: "diamond",
+	GameIds.UPGRADE_GEOMETRIC_INTUITION: "spark",
+	GameIds.UPGRADE_UNLOCK_FIRST_GENERATOR: "passive",
+	GameIds.UPGRADE_UNLOCK_VALUE_HARVESTER: "square",
 }
 const NODE_SIZE := Vector2(160, 92)
 const CANVAS_SIZE := Vector2(620, 460)
@@ -118,7 +118,7 @@ func _rebuild_vertex_upgrade_tree() -> void:
 		var upgrade_node: VertexUpgradeNode = vertex_upgrade_node_scene.instantiate() as VertexUpgradeNode
 		vertex_upgrade_canvas.add_child(upgrade_node)
 		upgrade_node.position = TREE_POSITIONS[upgrade_id]
-		upgrade_node.setup(upgrade, str(NODE_ICONS.get(upgrade_id, "◇")))
+		upgrade_node.setup(upgrade, str(NODE_ICONS.get(upgrade_id, "diamond")))
 		upgrade_node.buy_requested.connect(_on_vertex_upgrade_buy_requested)
 		vertex_upgrade_nodes[upgrade_id] = upgrade_node
 		current_revealed_node_ids[upgrade_id] = true

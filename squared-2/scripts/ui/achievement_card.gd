@@ -55,9 +55,9 @@ func refresh() -> void:
 	title_label.text = achievement_definition.display_name
 
 	if unlocked:
-		category_status_label.text = "%s • Unlocked" % achievement_definition.get_category_name()
+		category_status_label.text = "%s - Unlocked" % achievement_definition.get_category_name()
 	else:
-		category_status_label.text = "%s • Locked" % achievement_definition.get_category_name()
+		category_status_label.text = "%s - Locked" % achievement_definition.get_category_name()
 
 	description_label.text = achievement_definition.description
 
