@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/vertex_upgrade_node.gd" id="1_vertex_upgrade_node"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="2_contextual_help"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PolygonIcon.tscn" id="3_polygon_icon"]
 
 [node name="VertexUpgradeNode" type="PanelContainer"]
 custom_minimum_size = Vector2(160, 92)
@@ -23,10 +24,10 @@ theme_override_constants/separation = 2
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="IconLabel" type="Label" parent="NodeMargin/NodeVBox/TitleRow"]
+[node name="IconLabel" parent="NodeMargin/NodeVBox/TitleRow" instance=ExtResource("3_polygon_icon")]
 unique_name_in_owner = true
 layout_mode = 2
-text = "◇"
+icon_kind = "diamond"
 
 [node name="TitleLabel" type="Label" parent="NodeMargin/NodeVBox/TitleRow"]
 unique_name_in_owner = true

@@ -3,7 +3,7 @@ class_name VertexUpgradeNode
 
 signal buy_requested(upgrade_id: String)
 
-@onready var icon_label: Label = %IconLabel
+@onready var icon_label: PolygonIcon = %IconLabel
 @onready var title_label: Label = %TitleLabel
 @onready var category_cost_label: Label = %CategoryCostLabel
 @onready var state_label: Label = %StateLabel
@@ -11,7 +11,7 @@ signal buy_requested(upgrade_id: String)
 @onready var buy_button: Button = %BuyButton
 
 var upgrade_definition: VertexUpgradeDefinition
-var icon_glyph: String = "◇"
+var icon_kind: String = "diamond"
 var node_is_purchased: bool = false
 var node_can_buy: bool = false
 
@@ -23,9 +23,9 @@ func _ready() -> void:
 	_apply_theme()
 
 
-func setup(upgrade: VertexUpgradeDefinition, authored_icon_glyph: String) -> void:
+func setup(upgrade: VertexUpgradeDefinition, authored_icon_kind: String) -> void:
 	upgrade_definition = upgrade
-	icon_glyph = authored_icon_glyph
+	icon_kind = authored_icon_kind
 	refresh()
 
 
@@ -39,9 +39,9 @@ func refresh() -> void:
 	node_is_purchased = is_purchased
 	node_can_buy = can_buy
 
-	icon_label.text = "✓" if is_purchased else icon_glyph
+	icon_label.set_icon_kind("check" if is_purchased else icon_kind)
 	title_label.text = upgrade_definition.display_name
-	category_cost_label.text = "%s • %s Vertices" % [
+	category_cost_label.text = "%s - %s Vertices" % [
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(upgrade_definition.cost_vertices),
 	]
@@ -118,8 +118,7 @@ func _apply_theme() -> void:
 	ThemeTextHelper.apply_card_title(title_label)
 	ThemeTextHelper.apply_detail_label(category_cost_label)
 	ThemeTextHelper.apply_detail_label(state_label)
-	ThemeTextHelper.apply_primary_label(icon_label)
-	icon_label.add_theme_font_size_override("font_size", ThemeSystem.get_font_size("panel_title"))
+	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 	ThemeButtonHelper.apply_button_theme(buy_button)
 	_apply_state_theme()
 
@@ -128,17 +127,17 @@ func _apply_state_theme() -> void:
 	if node_is_purchased:
 		add_theme_stylebox_override("panel", ThemeSystem.make_selected_card_style())
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
-		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_primary"))
+		icon_label.set_icon_color(ThemeSystem.get_color("accent_primary"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("success"))
 	elif node_can_buy:
 		add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
-		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_secondary"))
+		icon_label.set_icon_color(ThemeSystem.get_color("accent_secondary"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_secondary"))
 	else:
 		add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
-		icon_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
+		icon_label.set_icon_color(ThemeSystem.get_color("text_muted"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
 
 

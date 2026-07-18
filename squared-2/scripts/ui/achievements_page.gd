@@ -101,17 +101,17 @@ func _update_description() -> void:
 func _get_icon_glyph(achievement: AchievementDefinition) -> String:
 	match achievement.category:
 		AchievementDefinition.AchievementCategory.CLICKS:
-			return "✦"
+			return "spark"
 		AchievementDefinition.AchievementCategory.TRAIT_PURCHASE:
-			return "◇"
+			return "diamond"
 		AchievementDefinition.AchievementCategory.PASSIVE:
-			return "◌"
+			return "passive"
 		AchievementDefinition.AchievementCategory.VERTEX:
-			return "△"
+			return "triangle"
 		AchievementDefinition.AchievementCategory.TRAITS:
-			return "✧"
+			return "spark"
 		_:
-			return "□"
+			return "square"
 
 
 func _get_reward_text(achievement: AchievementDefinition) -> String:
@@ -237,7 +237,7 @@ func _open_achievement_popup() -> void:
 	var detail_label: RichTextLabel = RichTextLabel.new()
 	detail_label.bbcode_enabled = true
 	detail_label.fit_content = true
-	detail_label.text = "[b]%s[/b]\n%s\n\n%s • %s\n%s\n%s" % [
+	detail_label.text = "[b]%s[/b]\n%s\n\n%s - %s\n%s\n%s" % [
 		achievement.get_category_name(),
 		achievement.description,
 		"Unlocked" if AchievementSystem.is_achievement_unlocked(achievement.id) else "Locked",

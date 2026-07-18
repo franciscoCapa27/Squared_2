@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cucatucma0iq" path="res://scripts/ui/passive_generator_card.gd" id="1_w8yjn"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="2_contextual_help"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PolygonIcon.tscn" id="3_polygon_icon"]
 
 [node name="PassiveGeneratorCard" type="PanelContainer" unique_id=1731951840]
 offset_right = 40.0
@@ -36,10 +37,10 @@ custom_minimum_size = Vector2(0, 20)
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="IconLabel" type="Label" parent="CardMargin/CardVBox/TitleRow"]
+[node name="IconLabel" parent="CardMargin/CardVBox/TitleRow" instance=ExtResource("3_polygon_icon")]
 unique_name_in_owner = true
 layout_mode = 2
-text = "◌"
+icon_kind = "passive"
 
 [node name="DetailHelp" parent="CardMargin/CardVBox/TitleRow" instance=ExtResource("2_contextual_help")]
 unique_name_in_owner = true

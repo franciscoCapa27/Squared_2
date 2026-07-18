@@ -33,7 +33,7 @@ func duplicate_profile() -> VisualProfile:
 
 
 # ------------------------------------------------------------------------
-# Family‑material visual identities (issue #68)
+# Family-material visual identities (issue #68)
 # ------------------------------------------------------------------------
 
 const FAMILY_VISUAL_MAP := {
@@ -49,7 +49,7 @@ const FAMILY_VISUAL_MAP := {
 		"pattern_style": "none",
 	},
 	"dense": {
-		"base_color": Color(0.9, 0.4, 0.15, 1.0),       # warm heavy orange‑brown
+		"base_color": Color(0.9, 0.4, 0.15, 1.0),       # warm heavy orange-brown
 		"accent_color": Color(0.95, 0.7, 0.3, 1.0),
 		"glow_base": 0,
 		"edge_base": 2,
@@ -71,7 +71,7 @@ const FAMILY_VISUAL_MAP := {
 		"pattern_style": "none",
 	},
 	"patient": {
-		"base_color": Color(0.5, 0.5, 1.0, 1.0),        # soft purple‑blue
+		"base_color": Color(0.5, 0.5, 1.0, 1.0),        # soft purple-blue
 		"accent_color": Color(0.8, 0.85, 1.0, 1.0),
 		"glow_base": 1,
 		"edge_base": 0,
