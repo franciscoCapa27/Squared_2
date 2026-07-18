@@ -192,17 +192,16 @@ func _show_trait_purchase_reveal_text(
 func _build_trait_purchase_reveal_text(
 	trait_family_display: String,
 	trait_rarity_display: String,
-	previous_square_title: String,
-	new_square_title: String
+	_previous_square_title: String,
+	_new_square_title: String
 ) -> String:
 	var rarity: String = trait_rarity_display.to_lower()
 	var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity)
-	var old_title: String = previous_square_title if previous_square_title != "" else "Square"
+	var family_color: String = ThemeTextHelper.get_trait_family_color_hex(trait_family_display)
 
-	return "[center][color=%s][font_size=13]%s · %s[/font_size]\n[font_size=10]%s[/font_size]\n[font_size=10]→ %s[/font_size][/color][/center]" % [
+	return "[center][color=%s][font_size=10]%s[/font_size][/color]\n[color=%s][font_size=12]%s[/font_size][/color][/center]" % [
 		rarity_color,
-		trait_family_display,
 		rarity,
-		old_title,
-		new_square_title
+		family_color,
+		trait_family_display
 	]

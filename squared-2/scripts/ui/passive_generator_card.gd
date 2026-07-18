@@ -144,9 +144,9 @@ func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
 		+ "Targeting: %s\n" % _get_targeting_text(generator_instance)
 		+ "%s\n\n" % next_level_detail
 		+ "Last pulse: %s\n" % last_pulse_detail
-		+ "Pulses this run: %s\n" % NumberFormatter.integer_amount(generator_instance.lifetime_pulses)
-		+ "Squares generated this run: %s\n\n" % NumberFormatter.amount(generator_instance.lifetime_squares_generated)
-		+ "Run levels persist after buying a Trait. Activity resets on a new game."
+		+ "Pulses: %s\n" % NumberFormatter.integer_amount(generator_instance.lifetime_pulses)
+		+ "Squares generated: %s\n\n" % NumberFormatter.amount(generator_instance.lifetime_squares_generated)
+		+ "Levels reset on a new game."
 	)
 
 func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String:

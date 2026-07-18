@@ -138,6 +138,8 @@ func _on_theme_selected(index: int) -> void:
 		return
 
 	SaveSystem.set_theme_id(selected_theme_id)
+	theme_option_button.get_popup().hide()
+	theme_option_button.release_focus()
 	options_status_label.text = "Theme set to %s." % ThemeSystem.get_theme_display_name(selected_theme_id)
 
 
