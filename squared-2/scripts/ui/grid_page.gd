@@ -291,6 +291,10 @@ func _show_trait_purchase_reveal(
 	previous_square_title: String,
 	square_title: String
 ) -> void:
+	# The purchase emits grid_changed immediately before this deferred callback.
+	# Wait for the rebuilt GridContainer to lay out its children before reading
+	# the target button's global rect for the root-level reveal overlay.
+	await get_tree().process_frame
 	var button: SquareButton = square_buttons_by_id.get(target_square_id) as SquareButton
 	if button == null:
 		return
