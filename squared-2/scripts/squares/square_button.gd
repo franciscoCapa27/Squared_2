@@ -25,6 +25,10 @@ func _ready() -> void:
 
 	_apply_theme()
 
+
+func _exit_tree() -> void:
+	_clear_trait_purchase_reveal()
+
 func _apply_theme() -> void:
 	add_theme_stylebox_override("normal", ThemeSystem.make_card_style())
 	add_theme_stylebox_override("hover", ThemeSystem.make_selected_card_style())
@@ -147,12 +151,7 @@ func _show_trait_purchase_reveal_text(
 	previous_square_title: String,
 	new_square_title: String
 ) -> void:
-	if trait_purchase_reveal_tween and trait_purchase_reveal_tween.is_valid():
-		trait_purchase_reveal_tween.kill()
-	if trait_purchase_reveal_label and is_instance_valid(trait_purchase_reveal_label):
-		trait_purchase_reveal_label.queue_free()
-	if trait_purchase_reveal_layer and is_instance_valid(trait_purchase_reveal_layer):
-		trait_purchase_reveal_layer.queue_free()
+	_clear_trait_purchase_reveal()
 
 	var reveal_label := RichTextLabel.new()
 	reveal_label.bbcode_enabled = true
@@ -199,6 +198,18 @@ func _show_trait_purchase_reveal_text(
 		if trait_purchase_reveal_label == reveal_label:
 			trait_purchase_reveal_label = null
 	)
+
+
+func _clear_trait_purchase_reveal() -> void:
+	if trait_purchase_reveal_tween and trait_purchase_reveal_tween.is_valid():
+		trait_purchase_reveal_tween.kill()
+	trait_purchase_reveal_tween = null
+	if trait_purchase_reveal_label and is_instance_valid(trait_purchase_reveal_label):
+		trait_purchase_reveal_label.queue_free()
+	trait_purchase_reveal_label = null
+	if trait_purchase_reveal_layer and is_instance_valid(trait_purchase_reveal_layer):
+		trait_purchase_reveal_layer.queue_free()
+	trait_purchase_reveal_layer = null
 
 
 func _build_trait_purchase_reveal_text(
