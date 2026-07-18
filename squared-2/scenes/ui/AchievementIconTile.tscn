@@ -1,11 +1,27 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/achievement_icon_tile.gd" id="1_achievement_icon_tile"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PolygonIcon.tscn" id="2_polygon_icon"]
 
 [node name="AchievementIconTile" type="Button"]
 custom_minimum_size = Vector2(72, 72)
 size_flags_horizontal = 0
 size_flags_vertical = 0
 focus_mode = 2
-text = "✦"
 script = ExtResource("1_achievement_icon_tile")
+
+[node name="Icon" parent="." instance=ExtResource("2_polygon_icon")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+icon_kind = "spark"

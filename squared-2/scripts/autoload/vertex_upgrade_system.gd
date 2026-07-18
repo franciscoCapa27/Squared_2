@@ -34,7 +34,7 @@ func can_buy_vertex_upgrade(upgrade_id: String) -> bool:
 	if upgrade == null:
 		return false
 
-	# Block upgrades that unlock a passive generator while the grid is still 1×1.
+	# Block upgrades that unlock a passive generator while the grid is still 1x1.
 	if _upgrade_contains_unlock_passive_effect(upgrade) and GameState.grid_size < 2:
 		return false
 

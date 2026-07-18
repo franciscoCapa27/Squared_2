@@ -246,7 +246,9 @@ func _apply_random_trait_to_random_square(trait_roll_grid_size: int) -> String:
 
 	var rarity_value: int = trait_definition.get("rarity")
 	var rarity_display: String = trait_definition.Rarity.keys()[rarity_value] # Converts 0 to "COMMON"
-	var family_display: String = trait_definition.display_name
+	var family_display: String = trait_definition.family_display_name.strip_edges()
+	if family_display == "":
+		family_display = trait_definition.display_name
 	var roman_stack: String = trait_instance.get_display_name()
 	var square_title: String = target_square.display_name
 

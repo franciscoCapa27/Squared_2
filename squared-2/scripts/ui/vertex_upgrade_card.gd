@@ -45,7 +45,7 @@ func refresh() -> void:
 	var can_buy: bool = VertexUpgradeSystem.can_buy_vertex_upgrade(upgrade_definition.id)
 
 	title_label.text = upgrade_definition.display_name
-	category_cost_label.text = "%s • Cost: %s Vertices" % [
+	category_cost_label.text = "%s - Cost: %s Vertices" % [
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(upgrade_definition.cost_vertices)
 	]

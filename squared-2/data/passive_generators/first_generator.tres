@@ -6,7 +6,7 @@
 script = ExtResource("1_r8nde")
 id = "first_generator"
 display_name = "First Generator"
-description = "The first passive generator. It starts each run at Level 0 after being permanently unlocked."
+description = "The first passive generator. It starts at Level 0 after being permanently unlocked."
 sort_order = 10
 base_interval_seconds = 5.0
 base_extraction_rate = 0.05

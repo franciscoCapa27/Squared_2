@@ -97,7 +97,7 @@ func get_progress_text(achievement: AchievementDefinition) -> String:
 	var current_level: int = get_achievement_level(achievement.id)
 	var level_count: int = achievement.get_level_count()
 	if current_level >= level_count:
-		return "Level %s / %s · Complete" % [
+		return "Level %s / %s - Complete" % [
 			NumberFormatter.integer_amount(level_count),
 			NumberFormatter.integer_amount(level_count),
 		]
@@ -105,7 +105,7 @@ func get_progress_text(achievement: AchievementDefinition) -> String:
 	var current_value: float = _get_condition_current_value(achievement)
 	var next_threshold: float = achievement.get_threshold_for_level(current_level)
 
-	return "Level %s / %s · %s / %s to next" % [
+	return "Level %s / %s - %s / %s to next" % [
 		NumberFormatter.integer_amount(current_level),
 		NumberFormatter.integer_amount(level_count),
 		NumberFormatter.amount(current_value),
@@ -169,7 +169,7 @@ func _unlock_achievement_level(achievement: AchievementDefinition, level_index: 
 	achievement_levels[achievement.id] = unlocked_level
 	_apply_rewards(achievement, level_index)
 
-	EventBus.story_message.emit("Achievement unlocked: %s — Level %s" % [
+	EventBus.story_message.emit("Achievement unlocked: %s - Level %s" % [
 		achievement.display_name,
 		NumberFormatter.integer_amount(unlocked_level),
 	])

@@ -4,7 +4,8 @@ class_name AchievementIconTile
 signal selected(achievement_id: String)
 
 var achievement_definition: AchievementDefinition
-var icon_glyph: String = "✦"
+@onready var polygon_icon: PolygonIcon = %Icon
+var icon_kind: String = "spark"
 var is_selected: bool = false
 
 
@@ -15,7 +16,8 @@ func _ready() -> void:
 
 func setup(achievement: AchievementDefinition, authored_icon_glyph: String) -> void:
 	achievement_definition = achievement
-	icon_glyph = authored_icon_glyph
+	icon_kind = authored_icon_glyph
+	polygon_icon.set_icon_kind(icon_kind)
 	refresh()
 
 
@@ -23,7 +25,9 @@ func refresh() -> void:
 	if achievement_definition == null:
 		return
 
-	text = icon_glyph
+	text = ""
+	polygon_icon.set_icon_kind(icon_kind)
+	polygon_icon.set_icon_color(ThemeSystem.get_color("accent_primary") if AchievementSystem.is_achievement_unlocked(achievement_definition.id) else ThemeSystem.get_color("text_muted"))
 	tooltip_text = "%s\n%s" % [
 		achievement_definition.display_name,
 		"Unlocked" if AchievementSystem.is_achievement_unlocked(achievement_definition.id) else "Locked",
