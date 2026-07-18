@@ -120,7 +120,7 @@ func _get_detail_text(current_level: int) -> String:
 			cost_text,
 			NumberFormatter.multiplier(upgrade_definition.cost_multiplier)
 		]
-		+ "Run Upgrade levels persist after buying a Trait and reset when starting a new game."
+		+ "Upgrade levels reset when starting a new game."
 	)
 
 func _get_requirement_text() -> String:
