@@ -4,7 +4,7 @@ class_name RunUpgradeCard
 signal buy_requested(upgrade_id: String)
 
 @onready var title_label: Label = %TitleLabel
-@onready var icon_label: Label = %IconLabel
+@onready var icon_label: PolygonIcon = %IconLabel
 @onready var category_level_label: Label = %CategoryLevelLabel
 @onready var description_label: RichTextLabel = %DescriptionLabel
 @onready var progress_bar: ProgressBar = %ProgressBar
@@ -24,7 +24,7 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
 
 	ThemeTextHelper.apply_card_title(title_label)
-	ThemeTextHelper.apply_primary_label(icon_label)
+	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 	ThemeTextHelper.apply_detail_label(category_level_label)
 	ThemeTextHelper.apply_body_rich_text(description_label)
 	ThemeButtonHelper.apply_button_theme(buy_button)
@@ -51,7 +51,8 @@ func refresh() -> void:
 	var cost: float = upgrade_definition.get_cost_for_next_level(current_level)
 
 	title_label.text = upgrade_definition.display_name
-	icon_label.text = _get_icon_glyph()
+	icon_label.set_icon_kind(_get_icon_kind())
+	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 	detail_help.visible = true
 	detail_help.help_title = upgrade_definition.display_name
 	detail_help.help_detail = _get_detail_text(current_level)
@@ -70,7 +71,7 @@ func refresh() -> void:
 	progress_bar.value = float(current_level) / float(maxi(1, upgrade_definition.max_level))
 	progress_bar.visible = true
 	# Keep the category in the tooltip-friendly detail content while the card stays compact.
-	category_level_label.tooltip_text = "%s • Level %s / %s" % [
+	category_level_label.tooltip_text = "%s - Level %s / %s" % [
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(current_level),
 		NumberFormatter.integer_amount(upgrade_definition.max_level)
@@ -83,23 +84,23 @@ func refresh() -> void:
 		buy_button.text = "Maxed"
 		buy_button.disabled = true
 	elif can_buy:
-		buy_button.text = "Buy — %s Squares" % NumberFormatter.cost(cost)
+		buy_button.text = "Buy - %s Squares" % NumberFormatter.cost(cost)
 		buy_button.disabled = false
 	else:
 		buy_button.text = "Need %s Squares" % NumberFormatter.cost(cost)
 		buy_button.disabled = true
 
 
-func _get_icon_glyph() -> String:
+func _get_icon_kind() -> String:
 	match upgrade_definition.category:
 		RunUpgradeDefinition.UpgradeCategory.PASSIVE:
-			return "◌"
+			return "passive"
 		RunUpgradeDefinition.UpgradeCategory.RESPAWN:
-			return "◒"
+			return "diamond"
 		RunUpgradeDefinition.UpgradeCategory.MANUAL:
-			return "✦"
+			return "spark"
 		_:
-			return "◇"
+			return "diamond"
 
 
 func _get_detail_text(current_level: int) -> String:
@@ -120,7 +121,7 @@ func _get_detail_text(current_level: int) -> String:
 			cost_text,
 			NumberFormatter.multiplier(upgrade_definition.cost_multiplier)
 		]
-		+ "Run Upgrade levels persist after buying a Trait and reset when starting a new game."
+		+ "Upgrade levels reset when starting a new game."
 	)
 
 func _get_requirement_text() -> String:

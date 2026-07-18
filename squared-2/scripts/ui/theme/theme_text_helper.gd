@@ -97,6 +97,20 @@ static func get_rarity_color_hex(rarity: String) -> String:
 			return "#d5dde7"
 
 
+static func get_trait_family_color_hex(family_name: String) -> String:
+	match family_name.strip_edges().to_lower():
+		"dense":
+			return "#f29a5a"
+		"glimmer":
+			return "#f2d15a"
+		"quick":
+			return "#6ea8ff"
+		"patient":
+			return "#c79aff"
+		_:
+			return "#d5dde7"
+
+
 static func apply_primary_label(label: Label) -> void:
 	_apply_label(
 		label,

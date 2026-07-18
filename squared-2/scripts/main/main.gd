@@ -341,7 +341,7 @@ func _refresh_feature_visibility(animated: bool = true) -> void:
 	var show_achievement_summary: bool = FeatureVisibilityRules.should_show_achievement_summary_panel()
 
 	if show_trait_purchase and not has_discovered_trait_purchase_panel:
-		_on_story_message("Buy Trait is now available — spend Squares to gain Vertices and roll a random Trait.")
+		_on_story_message("Buy Trait is now available - spend Squares to gain Vertices and roll a random Trait.")
 		has_discovered_trait_purchase_panel = true
 
 	if show_vertex_shop and not vertex_shop_story_shown:
@@ -350,7 +350,7 @@ func _refresh_feature_visibility(animated: bool = true) -> void:
 
 	if show_passives and not passives_story_shown:
 		passives_story_shown = true
-		_on_story_message("Your board awakens — passive generators produce squares automatically.")
+		_on_story_message("Your board awakens - passive generators produce squares automatically.")
 
 	passive_feature_visibility.set_feature_visible(show_passives, animated)
 	vertex_shop_feature_visibility.set_feature_visible(show_vertex_shop, animated)
@@ -460,7 +460,7 @@ func _refresh_trait_purchase_panel() -> void:
 	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
 	trait_purchase_button.text = "Buy Trait"
-	trait_purchase_details.text = "Cost: %s Squares • Gain: %s Vertices\nPossible rarities: %s" % [
+	trait_purchase_details.text = "Cost: %s Squares - Gain: %s Vertices\nPossible rarities: %s" % [
 		cost_text,
 		vertex_text,
 		_get_possible_rarities_rich_text(),
@@ -535,7 +535,7 @@ func _on_grid_upgrade_requested() -> void:
 
 	if not grid_expansion_story_shown:
 		grid_expansion_story_shown = true
-		_on_story_message("The grid expands, making room for more squares — and stranger Traits.")
+		_on_story_message("The grid expands, making room for more squares - and stranger Traits.")
 
 	square_details_panel.clear()
 	grid_page.reset_feature_visibility_state()

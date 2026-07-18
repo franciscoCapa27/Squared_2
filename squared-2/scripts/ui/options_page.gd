@@ -139,6 +139,15 @@ func _on_theme_selected(index: int) -> void:
 
 	SaveSystem.set_theme_id(selected_theme_id)
 	options_status_label.text = "Theme set to %s." % ThemeSystem.get_theme_display_name(selected_theme_id)
+	# OptionButton closes its PopupMenu after item selection. Reopen it after
+	# the theme refresh so the player can compare themes until clicking away.
+	call_deferred("_reopen_theme_popup")
+
+
+func _reopen_theme_popup() -> void:
+	if not is_inside_tree() or not theme_option_button.visible:
+		return
+	theme_option_button.show_popup()
 
 
 func _on_theme_changed() -> void:

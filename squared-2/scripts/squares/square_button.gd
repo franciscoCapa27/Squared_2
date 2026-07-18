@@ -9,6 +9,7 @@ var respawn_timer: SceneTreeTimer = null
 var normal_modulate: Color = Color.WHITE
 var trait_purchase_reveal_label: RichTextLabel = null
 var trait_purchase_reveal_tween: Tween = null
+var trait_purchase_reveal_layer: CanvasLayer = null
 
 ## A tween dedicated to the quick press/compression animation on manual click.
 var press_tween: Tween
@@ -23,6 +24,10 @@ func _ready() -> void:
 	pressed.connect(_on_pressed)
 
 	_apply_theme()
+
+
+func _exit_tree() -> void:
+	_clear_trait_purchase_reveal()
 
 func _apply_theme() -> void:
 	add_theme_stylebox_override("normal", ThemeSystem.make_card_style())
@@ -146,10 +151,7 @@ func _show_trait_purchase_reveal_text(
 	previous_square_title: String,
 	new_square_title: String
 ) -> void:
-	if trait_purchase_reveal_tween and trait_purchase_reveal_tween.is_valid():
-		trait_purchase_reveal_tween.kill()
-	if trait_purchase_reveal_label and is_instance_valid(trait_purchase_reveal_label):
-		trait_purchase_reveal_label.queue_free()
+	_clear_trait_purchase_reveal()
 
 	var reveal_label := RichTextLabel.new()
 	reveal_label.bbcode_enabled = true
@@ -174,7 +176,12 @@ func _show_trait_purchase_reveal_text(
 		new_square_title
 	)
 	reveal_label.modulate = Color(1.0, 1.0, 1.0, 0.0)
-	add_child(reveal_label)
+	trait_purchase_reveal_layer = CanvasLayer.new()
+	trait_purchase_reveal_layer.layer = 50
+	get_tree().root.add_child(trait_purchase_reveal_layer)
+	trait_purchase_reveal_layer.add_child(reveal_label)
+	reveal_label.position = get_global_rect().position
+	reveal_label.size = get_global_rect().size
 	trait_purchase_reveal_label = reveal_label
 
 	trait_purchase_reveal_tween = create_tween()
@@ -184,25 +191,40 @@ func _show_trait_purchase_reveal_text(
 	trait_purchase_reveal_tween.tween_callback(func():
 		if is_instance_valid(reveal_label):
 			reveal_label.queue_free()
+		if trait_purchase_reveal_layer and is_instance_valid(trait_purchase_reveal_layer):
+			trait_purchase_reveal_layer.queue_free()
+		if trait_purchase_reveal_layer == null or not is_instance_valid(trait_purchase_reveal_layer):
+			trait_purchase_reveal_layer = null
 		if trait_purchase_reveal_label == reveal_label:
 			trait_purchase_reveal_label = null
 	)
 
 
+func _clear_trait_purchase_reveal() -> void:
+	if trait_purchase_reveal_tween and trait_purchase_reveal_tween.is_valid():
+		trait_purchase_reveal_tween.kill()
+	trait_purchase_reveal_tween = null
+	if trait_purchase_reveal_label and is_instance_valid(trait_purchase_reveal_label):
+		trait_purchase_reveal_label.queue_free()
+	trait_purchase_reveal_label = null
+	if trait_purchase_reveal_layer and is_instance_valid(trait_purchase_reveal_layer):
+		trait_purchase_reveal_layer.queue_free()
+	trait_purchase_reveal_layer = null
+
+
 func _build_trait_purchase_reveal_text(
 	trait_family_display: String,
 	trait_rarity_display: String,
-	previous_square_title: String,
-	new_square_title: String
+	_previous_square_title: String,
+	_new_square_title: String
 ) -> String:
 	var rarity: String = trait_rarity_display.to_lower()
 	var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity)
-	var old_title: String = previous_square_title if previous_square_title != "" else "Square"
+	var family_color: String = ThemeTextHelper.get_trait_family_color_hex(trait_family_display)
 
-	return "[center][color=%s][font_size=13]%s · %s[/font_size]\n[font_size=10]%s[/font_size]\n[font_size=10]→ %s[/font_size][/color][/center]" % [
+	return "[center][color=%s][font_size=10]%s[/font_size][/color]\n[color=%s][font_size=12]%s[/font_size][/color][/center]" % [
 		rarity_color,
-		trait_family_display,
 		rarity,
-		old_title,
-		new_square_title
+		family_color,
+		trait_family_display
 	]
