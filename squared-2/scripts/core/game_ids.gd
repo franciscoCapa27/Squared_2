@@ -10,6 +10,9 @@ const STAT_TRAIT_LUCK := "trait_luck"
 # Passive generator IDs.
 const PASSIVE_FIRST_GENERATOR := "first_generator"
 const PASSIVE_VALUE_HARVESTER := "value_harvester"
+const PASSIVE_BROAD_EXTRACTOR := "broad_extractor"
+const PASSIVE_TRAIT_PULSE := "trait_pulse"
+const PASSIVE_GRID_PULSE := "grid_pulse"
 
 # Vertex upgrade IDs.
 const UPGRADE_UNLOCK_FIRST_GENERATOR := "unlock_first_generator"
@@ -46,8 +49,15 @@ const STAT_RUN_PASSIVE_CLICK_VALUE := "run_passive_click_value"
 const STAT_RUN_SQUARE_RESPAWN_TIME := "run_square_respawn_time"
 const STAT_RUN_PASSIVE_INTERVAL := "run_passive_interval"
 const STAT_RUN_PASSIVE_EXTRACTION := "run_passive_extraction"
+const STAT_RUN_TRAIT_PURCHASE_COST := "run_trait_purchase_cost"
 
 # Run upgrade IDs.
 const RUN_UPGRADE_SHARPEN_SQUARES := "sharpen_squares"
 const RUN_UPGRADE_QUICK_HANDS := "quick_hands"
 const RUN_UPGRADE_PASSIVE_TUNING := "passive_tuning"
+const RUN_UPGRADE_PRACTICED_CLICKS := "practiced_clicks"
+const RUN_UPGRADE_TRAIT_SAVINGS := "trait_savings"
+const RUN_UPGRADE_STEADY_EXTRACTION := "steady_extraction"
+const RUN_UPGRADE_SHORTER_CYCLES := "shorter_cycles"
+const RUN_UPGRADE_STRONGER_ORIGINS := "stronger_origins"
+const RUN_UPGRADE_TRAIT_MOMENTUM := "trait_momentum"

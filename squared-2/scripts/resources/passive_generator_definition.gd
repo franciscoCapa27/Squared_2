@@ -24,6 +24,9 @@ enum TargetingMode {
 @export var extraction_per_level: float = 0.01
 @export var maximum_extraction_rate: float = 2.0
 
+@export var extraction_per_target_trait: float = 0.0
+@export var extraction_per_grid_size: float = 0.0
+
 @export var base_level_cost: float = 10.0
 @export var level_cost_multiplier: float = 1.18
 

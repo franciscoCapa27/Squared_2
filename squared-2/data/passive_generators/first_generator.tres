@@ -5,11 +5,17 @@
 [resource]
 script = ExtResource("1_r8nde")
 id = "first_generator"
-display_name = "First Generator"
-description = "The first passive generator. It starts at Level 0 after being permanently unlocked."
+display_name = "Quick Scatter Generator"
+description = "Pulses quickly at a random square for a small amount of its value."
 sort_order = 10
-base_interval_seconds = 5.0
-base_extraction_rate = 0.05
+base_interval_seconds = 2.5
+minimum_interval_seconds = 0.75
+interval_level_multiplier = 0.96
+base_extraction_rate = 0.08
+extraction_per_level = 0.0
+maximum_extraction_rate = 0.08
+base_level_cost = 12.0
+level_cost_multiplier = 1.25
 targeting_mode = 0
 max_level = 10
 metadata/_custom_type_script = "uid://dvyamllgu87kt"

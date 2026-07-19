@@ -218,7 +218,7 @@ Teach the player the basic loop and reach trait purchase quickly.
 
 Grid size: **2x2**
 
-Unlocked after first trait purchase.
+Opened by the Squares cost curve after the First Square Era; Trait purchases are not a hard gate.
 
 New mechanics:
 
@@ -236,7 +236,7 @@ Teach the player that squares now have identity and position matters.
 
 Grid size: **3x3**
 
-Unlocked after all 2x2 squares have at least one Trait.
+Opened by a substantially larger Squares cost after the 2x2 board has had time to develop. Trait placement remains random, so this is a pacing target rather than a per-square guarantee.
 
 New mechanics:
 
@@ -288,7 +288,7 @@ Buy Trait grants:
 Current formula:
 
 ```text
-Buy Trait cost = ceil(15 * 1.75 ^ buy_trait_count)
+Buy Trait cost = ceil(15 * 1.5 ^ buy_trait_count)
 Vertices gained = max(1, floor(sqrt(buy_trait_cost / 25)))
 ```
 

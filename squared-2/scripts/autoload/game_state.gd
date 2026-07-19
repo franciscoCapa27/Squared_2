@@ -8,15 +8,18 @@ const INITIAL_SQUARE_ID := "A1"
 const VERTEX_GAIN_DIVISOR := 100.0
 
 const MAX_GRID_SIZE := 6
-const GRID_UPGRADE_BASE_COST := 35.0
-const GRID_UPGRADE_COST_MULTIPLIER := 5.0
-const FIRST_SQUARE_SOFT_PUSH_TRAIT_PURCHASE_COUNT := 1
-
+const GRID_UPGRADE_COSTS: Array[float] = [
+	90.0,
+	15000.0,
+	1000000.0,
+	150000000.0,
+	25000000000.0,
+]
 # -------------------------
 # Buy Trait scaling constants
 # -------------------------
 const TRAIT_PURCHASE_COST_BASE := 15.0
-const TRAIT_PURCHASE_COST_MULTIPLIER := 1.75
+const TRAIT_PURCHASE_COST_MULTIPLIER := 1.5
 const TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR := 25.0
 const LEGACY_TRAIT_PURCHASE_COUNT_KEY := "pre" + "stige_count"
 
@@ -105,7 +108,14 @@ func spend_vertices(amount: int) -> bool:
 # ------------------------------------------------------------------------------
 
 func get_trait_purchase_cost() -> float:
-	return ceil(TRAIT_PURCHASE_COST_BASE * pow(TRAIT_PURCHASE_COST_MULTIPLIER, float(trait_purchase_count)))
+	var base_cost: float = TRAIT_PURCHASE_COST_BASE * pow(
+		TRAIT_PURCHASE_COST_MULTIPLIER,
+		float(trait_purchase_count)
+	)
+	var cost_multiplier: float = RunUpgradeSystem.get_run_stat_multiplier(
+		GameIds.STAT_RUN_TRAIT_PURCHASE_COST
+	)
+	return ceil(base_cost * cost_multiplier)
 
 
 func can_buy_trait() -> bool:
@@ -182,15 +192,16 @@ func can_upgrade_grid() -> bool:
 
 
 func get_grid_upgrade_cost() -> float:
-	return GRID_UPGRADE_BASE_COST * pow(GRID_UPGRADE_COST_MULTIPLIER, float(grid_size - 1))
+	var cost_index: int = grid_size - INITIAL_GRID_SIZE
+
+	if cost_index < 0 or cost_index >= GRID_UPGRADE_COSTS.size():
+		return INF
+
+	return GRID_UPGRADE_COSTS[cost_index]
 
 
 func get_next_grid_size() -> int:
 	return min(grid_size + 1, MAX_GRID_SIZE)
-
-
-func should_soft_push_grid_upgrade() -> bool:
-	return grid_size == INITIAL_GRID_SIZE and trait_purchase_count >= FIRST_SQUARE_SOFT_PUSH_TRAIT_PURCHASE_COUNT
 
 
 func upgrade_grid() -> bool:
@@ -274,9 +285,6 @@ func _get_trait_purchase_story_message(gained_vertices: int, trait_message: Stri
 
 	if trait_message.strip_edges() != "":
 		parts.append("%s permanently" % trait_message)
-
-	if should_soft_push_grid_upgrade():
-		parts.append("The first square can keep changing, but the 2x2 grid is beginning to call")
 
 	return ". ".join(parts) + "."
 

@@ -48,7 +48,7 @@ var lifetime_pulses: int = 0
 
 func _init(
 	p_id: String = "first_generator",
-	p_display_name: String = "First Generator"
+	p_display_name: String = "Quick Scatter Generator"
 ) -> void:
 	id = p_id
 	display_name = p_display_name

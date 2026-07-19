@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="RunUpgradeDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://chdrsvo1guraf" path="res://scripts/resources/run_upgrade_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://mxwbqrrs5rto" path="res://scripts/resources/run_upgrade_definition.gd" id="2_definition"]
+[ext_resource type="Script" uid="uid://cvbvabkxna6aw" path="res://scripts/resources/run_upgrade_unlock_condition.gd" id="3_condition"]
+
+[sub_resource type="Resource" id="Resource_effect"]
+script = ExtResource("1_effect")
+target_stat = "run_trait_purchase_cost"
+value = 0.92
+metadata/_custom_type_script = "uid://chdrsvo1guraf"
+
+[sub_resource type="Resource" id="Resource_condition"]
+script = ExtResource("3_condition")
+condition_type = 2
+threshold = 8.0
+metadata/_custom_type_script = "uid://cvbvabkxna6aw"
+
+[resource]
+script = ExtResource("2_definition")
+id = "trait_savings"
+display_name = "Trait Savings"
+description = "Reduces Buy Trait cost."
+category = 1
+sort_order = 35
+base_cost = 180.0
+cost_multiplier = 1.65
+max_level = 6
+unlock_conditions = Array[ExtResource("3_condition")]([SubResource("Resource_condition")])
+effects_per_level = Array[ExtResource("1_effect")]([SubResource("Resource_effect")])
+metadata/_custom_type_script = "uid://mxwbqrrs5rto"
