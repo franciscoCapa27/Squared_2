@@ -5,14 +5,15 @@
 [resource]
 script = ExtResource("1_qxj05")
 id = "value_harvester"
-display_name = "Value Harvester"
-description = "A focused passive generator that always targets the square with the highest current manual payout."
+display_name = "Focused Harvest Generator"
+description = "Waits longer, then harvests the square with the highest current manual payout."
 sort_order = 20
-base_interval_seconds = 4.0
-minimum_interval_seconds = 0.75
-base_extraction_rate = 0.5
-extraction_per_level = 0.015
-maximum_extraction_rate = 3.0
-level_cost_multiplier = 1.22
+base_interval_seconds = 8.0
+minimum_interval_seconds = 2.5
+base_extraction_rate = 0.65
+extraction_per_level = 0.04
+maximum_extraction_rate = 1.2
+base_level_cost = 25.0
+level_cost_multiplier = 1.25
 targeting_mode = 1
 metadata/_custom_type_script = "uid://dvyamllgu87kt"

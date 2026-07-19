@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PassiveGeneratorDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://dvyamllgu87kt" path="res://scripts/resources/passive_generator_definition.gd" id="1_generator"]
+
+[resource]
+script = ExtResource("1_generator")
+id = "broad_extractor"
+display_name = "Broad Extractor"
+description = "Pulses at a random square at a steady rate, keeping the whole board involved."
+sort_order = 30
+base_interval_seconds = 6.0
+minimum_interval_seconds = 2.0
+base_extraction_rate = 0.18
+extraction_per_level = 0.02
+maximum_extraction_rate = 0.5
+base_level_cost = 90.0
+level_cost_multiplier = 1.27
+targeting_mode = 0
+metadata/_custom_type_script = "uid://dvyamllgu87kt"

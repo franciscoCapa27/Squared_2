@@ -28,9 +28,6 @@ static func should_show_achievement_summary_panel() -> bool:
 
 
 static func should_show_grid_upgrade_button() -> bool:
-	if GameState.should_soft_push_grid_upgrade():
-		return true
-
 	return GameState.grid_size < GameState.MAX_GRID_SIZE and (
 		GameState.squares >= GameState.get_grid_upgrade_cost() * GRID_UPGRADE_VISIBILITY_COST_RATIO
 	)

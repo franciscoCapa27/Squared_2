@@ -12,8 +12,8 @@ metadata/_custom_type_script = "uid://d3xcfqld3vjh7"
 [resource]
 script = ExtResource("2_8ly47")
 id = "first_generator_unlocked"
-display_name = "First Automation"
-description = "Unlock the First Generator."
+display_name = "Quick Scatter Unlocked"
+description = "Unlock Quick Scatter."
 category = 4
 condition_type = 7
 target_id = "first_generator"

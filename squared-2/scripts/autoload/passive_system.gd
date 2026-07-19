@@ -189,7 +189,7 @@ func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void:
 		return
 
 	var payout: float = SquareCalculator.calculate_manual_payout(target_square)
-	payout *= generator_instance.get_current_extraction_rate()
+	payout *= generator_instance.get_current_extraction_rate(target_square)
 	payout *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
 	payout += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
 	payout = max(0.0, payout)

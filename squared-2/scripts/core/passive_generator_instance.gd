@@ -74,12 +74,16 @@ func get_current_interval_seconds() -> float:
 
 	return max(definition.minimum_interval_seconds, interval)
 
-func get_current_extraction_rate() -> float:
+func get_current_extraction_rate(target_square: SquareData = null) -> float:
 	if definition == null:
 		return 0.0
 
 	var extraction_rate: float = definition.base_extraction_rate
 	extraction_rate += definition.extraction_per_level * float(max(0, level - 1))
+	if target_square != null:
+		extraction_rate += definition.extraction_per_target_trait * target_square.get_trait_count()
+
+	extraction_rate += definition.extraction_per_grid_size * float(GameState.grid_size)
 
 	extraction_rate *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_EXTRACTION)
 	extraction_rate += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_EXTRACTION)

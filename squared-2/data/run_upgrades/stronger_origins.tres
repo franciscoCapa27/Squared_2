@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="RunUpgradeDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://chdrsvo1guraf" path="res://scripts/resources/run_upgrade_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://mxwbqrrs5rto" path="res://scripts/resources/run_upgrade_definition.gd" id="2_definition"]
+[ext_resource type="Script" uid="uid://cvbvabkxna6aw" path="res://scripts/resources/run_upgrade_unlock_condition.gd" id="3_condition"]
+
+[sub_resource type="Resource" id="Resource_effect"]
+script = ExtResource("1_effect")
+target_stat = "run_square_base_value"
+value = 1.16
+metadata/_custom_type_script = "uid://chdrsvo1guraf"
+
+[sub_resource type="Resource" id="Resource_condition"]
+script = ExtResource("3_condition")
+condition_type = 3
+threshold = 3.0
+metadata/_custom_type_script = "uid://cvbvabkxna6aw"
+
+[resource]
+script = ExtResource("2_definition")
+id = "stronger_origins"
+display_name = "Stronger Origins"
+description = "Increases base square value."
+category = 1
+sort_order = 55
+base_cost = 1400.0
+cost_multiplier = 1.7
+max_level = 6
+hidden_until_unlocked = true
+unlock_conditions = Array[ExtResource("3_condition")]([SubResource("Resource_condition")])
+effects_per_level = Array[ExtResource("1_effect")]([SubResource("Resource_effect")])
+metadata/_custom_type_script = "uid://mxwbqrrs5rto"

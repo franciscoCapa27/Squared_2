@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="VertexUpgradeDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://c7mm37v2yrr14" path="res://scripts/resources/vertex_upgrade_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://dowlqajtj0tyi" path="res://scripts/resources/vertex_upgrade_definition.gd" id="2_definition"]
+
+[sub_resource type="Resource" id="Resource_effect"]
+script = ExtResource("1_effect")
+effect_type = 0
+target_id = "broad_extractor"
+metadata/_custom_type_script = "uid://c7mm37v2yrr14"
+
+[resource]
+script = ExtResource("2_definition")
+id = "unlock_broad_extractor"
+display_name = "Unlock Broad Extractor"
+description = "Permanently unlocks a steady passive generator that keeps the board involved."
+category = 0
+cost_vertices = 3
+sort_order = 50
+required_trait_purchase_count = 8
+required_grid_size = 2
+hidden_until_requirements_met = true
+effects = Array[ExtResource("1_effect")]([SubResource("Resource_effect")])
+metadata/_custom_type_script = "uid://dowlqajtj0tyi"
