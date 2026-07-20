@@ -136,6 +136,66 @@ _Avoid_: Tutorial, starter phase, single-square game
 The early-game question of whether to Buy Trait now for one more Trait roll or keep pushing the current run toward a larger goal, especially grid expansion that may unlock rarer and cooler Traits. This tension should make "one more Trait" and "save for expansion" both feel tempting.
 _Avoid_: Reset loop, optimal timing, progression choice
 
+**Cost-Led Grid Pacing**:
+Grid expansion is paced by Squares cost and the opportunity cost of spending those Squares on Traits, not by hard Trait-count gates. Prices should lead the player toward expansion while preserving the strategic choice to keep investing in the current grid.
+_Avoid_: Trait-count gate, forced era transition, hard expansion unlock
+
+**Random Board Saturation**:
+A pacing target describing how developed the current grid is under genuinely random Trait placement, measured by the likelihood that most or all squares have reached a desired minimum Trait depth. It guides expansion pricing but does not become a per-square guarantee.
+_Avoid_: Trait distribution guarantee, pity system, forced Trait assignment
+
+**Independent Trait Pricing**:
+Buy Trait cost is determined by the total number of Traits purchased and is unaffected by the current grid size. Grid expansion cost is a separate opportunity cost and must not retroactively or directly increase Trait prices.
+_Avoid_: Grid-scaled Trait cost, tier-priced Trait, expansion tax
+
+**Gentle Trait Escalation**:
+Buy Trait remains an exponentially increasing cost, but its multiplier should preserve a viable long-run rhythm instead of making later Trait rolls prohibitively distant. The current balance target is a 15-Square base with an approximately 1.5 multiplier, subject to playtest.
+_Avoid_: Runaway Trait inflation, flat Trait pricing, grid-dependent escalation
+
+**Uniform Expansion Pool**:
+When a grid expands, newly created squares immediately join the same random Trait-targeting pool as existing squares. Expansion does not assign Traits, protect empty squares, or bias future rolls toward the new area.
+_Avoid_: New-square pity, guaranteed filling, protected expansion targets
+
+**Full-Value Expansion Squares**:
+New squares are immediately real click targets with their normal base value, even before they receive Traits. Expansion is therefore both a board-identity milestone and an immediate increase in active earning capacity.
+_Avoid_: Empty placeholder squares, delayed activation, expansion-only decoration
+
+**Cost-Based Expansion Tease**:
+The upcoming grid expansion is revealed and kept visible based on proximity to its Squares cost, without a Trait-count trigger. The preview leads the player toward a strategic choice but never becomes a hard progression gate.
+_Avoid_: Trait-count reveal, hidden expansion, forced expansion prompt
+
+**Expansion Payoff Bundle**:
+Reaching 2x2 combines three payoffs: more full-value click targets, new random Trait targets, and passive generation becoming available. The expansion price must account for the combined payoff rather than weakening any one of them.
+_Avoid_: Empty expansion, delayed automation, isolated grid reward
+
+**Shared Squares Economy**:
+Squares are the main opportunity-cost currency for Traits, grid expansion, passive levels, and run upgrades. These purchases should remain concurrent alternatives so spending on one meaningfully delays or changes the timing of another; Vertices remain the longer-term permanent currency.
+_Avoid_: Isolated purchase currencies, mandatory sink order, free category progression
+
+**Plain Run Upgrades**:
+Run upgrades create strategic timing choices through deterministic, directly readable effects. Each upgrade should have one primary purpose and should not introduce random outcomes, risk/reward clauses, hidden behavior, or opaque targeting rules.
+_Avoid_: Volatile upgrades, surprise mechanics, compound-effect cards, hidden tradeoffs
+
+**Two-Dimensional Upgrade Reveal**:
+An upgrade becomes eligible through a deterministic milestone such as grid size, Trait-purchase count, or passive level, then becomes visible when the player approaches its Squares cost. Milestones control content pacing; cost controls the immediate spending decision.
+_Avoid_: Cost-only roster, milestone-only purchase, random upgrade reveal
+
+**Quick Scatter Generator**:
+The first passive role: a short-interval, lower-value pulse that targets random squares. Its identity is frequent board activity and broad participation, not maximum efficiency.
+_Avoid_: First Generator, strongest passive opener, focused targeting
+
+**Focused Harvest Generator**:
+The second passive role: a longer-interval, higher-value pulse that always targets the currently best-paying square. Its identity is deliberate efficiency rather than frequency or board coverage.
+_Avoid_: Random harvester, fast pulse, generic passive multiplier
+
+**Vertex-Gated Passive Unlock**:
+Every passive generator is permanently unlocked through the Vertex Shop, with milestone prerequisites and parallel choices after the first generator. Once unlocked, its levels are purchased with Squares during the current run.
+_Avoid_: Squares-only passive unlock, mandatory passive chain, run-only generator access
+
+**Run Upgrade Layer**:
+Run Upgrades are temporary, deterministic Squares purchases that compete with Traits, expansion, and passive levels during a run. They do not replace Vertex Shop unlocks or become permanent progression.
+_Avoid_: Permanent run upgrade, Vertex-priced run upgrade, separate free power lane
+
 **Reactive Luck**:
 The early Trait experience where random rolls shape the player's first board and the player mostly adapts to what appears. Decisions exist, but they should be light steering rather than direct build drafting during the First 2x2 Grid Era.
 _Avoid_: Trait drafting, build planning, deterministic progression

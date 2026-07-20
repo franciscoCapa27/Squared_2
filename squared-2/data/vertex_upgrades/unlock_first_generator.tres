@@ -12,8 +12,8 @@ metadata/_custom_type_script = "uid://c7mm37v2yrr14"
 [resource]
 script = ExtResource("2_vjorj")
 id = "unlock_first_generator"
-display_name = "Unlock First Generator"
-description = "After the grid opens, awaken the first passive generator. It starts at Level 0 and can be leveled with Squares."
+display_name = "Unlock Quick Scatter"
+description = "After the grid opens, awaken Quick Scatter. It starts at Level 0 and can be leveled with Squares."
 category = 0
 cost_vertices = 2
 sort_order = 30

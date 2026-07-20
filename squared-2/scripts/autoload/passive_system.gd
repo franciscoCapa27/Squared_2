@@ -183,13 +183,17 @@ func _tick_generator(generator_instance: PassiveGeneratorInstance, delta: float)
 		_pulse_generator(generator_instance)
 
 func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void:
+	if generator_instance.definition.targeting_mode == PassiveGeneratorDefinition.TargetingMode.WHOLE_GRID:
+		_pulse_whole_grid(generator_instance)
+		return
+
 	var target_square: SquareData = _select_target_square(generator_instance)
 
 	if target_square == null:
 		return
 
 	var payout: float = SquareCalculator.calculate_manual_payout(target_square)
-	payout *= generator_instance.get_current_extraction_rate()
+	payout *= generator_instance.get_current_extraction_rate(target_square)
 	payout *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
 	payout += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
 	payout = max(0.0, payout)
@@ -199,6 +203,32 @@ func _pulse_generator(generator_instance: PassiveGeneratorInstance) -> void:
 	generator_instance.record_pulse(target_square.id, payout)
 
 	passive_pulsed.emit(generator_instance.get_id(), target_square.id, payout)
+	passive_state_changed.emit()
+
+func _pulse_whole_grid(generator_instance: PassiveGeneratorInstance) -> void:
+	var total_payout: float = 0.0
+
+	for square_id: String in GameState.square_ids:
+		var square_data: SquareData = GameState.get_square(square_id)
+
+		if square_data == null:
+			continue
+
+		var payout: float = SquareCalculator.calculate_manual_payout(square_data)
+		payout *= generator_instance.get_current_extraction_rate()
+		payout *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
+		payout += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_CLICK_VALUE)
+		payout = max(0.0, payout)
+
+		square_data.record_passive_click(payout)
+		total_payout += payout
+
+	if total_payout <= 0.0:
+		return
+
+	GameState.add_squares(total_payout)
+	generator_instance.record_pulse("GRID", total_payout)
+	passive_pulsed.emit(generator_instance.get_id(), "GRID", total_payout)
 	passive_state_changed.emit()
 
 func _select_target_square(generator_instance: PassiveGeneratorInstance) -> SquareData:
@@ -214,6 +244,8 @@ func _select_target_square(generator_instance: PassiveGeneratorInstance) -> Squa
 			return _select_lowest_respawn_square()
 		PassiveGeneratorDefinition.TargetingMode.SELECTED_SQUARE:
 			return _select_random_square()
+		PassiveGeneratorDefinition.TargetingMode.MOST_TRAITS:
+			return _select_most_traits_square()
 		_:
 			return _select_random_square()
 
@@ -257,6 +289,29 @@ func _select_lowest_respawn_square() -> SquareData:
 		if respawn_time < best_respawn:
 			best_respawn = respawn_time
 			best_square = square_data
+
+	return best_square
+
+func _select_most_traits_square() -> SquareData:
+	var best_square: SquareData = null
+	var best_trait_count: int = -1
+	var best_payout: float = -1.0
+
+	for square_id: String in GameState.square_ids:
+		var square_data: SquareData = GameState.get_square(square_id)
+
+		if square_data == null:
+			continue
+
+		var trait_count: int = square_data.get_trait_count()
+		var payout: float = SquareCalculator.calculate_manual_payout(square_data)
+
+		if trait_count > best_trait_count or (
+			trait_count == best_trait_count and payout > best_payout
+		):
+			best_square = square_data
+			best_trait_count = trait_count
+			best_payout = payout
 
 	return best_square
 	

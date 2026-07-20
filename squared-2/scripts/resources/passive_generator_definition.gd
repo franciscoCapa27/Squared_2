@@ -5,7 +5,9 @@ enum TargetingMode {
 	RANDOM_SQUARE,
 	HIGHEST_PAYOUT,
 	LOWEST_RESPAWN,
-	SELECTED_SQUARE
+	SELECTED_SQUARE,
+	MOST_TRAITS,
+	WHOLE_GRID
 }
 
 @export var id: String = ""
@@ -23,6 +25,9 @@ enum TargetingMode {
 @export var base_extraction_rate: float = 0.25
 @export var extraction_per_level: float = 0.01
 @export var maximum_extraction_rate: float = 2.0
+
+@export var extraction_per_target_trait: float = 0.0
+@export var extraction_per_grid_size: float = 0.0
 
 @export var base_level_cost: float = 10.0
 @export var level_cost_multiplier: float = 1.18
