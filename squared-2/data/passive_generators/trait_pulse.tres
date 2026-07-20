@@ -6,7 +6,7 @@
 script = ExtResource("1_generator")
 id = "trait_pulse"
 display_name = "Trait Pulse"
-description = "Harvests the best square, gaining strength from each Trait on that square."
+description = "Harvests the square with the most Traits, gaining strength from each Trait on that square."
 sort_order = 40
 base_interval_seconds = 7.0
 minimum_interval_seconds = 2.5
@@ -16,5 +16,5 @@ maximum_extraction_rate = 1.0
 extraction_per_target_trait = 0.045
 base_level_cost = 300.0
 level_cost_multiplier = 1.28
-targeting_mode = 1
+targeting_mode = 4
 metadata/_custom_type_script = "uid://dvyamllgu87kt"

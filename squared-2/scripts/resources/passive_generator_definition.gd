@@ -5,7 +5,9 @@ enum TargetingMode {
 	RANDOM_SQUARE,
 	HIGHEST_PAYOUT,
 	LOWEST_RESPAWN,
-	SELECTED_SQUARE
+	SELECTED_SQUARE,
+	MOST_TRAITS,
+	WHOLE_GRID
 }
 
 @export var id: String = ""
