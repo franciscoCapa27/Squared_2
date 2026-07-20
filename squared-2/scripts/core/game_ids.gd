@@ -17,6 +17,9 @@ const PASSIVE_GRID_PULSE := "grid_pulse"
 # Vertex upgrade IDs.
 const UPGRADE_UNLOCK_FIRST_GENERATOR := "unlock_first_generator"
 const UPGRADE_UNLOCK_VALUE_HARVESTER := "unlock_value_harvest"
+const UPGRADE_UNLOCK_BROAD_EXTRACTOR := "unlock_broad_extractor"
+const UPGRADE_UNLOCK_TRAIT_PULSE := "unlock_trait_pulse"
+const UPGRADE_UNLOCK_GRID_PULSE := "unlock_grid_pulse"
 const UPGRADE_GEOMETRIC_INTUITION := "geometric_intuition"
 const UPGRADE_SHARPENED_ORIGIN := "sharpened_origin"
 
