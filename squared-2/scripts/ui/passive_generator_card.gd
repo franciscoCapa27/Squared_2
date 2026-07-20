@@ -162,6 +162,10 @@ func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String
 			return "the square with the shortest respawn"
 		PassiveGeneratorDefinition.TargetingMode.SELECTED_SQUARE:
 			return "the selected square"
+		PassiveGeneratorDefinition.TargetingMode.MOST_TRAITS:
+			return "the square with the most Traits"
+		PassiveGeneratorDefinition.TargetingMode.WHOLE_GRID:
+			return "the whole grid"
 		_:
 			return "one square"
 
