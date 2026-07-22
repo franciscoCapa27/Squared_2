@@ -2,19 +2,13 @@ extends Node
 
 const DEBUG_PERMANENT_STATS := false
 
-const INITIAL_GRID_SIZE := 1
-const INITIAL_SQUARE_ID := "A1"
+const INITIAL_GRID_SIZE := GridState.INITIAL_GRID_SIZE
+const INITIAL_SQUARE_ID := GridState.INITIAL_SQUARE_ID
 
 const VERTEX_GAIN_DIVISOR := 100.0
 
-const MAX_GRID_SIZE := 6
-const GRID_UPGRADE_COSTS: Array[float] = [
-	90.0,
-	15000.0,
-	1000000.0,
-	150000000.0,
-	25000000000.0,
-]
+const MAX_GRID_SIZE := GridState.MAX_GRID_SIZE
+const GRID_UPGRADE_COSTS: Array[float] = GridState.GRID_UPGRADE_COSTS
 const LEGACY_TRAIT_PURCHASE_COUNT_KEY := "pre" + "stige_count"
 
 var squares: float = 0.0
@@ -22,9 +16,25 @@ var vertices: int = 0
 var trait_purchase_count: int = 0
 var cheat_square_value_enabled: bool = false
 
-var grid_size: int = INITIAL_GRID_SIZE
-var square_ids: Array[String] = [INITIAL_SQUARE_ID]
-var squares_by_id: Dictionary = {}
+var _grid_state: GridState = GridState.new()
+
+var grid_size: int:
+	get:
+		return _grid_state.grid_size
+	set(value):
+		_grid_state.grid_size = value
+
+var square_ids: Array[String]:
+	get:
+		return _grid_state.square_ids
+	set(value):
+		_grid_state.square_ids = value
+
+var squares_by_id: Dictionary:
+	get:
+		return _grid_state.squares_by_id
+	set(value):
+		_grid_state.squares_by_id = value
 
 var permanent_stat_multipliers: Dictionary = {}
 var permanent_stat_additions: Dictionary = {}
@@ -38,7 +48,7 @@ func _ready() -> void:
 # ------------------------------------------------------------------------------
 
 func get_square(square_id: String) -> SquareData:
-	return squares_by_id.get(square_id) as SquareData
+	return _grid_state.get_square(square_id)
 
 
 func click_square(square_id: String) -> void:
@@ -144,54 +154,21 @@ func buy_trait(save_after_buy: bool = true) -> void:
 # ------------------------------------------------------------------------------
 
 func _create_initial_grid() -> void:
-	grid_size = INITIAL_GRID_SIZE
-	square_ids.clear()
-	squares_by_id.clear()
-
-	var square_data: SquareData = SquareData.new(INITIAL_SQUARE_ID, 0, 0)
-
-	square_ids.append(INITIAL_SQUARE_ID)
-	squares_by_id[INITIAL_SQUARE_ID] = square_data
+	_grid_state.create_initial_grid()
 
 func _set_grid_size(new_grid_size: int) -> void:
-	var old_squares_by_id: Dictionary = squares_by_id.duplicate()
-
-	grid_size = clamp(new_grid_size, INITIAL_GRID_SIZE, MAX_GRID_SIZE)
-	square_ids.clear()
-	squares_by_id.clear()
-
-	for y: int in grid_size:
-		for x: int in grid_size:
-			var square_id: String = _get_square_id_from_position(x, y)
-			square_ids.append(square_id)
-
-			if old_squares_by_id.has(square_id):
-				squares_by_id[square_id] = old_squares_by_id[square_id]
-				continue
-
-			var square_data: SquareData = SquareData.new(square_id, x, y)
-			square_data.created_at_trait_purchase = trait_purchase_count
-			square_data.created_at_grid_tier = grid_size
-			squares_by_id[square_id] = square_data
+	_grid_state.resize(new_grid_size, trait_purchase_count)
 
 func can_upgrade_grid() -> bool:
-	if grid_size >= MAX_GRID_SIZE:
-		return false
-
-	return squares >= get_grid_upgrade_cost()
+	return _grid_state.can_upgrade(squares)
 
 
 func get_grid_upgrade_cost() -> float:
-	var cost_index: int = grid_size - INITIAL_GRID_SIZE
-
-	if cost_index < 0 or cost_index >= GRID_UPGRADE_COSTS.size():
-		return INF
-
-	return GRID_UPGRADE_COSTS[cost_index]
+	return _grid_state.get_upgrade_cost()
 
 
 func get_next_grid_size() -> int:
-	return min(grid_size + 1, MAX_GRID_SIZE)
+	return _grid_state.get_next_size()
 
 
 func upgrade_grid() -> bool:
@@ -425,7 +402,3 @@ func _dictionary_from_variant(value: Variant) -> Dictionary:
 		return value as Dictionary
 
 	return {}
-
-func _get_square_id_from_position(x: int, y: int) -> String:
-	var row_letter: String = char(65 + y)
-	return "%s%s" % [row_letter, x + 1]
