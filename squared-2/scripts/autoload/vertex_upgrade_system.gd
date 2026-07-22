@@ -1,7 +1,6 @@
 extends Node
 
 signal vertex_upgrades_changed()
-signal vertex_upgrade_purchased(upgrade_id: String)
 
 const DEBUG_VERTEX_UPGRADES := false
 
@@ -88,7 +87,6 @@ func buy_vertex_upgrade(upgrade_id: String) -> bool:
 	_apply_vertex_upgrade_effects(upgrade)
 	_record_vertex_upgrade_purchase(upgrade.id)
 
-	vertex_upgrade_purchased.emit(upgrade.id)
 	vertex_upgrades_changed.emit()
 	EventBus.vertex_upgrade_purchased.emit(upgrade.id)
 	EventBus.story_message.emit("%s unlocked." % upgrade.display_name)

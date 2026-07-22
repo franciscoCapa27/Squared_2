@@ -15,12 +15,6 @@ const GRID_UPGRADE_COSTS: Array[float] = [
 	150000000.0,
 	25000000000.0,
 ]
-# -------------------------
-# Buy Trait scaling constants
-# -------------------------
-const TRAIT_PURCHASE_COST_BASE := 15.0
-const TRAIT_PURCHASE_COST_MULTIPLIER := 1.5
-const TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR := 25.0
 const LEGACY_TRAIT_PURCHASE_COUNT_KEY := "pre" + "stige_count"
 
 var squares: float = 0.0
@@ -108,14 +102,10 @@ func spend_vertices(amount: int) -> bool:
 # ------------------------------------------------------------------------------
 
 func get_trait_purchase_cost() -> float:
-	var base_cost: float = TRAIT_PURCHASE_COST_BASE * pow(
-		TRAIT_PURCHASE_COST_MULTIPLIER,
-		float(trait_purchase_count)
-	)
 	var cost_multiplier: float = RunUpgradeSystem.get_run_stat_multiplier(
 		GameIds.STAT_RUN_TRAIT_PURCHASE_COST
 	)
-	return ceil(base_cost * cost_multiplier)
+	return TraitPurchaseService.calculate_cost(trait_purchase_count, cost_multiplier)
 
 
 func can_buy_trait() -> bool:
@@ -123,7 +113,7 @@ func can_buy_trait() -> bool:
 
 
 func calculate_trait_purchase_vertices_gain() -> int:
-	return max(1, int(floor(sqrt(get_trait_purchase_cost() / TRAIT_PURCHASE_VERTEX_GAIN_DIVISOR))))
+	return TraitPurchaseService.calculate_vertices_gain(get_trait_purchase_cost())
 
 
 func buy_trait(save_after_buy: bool = true) -> void:
@@ -146,7 +136,7 @@ func buy_trait(save_after_buy: bool = true) -> void:
 	EventBus.story_message.emit(_get_trait_purchase_story_message(gained_vertices, trait_message))
 
 	if save_after_buy:
-		SaveSystem.save_game()
+		EventBus.save_requested.emit()
 
 
 # ------------------------------------------------------------------------------

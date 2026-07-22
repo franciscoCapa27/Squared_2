@@ -35,6 +35,14 @@ func _process(delta: float) -> void:
 		autosave_elapsed_seconds = 0.0
 		save_game()
 
+
+func _ready() -> void:
+	EventBus.save_requested.connect(_on_save_requested)
+
+
+func _on_save_requested() -> void:
+	save_game()
+
 func save_game() -> bool:
 	var save_data: Dictionary = _build_save_data()
 	var json_text: String = JSON.stringify(save_data)
