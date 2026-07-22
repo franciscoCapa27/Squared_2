@@ -5,8 +5,6 @@ const DEBUG_PERMANENT_STATS := false
 const INITIAL_GRID_SIZE := GridState.INITIAL_GRID_SIZE
 const INITIAL_SQUARE_ID := GridState.INITIAL_SQUARE_ID
 
-const VERTEX_GAIN_DIVISOR := 100.0
-
 const MAX_GRID_SIZE := GridState.MAX_GRID_SIZE
 const GRID_UPGRADE_COSTS: Array[float] = GridState.GRID_UPGRADE_COSTS
 const LEGACY_TRAIT_PURCHASE_COUNT_KEY := "pre" + "stige_count"
