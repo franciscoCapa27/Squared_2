@@ -106,9 +106,9 @@ func _show_next_notification() -> void:
 func _on_dismiss_timer_timeout() -> void:
 	if _active_tween != null:
 		_active_tween.kill()
-	_active_tween = create_tween()
-	_active_tween.tween_property(panel, "modulate:a", 0.0, FADE_DURATION)
-	_active_tween.tween_callback(_finish_notification)
+		_active_tween = create_tween()
+		_active_tween.tween_property(panel, "modulate:a", 0.0, FADE_DURATION)
+		_active_tween.tween_callback(_finish_notification)
 	else:
 		_finish_notification()
 
