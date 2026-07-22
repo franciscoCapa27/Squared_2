@@ -158,6 +158,8 @@ func prestige() -> bool:
 
 	prestige_count += 1
 	level = 1
+	can_self_condensation = false
+	self_condensation_level = 0
 	elapsed_seconds = 0.0
 	last_target_square_id = ""
 	last_payout = 0.0

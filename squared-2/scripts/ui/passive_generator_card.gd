@@ -13,12 +13,23 @@ signal upgrade_requested(generator_id: String)
 
 var generator_id: String = ""
 var upgrade_request_pending: bool = false
+var prestige_confirm_remaining: float = 0.0
+
+const PRESTIGE_CONFIRM_SECONDS: float = 2.5
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	upgrade_button.pressed.connect(_on_upgrade_button_pressed)
 
 	_apply_theme()
+
+func _process(delta: float) -> void:
+	if prestige_confirm_remaining <= 0.0:
+		return
+	prestige_confirm_remaining -= delta
+	if prestige_confirm_remaining <= 0.0:
+		prestige_confirm_remaining = 0.0
+		refresh()
 
 func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
@@ -82,7 +93,10 @@ func refresh() -> void:
 	upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_upgrade_generator(generator_id)
 
 	if generator_instance.level >= generator_instance.get_max_level():
-		upgrade_button.text = "Prestige • %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
+		if prestige_confirm_remaining > 0.0:
+			upgrade_button.text = "Click again to Prestige"
+		else:
+			upgrade_button.text = "Prestige • %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
 		upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_prestige_generator(generator_id)
 	else:
 		upgrade_button.text = "Buy %s - %s" % [
@@ -118,7 +132,7 @@ func _get_compact_description(generator_instance: PassiveGeneratorInstance) -> S
 
 	return "Clicks %s for %s every %s." % [
 		_get_targeting_text(generator_instance),
-		NumberFormatter.percent(generator_instance.get_current_extraction_rate()),
+		_get_extraction_text(generator_instance),
 		NumberFormatter.seconds(generator_instance.get_current_interval_seconds())
 	]
 
@@ -127,8 +141,17 @@ func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String
 	return "Clicks %s every [b]%s[/b] at [b]%s[/b] strength." % [
 		_get_targeting_text(generator_instance),
 		NumberFormatter.seconds(generator_instance.get_current_interval_seconds()),
-		NumberFormatter.percent(generator_instance.get_current_extraction_rate())
+		_get_extraction_text(generator_instance)
 	]
+
+
+func _get_extraction_text(generator_instance: PassiveGeneratorInstance) -> String:
+	var extraction_text: String = "%s base" % NumberFormatter.percent(generator_instance.get_current_extraction_rate())
+	if generator_instance.definition != null and generator_instance.definition.extraction_per_target_trait > 0.0:
+		extraction_text += " + %s per Trait" % NumberFormatter.percent(
+			generator_instance.definition.extraction_per_target_trait
+		)
+	return extraction_text
 
 
 func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
@@ -156,7 +179,7 @@ func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
 	return (
 		"Current effect: %s\n" % _get_effect_summary(generator_instance)
 		+ "Interval: %s\n" % NumberFormatter.seconds(generator_instance.get_current_interval_seconds())
-		+ "Extraction: %s\n" % NumberFormatter.percent(generator_instance.get_current_extraction_rate())
+		+ "Extraction: %s\n" % _get_extraction_text(generator_instance)
 		+ "Targeting: %s\n" % _get_targeting_text(generator_instance)
 		+ "%s\n\n" % next_level_detail
 		+ "Last pulse: %s\n" % last_pulse_detail
@@ -193,7 +216,12 @@ func _on_upgrade_button_pressed() -> void:
 
 	var generator_instance: PassiveGeneratorInstance = PassiveSystem.get_generator_instance(generator_id)
 	if generator_instance != null and generator_instance.level >= generator_instance.get_max_level():
+		if prestige_confirm_remaining <= 0.0:
+			prestige_confirm_remaining = PRESTIGE_CONFIRM_SECONDS
+			upgrade_button.text = "Click again to Prestige"
+			return
 		if PassiveSystem.prestige_generator(generator_id):
+			prestige_confirm_remaining = 0.0
 			refresh()
 		return
 
