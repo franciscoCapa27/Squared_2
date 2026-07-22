@@ -103,9 +103,12 @@ func refresh_visible_generator_discoveries() -> void:
 			continue
 
 		var next_cost: float = generator_instance.get_next_level_cost()
-		var visibility_cost: float = next_cost * PASSIVE_VISIBILITY_COST_RATIO
 
-		if GameState.squares >= visibility_cost:
+		if ProgressionDiscoveryPolicy.should_reveal(
+			GameState.squares,
+			next_cost,
+			PASSIVE_VISIBILITY_COST_RATIO
+		):
 			discovered_visible_generators[generator_instance.definition.id] = true
 
 

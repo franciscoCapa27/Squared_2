@@ -131,9 +131,12 @@ func refresh_visible_run_upgrade_discoveries() -> void:
 			continue
 
 		var next_cost: float = upgrade.get_cost_for_next_level(current_level)
-		var visibility_cost: float = next_cost * RUN_UPGRADE_VISIBILITY_COST_RATIO
 
-		if GameState.squares >= visibility_cost:
+		if ProgressionDiscoveryPolicy.should_reveal(
+			GameState.squares,
+			next_cost,
+			RUN_UPGRADE_VISIBILITY_COST_RATIO
+		):
 			discovered_visible_run_upgrades[upgrade.id] = true
 
 

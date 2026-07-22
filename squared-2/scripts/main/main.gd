@@ -456,43 +456,14 @@ func _on_story_message(message: String) -> void:
 func _refresh_trait_purchase_panel() -> void:
 	var vertices_gain: int = max(1, GameState.calculate_trait_purchase_vertices_gain())
 	var cost_value: float = GameState.get_trait_purchase_cost()
-	var cost_text: String = NumberFormatter.amount(cost_value)
-	var vertex_text: String = NumberFormatter.integer_amount(vertices_gain)
 
 	trait_purchase_button.text = "Buy Trait"
-	trait_purchase_details.text = "Cost: %s Squares - Gain: %s Vertices\nPossible rarities: %s" % [
-		cost_text,
-		vertex_text,
-		_get_possible_rarities_rich_text(),
-	]
+	trait_purchase_details.text = TraitPurchasePresenter.build_details_text(
+		cost_value,
+		vertices_gain,
+		TraitDatabase.get_rarity_weights_for_grid(GameState.grid_size)
+	)
 	trait_purchase_description.text = "Spend Squares to permanently add a random Trait and gain Vertices."
-
-
-func _get_possible_rarities_rich_text() -> String:
-	var rarity_parts: Array[String] = []
-
-	for rarity_name: String in _get_possible_rarity_names():
-		var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(rarity_name)
-		rarity_parts.append("[color=%s]%s[/color]" % [rarity_color, rarity_name])
-
-	return ", ".join(rarity_parts)
-
-
-func _get_possible_rarity_names() -> Array[String]:
-	var rarity_names: Array[String] = []
-	var rarity_weights: Dictionary = TraitDatabase.get_rarity_weights_for_grid(GameState.grid_size)
-
-	for rarity_variant: Variant in rarity_weights.keys():
-		var rarity: int = int(rarity_variant)
-		if float(rarity_weights[rarity_variant]) <= 0.0:
-			continue
-
-		rarity_names.append(TraitDefinition.rarity_name_from_value(rarity))
-
-	if rarity_names.is_empty():
-		rarity_names.append(TraitDefinition.rarity_name_from_value(TraitDefinition.Rarity.COMMON))
-
-	return rarity_names
 
 func _refresh_achievement_summary() -> void:
 	var unlocked_count: int = AchievementSystem.get_unlocked_count()
