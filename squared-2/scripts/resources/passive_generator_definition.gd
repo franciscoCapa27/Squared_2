@@ -7,6 +7,7 @@ enum TargetingMode {
 	LOWEST_RESPAWN,
 	SELECTED_SQUARE,
 	MOST_TRAITS,
+	RAREST_TRAIT,
 	WHOLE_GRID
 }
 
@@ -31,6 +32,7 @@ enum TargetingMode {
 
 @export var base_level_cost: float = 10.0
 @export var level_cost_multiplier: float = 1.18
+@export var prestige_cost_multiplier: float = 25.0
 
 @export var targeting_mode: TargetingMode = TargetingMode.RANDOM_SQUARE
 

@@ -82,17 +82,26 @@ func refresh() -> void:
 	upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_upgrade_generator(generator_id)
 
 	if generator_instance.level >= generator_instance.get_max_level():
-		upgrade_button.text = "Max Level"
+		upgrade_button.text = "Prestige • %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
+		upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_prestige_generator(generator_id)
 	else:
 		upgrade_button.text = "Buy %s - %s" % [
 			generator_instance.level + 1,
 			NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
 		]
 
-	upgrade_button.tooltip_text = "Squares: %s / Cost: %s" % [
-		NumberFormatter.amount(GameState.squares),
-		NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
-	]
+	var action_cost: int = generator_instance.get_next_level_cost()
+	if generator_instance.level >= generator_instance.get_max_level():
+		action_cost = generator_instance.get_prestige_cost()
+		upgrade_button.tooltip_text = "Squares: %s / Prestige cost: %s" % [
+			NumberFormatter.amount(GameState.squares),
+			NumberFormatter.cost(float(action_cost))
+		]
+	else:
+		upgrade_button.tooltip_text = "Squares: %s / Cost: %s" % [
+			NumberFormatter.amount(GameState.squares),
+			NumberFormatter.cost(float(action_cost))
+		]
 
 	if not is_active:
 		progress_bar.value = 0.0
@@ -107,7 +116,11 @@ func _get_compact_description(generator_instance: PassiveGeneratorInstance) -> S
 	if not generator_instance.is_active():
 		return "Inactive"
 
-	return "Clicks %s." % _get_targeting_text(generator_instance)
+	return "Clicks %s for %s every %s." % [
+		_get_targeting_text(generator_instance),
+		NumberFormatter.percent(generator_instance.get_current_extraction_rate()),
+		NumberFormatter.seconds(generator_instance.get_current_interval_seconds())
+	]
 
 
 func _get_effect_summary(generator_instance: PassiveGeneratorInstance) -> String:
@@ -125,10 +138,13 @@ func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
 			generator_instance.definition
 		)
 		next_level_instance.level = generator_instance.level + 1
+		next_level_instance.prestige_count = generator_instance.prestige_count
 		next_level_detail = "Next level: %s interval; %s extraction." % [
 			NumberFormatter.seconds(next_level_instance.get_current_interval_seconds()),
 			NumberFormatter.percent(next_level_instance.get_current_extraction_rate())
 		]
+	if generator_instance.level >= generator_instance.get_max_level():
+		next_level_detail = "Prestige: pay %s; return to Level 1 with x10 value and /5 speed." % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
 
 	var last_pulse_detail: String = "None yet."
 	if generator_instance.last_target_square_id != "":
@@ -146,7 +162,7 @@ func _get_detail_help(generator_instance: PassiveGeneratorInstance) -> String:
 		+ "Last pulse: %s\n" % last_pulse_detail
 		+ "Pulses: %s\n" % NumberFormatter.integer_amount(generator_instance.lifetime_pulses)
 		+ "Squares generated: %s\n\n" % NumberFormatter.amount(generator_instance.lifetime_squares_generated)
-		+ "Levels reset on a new game."
+		+ "Hard Reset clears Prestige."
 	)
 
 func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String:
@@ -164,6 +180,8 @@ func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String
 			return "the selected square"
 		PassiveGeneratorDefinition.TargetingMode.MOST_TRAITS:
 			return "the square with the most Traits"
+		PassiveGeneratorDefinition.TargetingMode.RAREST_TRAIT:
+			return "the square with the rarest Trait"
 		PassiveGeneratorDefinition.TargetingMode.WHOLE_GRID:
 			return "the whole grid"
 		_:
@@ -171,6 +189,12 @@ func _get_targeting_text(generator_instance: PassiveGeneratorInstance) -> String
 
 func _on_upgrade_button_pressed() -> void:
 	if generator_id == "" or upgrade_request_pending:
+		return
+
+	var generator_instance: PassiveGeneratorInstance = PassiveSystem.get_generator_instance(generator_id)
+	if generator_instance != null and generator_instance.level >= generator_instance.get_max_level():
+		if PassiveSystem.prestige_generator(generator_id):
+			refresh()
 		return
 
 	upgrade_request_pending = true
