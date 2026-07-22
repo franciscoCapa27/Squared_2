@@ -64,9 +64,10 @@ func refresh() -> void:
 		NumberFormatter.integer_amount(current_level),
 		NumberFormatter.integer_amount(upgrade_definition.max_level),
 	]
-	description_label.text = "[b]%s[/b]\n%s" % [
+	description_label.text = "[b]%s[/b]  %s\n%s" % [
 		upgrade_definition.get_category_name(),
 		upgrade_definition.description,
+		_get_effect_summary_text(),
 	]
 	progress_bar.value = float(current_level) / float(maxi(1, upgrade_definition.max_level))
 	progress_bar.visible = true
@@ -167,20 +168,64 @@ func _get_effect_text() -> String:
 	return "\n".join(lines)
 
 
+func _get_effect_summary_text() -> String:
+	if upgrade_definition == null or upgrade_definition.effects_per_level.is_empty():
+		return "Effect: no effects."
+
+	var lines: Array[String] = []
+	for effect_iter: RunUpgradeEffect in upgrade_definition.effects_per_level:
+		if effect_iter == null:
+			continue
+		lines.append("Effect per level: %s" % _format_effect(effect_iter))
+
+	if lines.is_empty():
+		return "Effect: no effects."
+
+	return "\n".join(lines)
+
+
 func _format_effect(effect_iter: RunUpgradeEffect) -> String:
 	match effect_iter.effect_type:
 		RunUpgradeEffect.EffectType.GLOBAL_RUN_STAT_MULTIPLIER:
-			return "%s %s" % [
-				_format_stat_name(effect_iter.target_stat),
-				NumberFormatter.precise_percent_from_multiplier(effect_iter.value)
-			]
+			return _format_multiplier_effect(effect_iter.target_stat, effect_iter.value)
 		RunUpgradeEffect.EffectType.GLOBAL_RUN_STAT_ADDITION:
-			return "%s %s" % [
-				_format_stat_name(effect_iter.target_stat),
-				NumberFormatter.signed_amount(effect_iter.value)
+			return "Increases %s by %s" % [
+				_format_player_stat_name(effect_iter.target_stat),
+				NumberFormatter.amount(effect_iter.value)
 			]
 		_:
 			return "Unknown effect"
+
+
+func _format_multiplier_effect(stat_id: String, multiplier_value: float) -> String:
+	var stat_name: String = _format_player_stat_name(stat_id)
+	var delta: float = abs(multiplier_value - 1.0)
+	var amount_text: String = NumberFormatter.percent(delta)
+
+	if multiplier_value < 1.0:
+		return "Reduces %s by %s" % [stat_name.to_lower(), amount_text]
+
+	return "Improves %s by %s" % [stat_name.to_lower(), amount_text]
+
+
+func _format_player_stat_name(stat_id: String) -> String:
+	match stat_id:
+		GameIds.STAT_RUN_SQUARE_BASE_VALUE:
+			return "square payouts"
+		GameIds.STAT_RUN_MANUAL_CLICK_VALUE:
+			return "manual clicking"
+		GameIds.STAT_RUN_PASSIVE_CLICK_VALUE:
+			return "passive clicking"
+		GameIds.STAT_RUN_SQUARE_RESPAWN_TIME:
+			return "square respawn time"
+		GameIds.STAT_RUN_PASSIVE_INTERVAL:
+			return "passive interval"
+		GameIds.STAT_RUN_PASSIVE_EXTRACTION:
+			return "passive payout"
+		GameIds.STAT_RUN_TRAIT_PURCHASE_COST:
+			return "Buy Trait cost"
+		_:
+			return _format_stat_name(stat_id).to_lower()
 
 
 func _format_stat_name(stat_id: String) -> String:

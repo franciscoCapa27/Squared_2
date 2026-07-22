@@ -49,7 +49,10 @@ func refresh() -> void:
 		upgrade_definition.get_category_name(),
 		NumberFormatter.integer_amount(upgrade_definition.cost_vertices)
 	]
-	description_label.text = upgrade_definition.description
+	description_label.text = "%s\n[b]Effect:[/b] %s" % [
+		upgrade_definition.description,
+		VertexUpgradeDetails.get_player_facing_effects_text(upgrade_definition),
+	]
 	requirement_label.text = _get_detail_text()
 
 	if is_purchased:
@@ -104,24 +107,7 @@ func _get_requirement_text() -> String:
 
 
 func _get_effects_text() -> String:
-	if upgrade_definition == null:
-		return ""
-
-	if upgrade_definition.effects.is_empty():
-		return "No effects."
-
-	var lines: Array[String] = []
-
-	for effect_iter: VertexUpgradeEffect in upgrade_definition.effects:
-		if effect_iter == null:
-			continue
-
-		lines.append(_format_effect(effect_iter))
-
-	if lines.is_empty():
-		return "No effects."
-
-	return "\n".join(lines)
+	return VertexUpgradeDetails.get_player_facing_effects_text(upgrade_definition)
 
 
 func _format_effect(effect_iter: VertexUpgradeEffect) -> String:

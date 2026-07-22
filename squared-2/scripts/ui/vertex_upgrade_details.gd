@@ -60,21 +60,22 @@ static func _get_effects_text(upgrade_definition: VertexUpgradeDefinition) -> St
 	return "\n".join(lines)
 
 
+static func get_player_facing_effects_text(upgrade_definition: VertexUpgradeDefinition) -> String:
+	return _get_effects_text(upgrade_definition)
+
+
 static func _format_effect(effect_iter: VertexUpgradeEffect) -> String:
 	match effect_iter.effect_type:
 		VertexUpgradeEffect.EffectType.UNLOCK_PASSIVE_GENERATOR:
 			return "Unlock passive generator: %s" % _format_passive_generator_name(effect_iter.target_id)
 
 		VertexUpgradeEffect.EffectType.GLOBAL_STAT_MULTIPLIER:
-			return "%s %s" % [
-				_format_stat_name(effect_iter.target_stat),
-				NumberFormatter.precise_percent_from_multiplier(effect_iter.value)
-			]
+			return _format_multiplier_effect(effect_iter.target_stat, effect_iter.value)
 
 		VertexUpgradeEffect.EffectType.ADD_PERMANENT_STAT:
-			return "%s %s" % [
-				_format_stat_name(effect_iter.target_stat),
-				NumberFormatter.signed_amount(effect_iter.value)
+			return "Increases %s by %s" % [
+				_format_player_stat_name(effect_iter.target_stat),
+				NumberFormatter.amount(effect_iter.value)
 			]
 
 		VertexUpgradeEffect.EffectType.UNLOCK_MECHANIC:
@@ -91,6 +92,31 @@ static func _format_effect(effect_iter: VertexUpgradeEffect) -> String:
 
 		_:
 			return "Unknown effect"
+
+
+static func _format_multiplier_effect(stat_id: String, multiplier_value: float) -> String:
+	var stat_name: String = _format_player_stat_name(stat_id)
+	var delta: float = abs(multiplier_value - 1.0)
+	var amount_text: String = NumberFormatter.percent(delta)
+
+	if multiplier_value < 1.0:
+		return "Reduces %s by %s" % [stat_name.to_lower(), amount_text]
+
+	return "Improves %s by %s" % [stat_name.to_lower(), amount_text]
+
+
+static func _format_player_stat_name(stat_id: String) -> String:
+	match stat_id:
+		GameIds.STAT_SQUARE_BASE_VALUE:
+			return "square payouts"
+		GameIds.STAT_SQUARE_RESPAWN_TIME:
+			return "square respawn time"
+		GameIds.STAT_VERTEX_GAIN:
+			return "Vertex gain"
+		GameIds.STAT_TRAIT_LUCK:
+			return "Trait luck"
+		_:
+			return _format_stat_name(stat_id).to_lower()
 
 
 static func _format_stat_name(stat_id: String) -> String:
