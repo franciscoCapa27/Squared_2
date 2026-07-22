@@ -16,10 +16,10 @@ metadata/_custom_type_script = "uid://mgrglak6u0c0"
 [sub_resource type="Resource" id="Resource_uquick_value"]
 script = ExtResource("1_uquick")
 target_stat = "square_value"
-value = 0.86
+value = 1.12
 use_value_range = true
-value_min = 0.78
-value_max = 0.9
+value_min = 1.02
+value_max = 1.12
 roll_key = "square_value_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
@@ -29,7 +29,7 @@ id = "uncommon_quick"
 display_name = "Uncommon Quick"
 family_id = "quick"
 family_display_name = "Quick"
-description = "A sharper Quick square: -28% to -42% respawn time, but -10% to -22% Squares from this square."
+description = "A sharper Quick square: -28% to -42% respawn time and +2% to +12% Squares."
 rarity = 1
 tags = Array[String](["speed", "quick"])
 weight = 0.9

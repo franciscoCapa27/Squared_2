@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_overflow"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_overflow"]
+
+[sub_resource type="Resource" id="Resource_overflow_value"]
+script = ExtResource("1_overflow")
+target_stat = "square_value"
+value = 3.1
+use_value_range = true
+value_min = 2.3
+value_max = 3.1
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_overflow")
+id = "rare_overflow"
+display_name = "Rare Overflow"
+family_id = "overflow"
+family_display_name = "Overflow"
+description = "Overflow squares release a deep reserve: +130% to +210% Squares from this square."
+rarity = 2
+tags = Array[String](["value", "burst", "heavy", "overflow"])
+weight = 0.65
+min_grid_tier = 3
+effect_components = Array[ExtResource("1_overflow")]([SubResource("Resource_overflow_value")])
+name_prefixes = Array[String](["Overflowing"])
+name_suffixes = Array[String](["of the Deep Reserve"])
+visual_base_color_weight = Color(0.78431374, 0.41960785, 1, 1)
+visual_accent_color_weight = Color(1, 0.7058824, 0.9411765, 1)
+visual_glow_weight = 4
+visual_edge_complexity_weight = 4
+visual_gloss_weight = 2
+metadata/_custom_type_script = "uid://crmybp42r8q3a"
