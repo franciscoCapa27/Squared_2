@@ -87,6 +87,38 @@ func can_upgrade_generator(generator_id: String) -> bool:
 		return false
 
 	return generator_instance.can_level_up(GameState.squares)
+
+func can_prestige_generator(generator_id: String) -> bool:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+	if generator_instance == null:
+		return false
+
+	return generator_instance.can_prestige(GameState.squares)
+
+func prestige_generator(generator_id: String) -> bool:
+	var generator_instance: PassiveGeneratorInstance = get_generator_instance(generator_id)
+
+	if generator_instance == null or not generator_instance.can_prestige(GameState.squares):
+		return false
+
+	var cost: int = generator_instance.get_prestige_cost()
+	if not GameState.spend_squares(float(cost)):
+		return false
+
+	if not generator_instance.prestige():
+		GameState.add_squares(float(cost))
+		return false
+
+	EventBus.story_message.emit(
+		"%s prestiged: Level 1, x%s value, x%s interval." % [
+			generator_instance.get_display_name(),
+			NumberFormatter.integer_amount(int(pow(10.0, generator_instance.prestige_count))),
+			NumberFormatter.integer_amount(int(pow(5.0, generator_instance.prestige_count)))
+		]
+	)
+	passive_state_changed.emit()
+	return true
 func refresh_visible_generator_discoveries() -> void:
 	for generator_instance: PassiveGeneratorInstance in get_all_generator_instances():
 		if generator_instance == null:
@@ -103,9 +135,12 @@ func refresh_visible_generator_discoveries() -> void:
 			continue
 
 		var next_cost: float = generator_instance.get_next_level_cost()
-		var visibility_cost: float = next_cost * PASSIVE_VISIBILITY_COST_RATIO
 
-		if GameState.squares >= visibility_cost:
+		if ProgressionDiscoveryPolicy.should_reveal(
+			GameState.squares,
+			next_cost,
+			PASSIVE_VISIBILITY_COST_RATIO
+		):
 			discovered_visible_generators[generator_instance.definition.id] = true
 
 
@@ -246,6 +281,8 @@ func _select_target_square(generator_instance: PassiveGeneratorInstance) -> Squa
 			return _select_random_square()
 		PassiveGeneratorDefinition.TargetingMode.MOST_TRAITS:
 			return _select_most_traits_square()
+		PassiveGeneratorDefinition.TargetingMode.RAREST_TRAIT:
+			return _select_rarest_trait_square()
 		_:
 			return _select_random_square()
 
@@ -312,6 +349,35 @@ func _select_most_traits_square() -> SquareData:
 			best_square = square_data
 			best_trait_count = trait_count
 			best_payout = payout
+
+	return best_square
+
+func _select_rarest_trait_square() -> SquareData:
+	var best_square: SquareData = null
+	var best_rarity: int = -1
+	var best_payout: float = -1.0
+
+	for square_id: String in GameState.square_ids:
+		var square_data: SquareData = GameState.get_square(square_id)
+		if square_data == null:
+			continue
+
+		var square_rarity: int = -1
+		for trait_iter: TraitInstance in square_data.traits:
+			if trait_iter == null or trait_iter.definition == null:
+				continue
+			square_rarity = max(square_rarity, int(trait_iter.definition.rarity))
+
+		var payout: float = SquareCalculator.calculate_manual_payout(square_data)
+		if square_rarity > best_rarity or (
+			square_rarity == best_rarity and payout > best_payout
+		):
+			best_square = square_data
+			best_rarity = square_rarity
+			best_payout = payout
+
+	if best_rarity < 0:
+		return _select_highest_payout_square()
 
 	return best_square
 	

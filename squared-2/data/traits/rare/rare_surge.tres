@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_surge"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_surge"]
+
+[sub_resource type="Resource" id="Resource_surge_value"]
+script = ExtResource("1_surge")
+target_stat = "square_value"
+value = 1.6
+use_value_range = true
+value_min = 1.3
+value_max = 1.6
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[sub_resource type="Resource" id="Resource_surge_respawn"]
+script = ExtResource("1_surge")
+target_stat = "respawn_time"
+value = 0.55
+use_value_range = true
+value_min = 0.48
+value_max = 0.62
+roll_key = "respawn_time_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_surge")
+id = "rare_surge"
+display_name = "Rare Surge"
+family_id = "surge"
+family_display_name = "Surge"
+description = "Surge squares cycle in a flash: +30% to +60% Squares and -38% to -52% respawn time."
+rarity = 2
+tags = Array[String](["value", "speed", "surge", "active"])
+weight = 0.7
+min_grid_tier = 3
+effect_components = Array[ExtResource("1_surge")]([SubResource("Resource_surge_value"), SubResource("Resource_surge_respawn")])
+name_prefixes = Array[String](["Surging"])
+name_suffixes = Array[String](["of the Quickening"])
+visual_base_color_weight = Color(0.41960785, 0.9254902, 1, 1)
+visual_accent_color_weight = Color(0.78431374, 1, 1, 1)
+visual_glow_weight = 5
+visual_edge_complexity_weight = 3
+visual_gloss_weight = 1
+metadata/_custom_type_script = "uid://crmybp42r8q3a"

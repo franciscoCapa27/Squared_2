@@ -131,6 +131,25 @@ The order matters because some systems depend on definitions loaded by databases
 
 ---
 
+## 3.1 Supporting Modules And Seams
+
+The autoloads remain the public coordination layer, while focused modules own
+policies that should not be duplicated across callers:
+
+| Module | Responsibility | Public seam |
+| --- | --- | --- |
+| `GridState` | Grid construction, expansion, Square preservation, and grid costs | `GameState` retains compatibility accessors for grid state |
+| `SquareNaming` | Deterministic Trait-family ordering and Square title generation | `SquareData.generate_square_name()` |
+| `TraitPurchaseService` | Buy Trait cost and Vertex gain calculations | `GameState` purchase-cost methods |
+| `ProgressionDiscoveryPolicy` | Affordability-proximity visibility rules | `PassiveSystem` and `RunUpgradeSystem` |
+| `TraitPurchasePresenter` | Buy Trait detail copy and rarity formatting | `Main` Buy Trait panel refresh |
+
+Gameplay state changes request persistence through `EventBus.save_requested`; the
+`SaveSystem` owns the save policy and file operation. Cross-system Vertex upgrade
+notifications use `EventBus.vertex_upgrade_purchased` as the authoritative event.
+
+---
+
 # 4. Autoload Scripts
 
 ---

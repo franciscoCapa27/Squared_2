@@ -14,6 +14,7 @@
 [ext_resource type="Script" path="res://scripts/ui/collapsible_panel_header.gd" id="9_collapsible"]
 [ext_resource type="PackedScene" path="res://scenes/ui/ContextualHelp.tscn" id="10_contextual_help"]
 [ext_resource type="PackedScene" path="res://scenes/ui/TriangleIndicator.tscn" id="11_triangle_indicator"]
+[ext_resource type="PackedScene" path="res://scenes/ui/NotificationSystem.tscn" id="12_notification_system"]
 
 [node name="Main" type="Control" unique_id=1963513095]
 layout_mode = 3
@@ -774,6 +775,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RunUpgradesTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904 node_paths=PackedStringArray("content")]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 text = "Upgrades"
@@ -832,6 +834,9 @@ target = NodePath("../../RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPane
 unique_name_in_owner = true
 script = ExtResource("4_3km4f")
 target = NodePath("../../RootMargin/MainVBox/BodyHBox/RightPanel/SquareDetailsPanel")
+
+[node name="NotificationSystem" parent="." instance=ExtResource("12_notification_system")]
+unique_name_in_owner = true
 
 [node name="AchievementSummaryFeatureVisibility" type="Node" parent="FeatureVisibilityControllers" unique_id=898244319 node_paths=PackedStringArray("target")]
 unique_name_in_owner = true

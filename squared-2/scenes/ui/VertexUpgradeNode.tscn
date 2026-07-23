@@ -5,27 +5,28 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PolygonIcon.tscn" id="3_polygon_icon"]
 
 [node name="VertexUpgradeNode" type="PanelContainer"]
-custom_minimum_size = Vector2(160, 92)
+custom_minimum_size = Vector2(160, 82)
 size_flags_vertical = 0
 script = ExtResource("1_vertex_upgrade_node")
 
 [node name="NodeMargin" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
 [node name="NodeVBox" type="VBoxContainer" parent="NodeMargin"]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 1
 
 [node name="TitleRow" type="HBoxContainer" parent="NodeMargin/NodeVBox"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 2
 
 [node name="IconLabel" parent="NodeMargin/NodeVBox/TitleRow" instance=ExtResource("3_polygon_icon")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 icon_kind = "diamond"
 
@@ -37,7 +38,9 @@ autowrap_mode = 3
 
 [node name="DetailHelp" parent="NodeMargin/NodeVBox/TitleRow" instance=ExtResource("2_contextual_help")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
+theme_override_font_sizes/font_size = 11
 help_title = "Vertex upgrade"
 
 [node name="CategoryCostLabel" type="Label" parent="NodeMargin/NodeVBox"]
@@ -51,6 +54,6 @@ layout_mode = 2
 
 [node name="BuyButton" type="Button" parent="NodeMargin/NodeVBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 text = "Locked"

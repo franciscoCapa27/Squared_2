@@ -21,6 +21,7 @@ func _apply_theme() -> void:
 	add_theme_stylebox_override("panel", ThemeSystem.make_panel_style())
 	ThemeLayoutHelper.apply_dense_margin(side_margin, "inner_margin")
 	ThemeLayoutHelper.apply_dense_box_separation(side_v_box, "section_gap")
+	details_content.add_theme_constant_override("separation", 1)
 
 
 func _on_theme_changed() -> void:
@@ -77,16 +78,15 @@ func _rebuild_empty_details() -> void:
 
 func _rebuild_details(square_data: SquareData) -> void:
 	_clear_details_content()
-	_add_section_title("Square")
-	_add_detail_row(
+	_add_detail_pair_row(
 		"Trait count",
-		NumberFormatter.integer_amount(square_data.get_trait_count())
+		NumberFormatter.integer_amount(square_data.get_trait_count()),
+		"Position",
+		square_data.coordinate
 	)
-	_add_detail_row(
+	_add_detail_pair_row(
 		"Current payout",
-		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data))
-	)
-	_add_detail_row(
+		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data)),
 		"Respawn",
 		NumberFormatter.seconds(SquareCalculator.calculate_respawn_time(square_data))
 	)
@@ -113,18 +113,35 @@ func _add_section_title(title_text: String) -> void:
 	var section_title: Label = Label.new()
 	section_title.text = title_text
 	ThemeTextHelper.apply_panel_title(section_title)
+	section_title.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("panel_title")
+	)
+	section_title.custom_minimum_size.y = 18.0
 	details_content.add_child(section_title)
 
 
-func _add_detail_row(
-	label_text: String,
-	value_text: String
+func _add_detail_pair_row(
+	left_label_text: String,
+	left_value_text: String,
+	right_label_text: String,
+	right_value_text: String
 ) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
-	row.custom_minimum_size.y = 20.0
+	row.custom_minimum_size.y = 16.0
 	row.add_theme_constant_override("separation", 4)
 	details_content.add_child(row)
 
+	_add_detail_pair(row, left_label_text, left_value_text)
+
+	var spacer: Control = Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+
+	_add_detail_pair(row, right_label_text, right_value_text)
+
+
+func _add_detail_pair(row: HBoxContainer, label_text: String, value_text: String) -> void:
 	var name_label: Label = Label.new()
 	name_label.text = "%s:" % label_text
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -139,10 +156,22 @@ func _add_detail_row(
 
 
 func _add_family_summary(family_info: Dictionary) -> void:
-	var family_label: Label = Label.new()
-	family_label.text = family_info["title"]
-	family_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ThemeTextHelper.apply_body_label(family_label)
+	var family_label: RichTextLabel = RichTextLabel.new()
+	family_label.bbcode_enabled = true
+	family_label.fit_content = true
+	family_label.scroll_active = false
+	family_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	family_label.custom_minimum_size.y = 16.0
+	ThemeTextHelper.apply_detail_rich_text(family_label)
+	family_label.add_theme_font_size_override(
+		"normal_font_size",
+		ThemeSystem.get_compact_font_size("detail")
+	)
+	family_label.add_theme_font_size_override(
+		"bold_font_size",
+		ThemeSystem.get_compact_font_size("detail")
+	)
+	family_label.text = _build_family_summary_text(family_info)
 	details_content.add_child(family_label)
 
 
@@ -170,29 +199,114 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 			int(family_info["max_rarity"]),
 			int(trait_iter.definition.rarity)
 		)
-		var effects: Array[String] = []
+		var effects: Array[Dictionary] = []
 		for effect_variant: Variant in family_info["effects"] as Array:
-			effects.append(str(effect_variant))
-		for effect_line: String in trait_iter.get_effect_summary_lines():
-			if not effects.has(effect_line):
-				effects.append(effect_line)
+			effects.append(effect_variant as Dictionary)
+		for effect_entry: Dictionary in _get_effect_entries(trait_iter):
+			var is_duplicate: bool = false
+			for existing_effect: Dictionary in effects:
+				if str(existing_effect["text"]) == str(effect_entry["text"]):
+					is_duplicate = true
+					break
+			if not is_duplicate:
+				effects.append(effect_entry)
 		family_info["effects"] = effects
 		family_groups[family_key] = family_info
 
 	var result: Array[Dictionary] = []
 	for family_key: String in family_groups.keys():
 		var family_info: Dictionary = family_groups[family_key]
-		var title: String = "%s %s (%s)" % [
-			family_info["display_name"],
-			_to_roman(int(family_info["count"])),
-			TraitDefinition.rarity_name_from_value(int(family_info["max_rarity"])).to_lower()
-		]
-
 		result.append({
-			"title": title
+			"display_name": family_info["display_name"],
+			"count": int(family_info["count"]),
+			"max_rarity": int(family_info["max_rarity"]),
+			"effects": family_info["effects"]
 		})
 
+	result.sort_custom(_sort_family_groups)
 	return result
+
+
+func _sort_family_groups(left: Dictionary, right: Dictionary) -> bool:
+	var left_rarity: int = int(left["max_rarity"])
+	var right_rarity: int = int(right["max_rarity"])
+	if left_rarity != right_rarity:
+		return left_rarity > right_rarity
+
+	var left_count: int = int(left["count"])
+	var right_count: int = int(right["count"])
+	if left_count != right_count:
+		return left_count > right_count
+
+	return str(left["display_name"]).nocasecmp_to(str(right["display_name"])) < 0
+
+
+func _build_family_summary_text(family_info: Dictionary) -> String:
+	var rarity_name: String = TraitDefinition.rarity_name_from_value(
+		int(family_info["max_rarity"])
+	)
+	var title: String = "%s %s (%s)" % [
+		family_info["display_name"],
+		_to_roman(int(family_info["count"])),
+		rarity_name.to_lower()
+	]
+	var lines: Array[String] = [
+		"[color=%s][b]%s[/b][/color]" % [
+			ThemeTextHelper.get_rarity_color_hex(rarity_name),
+			title
+		]
+	]
+
+	for effect_entry: Dictionary in family_info["effects"] as Array:
+		var effect_color: String = _get_effect_color_hex(bool(effect_entry["beneficial"]))
+		lines.append("[color=%s]• %s[/color]" % [effect_color, effect_entry["text"]])
+
+	return "\n".join(lines)
+
+
+func _get_effect_entries(trait_iter: TraitInstance) -> Array[Dictionary]:
+	var entries: Array[Dictionary] = []
+	var summary_lines: Array[String] = trait_iter.get_effect_summary_lines()
+	var summary_index: int = 0
+
+	for effect_iter: EffectComponent in trait_iter.get_effective_components():
+		if effect_iter == null or effect_iter.effect_type != EffectComponent.EffectType.STAT_MODIFIER:
+			continue
+
+		if summary_index >= summary_lines.size():
+			break
+
+		entries.append({
+			"text": summary_lines[summary_index],
+			"beneficial": _is_effect_beneficial(effect_iter, trait_iter.get_effect_value(effect_iter))
+		})
+		summary_index += 1
+
+	return entries
+
+
+func _is_effect_beneficial(effect_iter: EffectComponent, effect_value: float) -> bool:
+	var higher_is_better: bool = effect_iter.target_stat != "respawn_time"
+	var direction: float = 0.0
+
+	match effect_iter.operation:
+		EffectComponent.Operation.ADD:
+			direction = effect_value
+		EffectComponent.Operation.SUBTRACT:
+			direction = -effect_value
+		EffectComponent.Operation.MULTIPLY:
+			direction = effect_value - 1.0
+		EffectComponent.Operation.DIVIDE:
+			direction = 1.0 - effect_value
+		EffectComponent.Operation.OVERRIDE:
+			direction = effect_value - 1.0
+
+	return direction > 0.0 if higher_is_better else direction < 0.0
+
+
+func _get_effect_color_hex(beneficial: bool) -> String:
+	var color: Color = ThemeSystem.get_color("success" if beneficial else "danger")
+	return color.to_html(false)
 
 
 func _get_square_help_detail(square_data: SquareData) -> String:
