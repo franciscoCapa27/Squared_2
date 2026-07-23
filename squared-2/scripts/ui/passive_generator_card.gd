@@ -89,7 +89,8 @@ func refresh() -> void:
 
 	if generator_instance.level >= generator_instance.get_max_level():
 		upgrade_button.text = "Prestige - %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
-		upgrade_button.disabled = upgrade_request_pending
+		var can_prestige: bool = PassiveSystem.can_prestige_generator(generator_id)
+		upgrade_button.disabled = upgrade_request_pending or not can_prestige
 	else:
 		upgrade_button.text = "Buy - %s" % NumberFormatter.cost(
 			float(generator_instance.get_next_level_cost())
@@ -98,10 +99,15 @@ func refresh() -> void:
 	var action_cost: int = generator_instance.get_next_level_cost()
 	if generator_instance.level >= generator_instance.get_max_level():
 		action_cost = generator_instance.get_prestige_cost()
-		upgrade_button.tooltip_text = "Squares: %s / Prestige cost: %s" % [
-			NumberFormatter.amount(GameState.squares),
-			NumberFormatter.cost(float(action_cost))
-		]
+		if PassiveSystem.can_prestige_generator(generator_id):
+			upgrade_button.tooltip_text = "Squares: %s / Prestige cost: %s" % [
+				NumberFormatter.amount(GameState.squares),
+				NumberFormatter.cost(float(action_cost))
+			]
+		else:
+			upgrade_button.tooltip_text = "Need %s more Squares to Prestige." % NumberFormatter.amount(
+				maxf(0.0, float(action_cost) - GameState.squares)
+			)
 	else:
 		upgrade_button.tooltip_text = "Squares: %s / Cost: %s" % [
 			NumberFormatter.amount(GameState.squares),
@@ -207,19 +213,10 @@ func _on_upgrade_button_pressed() -> void:
 
 	var generator_instance: PassiveGeneratorInstance = PassiveSystem.get_generator_instance(generator_id)
 	if generator_instance != null and generator_instance.level >= generator_instance.get_max_level():
-		if not PassiveSystem.can_prestige_generator(generator_id):
-			var missing_squares: float = maxf(
-				0.0,
-				float(generator_instance.get_prestige_cost()) - GameState.squares
-			)
-			status_label.text = "%s\n[color=%s]Need %s more Squares to Prestige.[/color]" % [
-				_get_compact_description(generator_instance),
-				ThemeSystem.get_color("warning").to_html(false),
-				NumberFormatter.amount(missing_squares),
-			]
-			return
-		if PassiveSystem.prestige_generator(generator_id):
-			refresh()
+		upgrade_request_pending = true
+		upgrade_button.disabled = true
+		upgrade_requested.emit(generator_id)
+		call_deferred("_finish_upgrade_request")
 		return
 
 	upgrade_request_pending = true

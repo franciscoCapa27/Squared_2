@@ -80,7 +80,16 @@ func _rebuild_passive_generator_list() -> void:
 
 
 func _on_passive_generator_upgrade_requested(generator_id: String) -> void:
-	var upgraded: bool = PassiveSystem.upgrade_generator(generator_id)
+	var generator_instance: PassiveGeneratorInstance = PassiveSystem.get_generator_instance(generator_id)
+	if generator_instance == null:
+		refresh()
+		return
+
+	var upgraded: bool = false
+	if generator_instance.level >= generator_instance.get_max_level():
+		upgraded = PassiveSystem.prestige_generator(generator_id)
+	else:
+		upgraded = PassiveSystem.upgrade_generator(generator_id)
 
 	if not upgraded:
 		refresh()
