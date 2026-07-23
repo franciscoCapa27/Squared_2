@@ -1,0 +1,45 @@
+[gd_resource type="Resource" script_class="TraitDefinition" format=3]
+
+[ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_constellation"]
+[ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_constellation"]
+
+[sub_resource type="Resource" id="Resource_constellation_value"]
+script = ExtResource("1_constellation")
+target_stat = "square_value"
+value = 2.1
+use_value_range = true
+value_min = 1.6
+value_max = 2.1
+roll_key = "square_value_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[sub_resource type="Resource" id="Resource_constellation_respawn"]
+script = ExtResource("1_constellation")
+target_stat = "respawn_time"
+value = 0.9
+use_value_range = true
+value_min = 0.84
+value_max = 0.96
+roll_key = "respawn_time_multiplier"
+metadata/_custom_type_script = "uid://mgrglak6u0c0"
+
+[resource]
+script = ExtResource("2_constellation")
+id = "rare_constellation"
+display_name = "Rare Constellation"
+family_id = "constellation"
+family_display_name = "Constellation"
+description = "Constellation squares align their paths: +60% to +110% Squares and -4% to -16% respawn time."
+rarity = 2
+tags = Array[String](["value", "speed", "cosmic", "constellation"])
+weight = 0.75
+min_grid_tier = 3
+effect_components = Array[ExtResource("1_constellation")]([SubResource("Resource_constellation_value"), SubResource("Resource_constellation_respawn")])
+name_prefixes = Array[String](["Constellation"])
+name_suffixes = Array[String](["of the Aligned Sky"])
+visual_base_color_weight = Color(0.41960785, 0.5764706, 1, 1)
+visual_accent_color_weight = Color(0.78431374, 0.8627451, 1, 1)
+visual_glow_weight = 5
+visual_edge_complexity_weight = 4
+visual_gloss_weight = 2
+metadata/_custom_type_script = "uid://crmybp42r8q3a"

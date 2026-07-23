@@ -3,16 +3,6 @@
 [ext_resource type="Script" uid="uid://mgrglak6u0c0" path="res://scripts/resources/effect_component.gd" id="1_upatient"]
 [ext_resource type="Script" uid="uid://crmybp42r8q3a" path="res://scripts/resources/trait_definition.gd" id="2_upatient"]
 
-[sub_resource type="Resource" id="Resource_upatient_respawn"]
-script = ExtResource("1_upatient")
-target_stat = "respawn_time"
-value = 1.825
-use_value_range = true
-value_min = 1.65
-value_max = 2.0
-roll_key = "respawn_time_multiplier"
-metadata/_custom_type_script = "uid://mgrglak6u0c0"
-
 [sub_resource type="Resource" id="Resource_upatient_value"]
 script = ExtResource("1_upatient")
 target_stat = "square_value"
@@ -29,11 +19,11 @@ id = "uncommon_patient"
 display_name = "Uncommon Patient"
 family_id = "patient"
 family_display_name = "Patient"
-description = "A deeper Patient square waits dramatically longer, then pays out in a heavy burst: +100% to +160% Squares, but +65% to +100% respawn time."
-tags = Array[String](["value","slow","burst","patient"])
+description = "A deeper Patient square delivers a heavy payout: +100% to +160% Squares from this square."
+tags = Array[String](["value", "burst", "patient"])
 weight = 0.7
 min_grid_tier = 2
-effect_components = Array[ExtResource("1_upatient")]([SubResource("Resource_upatient_respawn"), SubResource("Resource_upatient_value")])
+effect_components = Array[ExtResource("1_upatient")]([SubResource("Resource_upatient_value")])
 name_prefixes = Array[String](["Patient"])
 name_suffixes = Array[String](["of the Long Wait"])
 visual_base_color_weight = Color(0.69411767, 0.78431374, 1, 1)

@@ -17,3 +17,22 @@ static func apply_button_theme(button: Button) -> void:
 	button.add_theme_color_override("font_disabled_color", ThemeSystem.get_color("text_muted"))
 
 	ThemeTextHelper.apply_button_label(button)
+
+
+static func apply_compact_button_theme(button: Button) -> void:
+	if button == null:
+		return
+
+	apply_button_theme(button)
+
+	for state_name: StringName in [&"normal", &"hover", &"pressed", &"disabled"]:
+		ThemeLayoutHelper.compact_stylebox(
+			button.get_theme_stylebox(state_name),
+			5.0,
+			2.0
+		)
+
+	button.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("button")
+	)

@@ -56,14 +56,12 @@ func refresh() -> void:
 		state_label.text = "Unlocked"
 		buy_button.text = "Unlocked"
 		buy_button.disabled = true
-	elif can_buy:
-		state_label.text = "Ready"
-		buy_button.text = "Buy"
-		buy_button.disabled = false
 	else:
-		state_label.text = "Locked"
-		buy_button.text = "Locked"
-		buy_button.disabled = true
+		state_label.text = "Ready" if can_buy else "Locked"
+		buy_button.text = "Buy - %s" % NumberFormatter.integer_amount(
+			upgrade_definition.cost_vertices
+		)
+		buy_button.disabled = not can_buy
 
 	_apply_state_theme()
 
@@ -114,28 +112,44 @@ func _get_buy_state_detail(is_purchased: bool, can_buy: bool) -> String:
 
 
 func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+	add_theme_stylebox_override(
+		"panel",
+		ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_card_style())
+	)
 	ThemeTextHelper.apply_card_title(title_label)
+	title_label.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("card_title")
+	)
 	ThemeTextHelper.apply_detail_label(category_cost_label)
 	ThemeTextHelper.apply_detail_label(state_label)
 	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
-	ThemeButtonHelper.apply_button_theme(buy_button)
+	ThemeButtonHelper.apply_compact_button_theme(buy_button)
 	_apply_state_theme()
 
 
 func _apply_state_theme() -> void:
 	if node_is_purchased:
-		add_theme_stylebox_override("panel", ThemeSystem.make_selected_card_style())
+		add_theme_stylebox_override(
+			"panel",
+			ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_selected_card_style())
+		)
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
 		icon_label.set_icon_color(ThemeSystem.get_color("accent_primary"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("success"))
 	elif node_can_buy:
-		add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
+		add_theme_stylebox_override(
+			"panel",
+			ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_elevated_panel_style())
+		)
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_primary"))
 		icon_label.set_icon_color(ThemeSystem.get_color("accent_secondary"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("accent_secondary"))
 	else:
-		add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+		add_theme_stylebox_override(
+			"panel",
+			ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_card_style())
+		)
 		title_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))
 		icon_label.set_icon_color(ThemeSystem.get_color("text_muted"))
 		state_label.add_theme_color_override("font_color", ThemeSystem.get_color("text_muted"))

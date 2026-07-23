@@ -4,6 +4,7 @@ class_name RunUpgradesPanel
 @onready var run_upgrade_list: VBoxContainer = %RunUpgradeList
 @onready var run_upgrades_margin: MarginContainer = %RunUpgradesMargin
 @onready var run_upgrades_v_box: VBoxContainer = %RunUpgradesVBox
+@onready var run_upgrades_title: CollapsiblePanelHeader = %RunUpgradesTitle
 
 var run_upgrade_card_scene: PackedScene = preload("res://scenes/ui/RunUpgradeCard.tscn")
 var run_upgrade_cards: Dictionary = {}
@@ -33,6 +34,8 @@ func _apply_theme() -> void:
 
 	ThemeLayoutHelper.apply_dense_margin(run_upgrades_margin, "inner_margin")
 	ThemeLayoutHelper.apply_dense_box_separation(run_upgrades_v_box, "card_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(run_upgrade_list, "card_gap")
+	ThemeButtonHelper.apply_compact_button_theme(run_upgrades_title)
 
 
 func _on_theme_changed() -> void:

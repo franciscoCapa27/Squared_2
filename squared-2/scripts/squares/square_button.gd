@@ -158,8 +158,6 @@ func _show_trait_purchase_reveal_text(
 	reveal_label.fit_content = false
 	reveal_label.scroll_active = false
 	reveal_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	reveal_label.anchor_right = 1.0
-	reveal_label.anchor_bottom = 1.0
 	reveal_label.offset_left = 5.0
 	reveal_label.offset_top = 5.0
 	reveal_label.offset_right = -5.0

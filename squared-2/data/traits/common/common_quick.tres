@@ -16,10 +16,10 @@ metadata/_custom_type_script = "uid://mgrglak6u0c0"
 [sub_resource type="Resource" id="Resource_lfhmg"]
 script = ExtResource("1_8xmlo")
 target_stat = "square_value"
-value = 0.9
+value = 1.05
 use_value_range = true
-value_min = 0.8
-value_max = 0.95
+value_min = 1.0
+value_max = 1.05
 roll_key = "square_value_multiplier"
 metadata/_custom_type_script = "uid://mgrglak6u0c0"
 
@@ -29,7 +29,7 @@ id = "common_quick"
 display_name = "Common Quick"
 family_id = "quick"
 family_display_name = "Quick"
-description = "Quick squares return sooner: -10% to -25% respawn time, but -5% to -20% Squares from this square."
+description = "Quick squares return sooner and retain their output: -10% to -25% respawn time, +0% to +5% Squares."
 tags = Array[String](["speed", "quick"])
 effect_components = Array[ExtResource("1_8xmlo")]([SubResource("Resource_2bbb4"), SubResource("Resource_lfhmg")])
 name_prefixes = Array[String](["Quick"])

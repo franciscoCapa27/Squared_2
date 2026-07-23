@@ -9,6 +9,10 @@ var is_unlocked: bool = false
 # Run-based level. Persists through Trait purchases and resets only on a new game.
 var level: int = 0
 
+# Local prestige is run-layer progression for this generator. It survives saves
+# and normal resets, but is cleared by reset_to_new_game (Hard Reset).
+var prestige_count: int = 0
+
 # Future self-condensation state.
 var self_condensation_level: int = 0
 var can_self_condensation: bool = false
@@ -71,6 +75,7 @@ func get_current_interval_seconds() -> float:
 
 	interval *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_INTERVAL)
 	interval += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_INTERVAL)
+	interval *= pow(5.0, float(prestige_count))
 
 	return max(definition.minimum_interval_seconds, interval)
 
@@ -88,7 +93,9 @@ func get_current_extraction_rate(target_square: SquareData = null) -> float:
 	extraction_rate *= RunUpgradeSystem.get_run_stat_multiplier(GameIds.STAT_RUN_PASSIVE_EXTRACTION)
 	extraction_rate += RunUpgradeSystem.get_run_stat_addition(GameIds.STAT_RUN_PASSIVE_EXTRACTION)
 
-	return min(definition.maximum_extraction_rate, extraction_rate)
+	extraction_rate = min(definition.maximum_extraction_rate, extraction_rate)
+	extraction_rate *= pow(10.0, float(prestige_count))
+	return extraction_rate
 
 func get_next_level_cost() -> int:
 	if definition == null:
@@ -115,6 +122,19 @@ func can_level_up(current_squares: float) -> bool:
 
 	return current_squares >= float(get_next_level_cost())
 
+func get_prestige_cost() -> int:
+	if definition == null or not is_unlocked or level < get_max_level():
+		return 0
+
+	var max_level_cost: float = definition.base_level_cost * pow(
+		definition.level_cost_multiplier,
+		float(get_max_level())
+	)
+	return int(ceil(max_level_cost * definition.prestige_cost_multiplier))
+
+func can_prestige(current_squares: float) -> bool:
+	return get_prestige_cost() > 0 and current_squares >= float(get_prestige_cost())
+
 func level_up() -> bool:
 	if definition == null:
 		return false
@@ -130,6 +150,19 @@ func level_up() -> bool:
 	if level >= definition.self_condensation_unlock_level:
 		can_self_condensation = true
 
+	return true
+
+func prestige() -> bool:
+	if definition == null or not is_unlocked or level < get_max_level():
+		return false
+
+	prestige_count += 1
+	level = 1
+	can_self_condensation = false
+	self_condensation_level = 0
+	elapsed_seconds = 0.0
+	last_target_square_id = ""
+	last_payout = 0.0
 	return true
 
 func get_progress_ratio() -> float:
@@ -160,6 +193,7 @@ func to_save_dict() -> Dictionary:
 		"definition_id": definition_id,
 		"is_unlocked": is_unlocked,
 		"level": level,
+		"prestige_count": prestige_count,
 		"self_condensation_level": self_condensation_level,
 		"can_self_condensation": can_self_condensation,
 		"elapsed_seconds": elapsed_seconds,
@@ -172,6 +206,8 @@ func to_save_dict() -> Dictionary:
 func apply_save_dict(data: Dictionary) -> void:
 	is_unlocked = bool(data.get("is_unlocked", false))
 	level = int(data.get("level", 0))
+	prestige_count = max(0, int(data.get("prestige_count", 0)))
+	level = clamp(level, 0, get_max_level())
 	self_condensation_level = int(data.get("self_condensation_level", 0))
 	can_self_condensation = bool(data.get("can_self_condensation", false))
 	elapsed_seconds = float(data.get("elapsed_seconds", 0.0))
@@ -183,6 +219,7 @@ func apply_save_dict(data: Dictionary) -> void:
 func reset_to_new_game() -> void:
 	is_unlocked = false
 	level = 0
+	prestige_count = 0
 	self_condensation_level = 0
 	can_self_condensation = false
 	elapsed_seconds = 0.0
