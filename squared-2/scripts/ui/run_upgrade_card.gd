@@ -21,13 +21,20 @@ func _ready() -> void:
 	_apply_theme()
 
 func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+	add_theme_stylebox_override(
+		"panel",
+		ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_card_style())
+	)
 
 	ThemeTextHelper.apply_card_title(title_label)
+	title_label.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("card_title")
+	)
 	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
 	ThemeTextHelper.apply_detail_label(category_level_label)
-	ThemeTextHelper.apply_body_rich_text(description_label)
-	ThemeButtonHelper.apply_button_theme(buy_button)
+	ThemeTextHelper.apply_detail_rich_text(description_label)
+	ThemeButtonHelper.apply_compact_button_theme(buy_button)
 
 
 
@@ -84,12 +91,9 @@ func refresh() -> void:
 	elif is_maxed:
 		buy_button.text = "Maxed"
 		buy_button.disabled = true
-	elif can_buy:
-		buy_button.text = "Buy - %s Squares" % NumberFormatter.cost(cost)
-		buy_button.disabled = false
 	else:
-		buy_button.text = "Need %s Squares" % NumberFormatter.cost(cost)
-		buy_button.disabled = true
+		buy_button.text = "Buy - %s" % NumberFormatter.cost(cost)
+		buy_button.disabled = not can_buy
 
 
 func _get_icon_kind() -> String:

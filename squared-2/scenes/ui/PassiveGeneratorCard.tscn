@@ -13,25 +13,24 @@ script = ExtResource("1_w8yjn")
 
 [node name="CardMargin" type="MarginContainer" parent="." unique_id=1646056221]
 layout_mode = 2
-theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
 
 [node name="CardVBox" type="VBoxContainer" parent="CardMargin" unique_id=589219007]
 layout_mode = 2
-theme_override_constants/separation = 2
+theme_override_constants/separation = 1
 
 [node name="TitleRow" type="HBoxContainer" parent="CardMargin/CardVBox" unique_id=1992256305]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 2
 
 [node name="TitleLabel" type="Label" parent="CardMargin/CardVBox/TitleRow" unique_id=1992256305]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 clip_text = true
-custom_minimum_size = Vector2(0, 18)
 
 [node name="LevelLabel" type="Label" parent="CardMargin/CardVBox/TitleRow"]
 unique_name_in_owner = true
@@ -39,12 +38,13 @@ layout_mode = 2
 
 [node name="IconLabel" parent="CardMargin/CardVBox/TitleRow" instance=ExtResource("3_polygon_icon")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 icon_kind = "passive"
 
 [node name="DetailHelp" parent="CardMargin/CardVBox/TitleRow" instance=ExtResource("2_contextual_help")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(18, 18)
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
@@ -60,10 +60,12 @@ scroll_active = false
 
 [node name="ProgressBar" type="ProgressBar" parent="CardMargin/CardVBox" unique_id=1214539390]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 3)
 layout_mode = 2
 max_value = 1.0
+show_percentage = false
 
 [node name="UpgradeButton" type="Button" parent="CardMargin/CardVBox" unique_id=19665633]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 22)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2

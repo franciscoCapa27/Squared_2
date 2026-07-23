@@ -78,17 +78,15 @@ func _rebuild_empty_details() -> void:
 
 func _rebuild_details(square_data: SquareData) -> void:
 	_clear_details_content()
-	_add_section_title("Square")
-	_add_detail_row("Position", square_data.coordinate)
-	_add_detail_row(
+	_add_detail_pair_row(
 		"Trait count",
-		NumberFormatter.integer_amount(square_data.get_trait_count())
+		NumberFormatter.integer_amount(square_data.get_trait_count()),
+		"Position",
+		square_data.coordinate
 	)
-	_add_detail_row(
+	_add_detail_pair_row(
 		"Current payout",
-		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data))
-	)
-	_add_detail_row(
+		NumberFormatter.amount(SquareCalculator.calculate_manual_payout(square_data)),
 		"Respawn",
 		NumberFormatter.seconds(SquareCalculator.calculate_respawn_time(square_data))
 	)
@@ -123,15 +121,27 @@ func _add_section_title(title_text: String) -> void:
 	details_content.add_child(section_title)
 
 
-func _add_detail_row(
-	label_text: String,
-	value_text: String
+func _add_detail_pair_row(
+	left_label_text: String,
+	left_value_text: String,
+	right_label_text: String,
+	right_value_text: String
 ) -> void:
 	var row: HBoxContainer = HBoxContainer.new()
 	row.custom_minimum_size.y = 16.0
 	row.add_theme_constant_override("separation", 4)
 	details_content.add_child(row)
 
+	_add_detail_pair(row, left_label_text, left_value_text)
+
+	var spacer: Control = Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+
+	_add_detail_pair(row, right_label_text, right_value_text)
+
+
+func _add_detail_pair(row: HBoxContainer, label_text: String, value_text: String) -> void:
 	var name_label: Label = Label.new()
 	name_label.text = "%s:" % label_text
 	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -213,7 +223,22 @@ func _get_family_groups(square_data: SquareData) -> Array[Dictionary]:
 			"effects": family_info["effects"]
 		})
 
+	result.sort_custom(_sort_family_groups)
 	return result
+
+
+func _sort_family_groups(left: Dictionary, right: Dictionary) -> bool:
+	var left_rarity: int = int(left["max_rarity"])
+	var right_rarity: int = int(right["max_rarity"])
+	if left_rarity != right_rarity:
+		return left_rarity > right_rarity
+
+	var left_count: int = int(left["count"])
+	var right_count: int = int(right["count"])
+	if left_count != right_count:
+		return left_count > right_count
+
+	return str(left["display_name"]).nocasecmp_to(str(right["display_name"])) < 0
 
 
 func _build_family_summary_text(family_info: Dictionary) -> String:

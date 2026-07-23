@@ -2,6 +2,21 @@ extends RefCounted
 class_name ThemeLayoutHelper
 
 
+static func compact_stylebox(
+	style_box: StyleBox,
+	horizontal_margin: float = 4.0,
+	vertical_margin: float = 3.0
+) -> StyleBox:
+	if style_box == null:
+		return style_box
+
+	style_box.content_margin_left = horizontal_margin
+	style_box.content_margin_top = vertical_margin
+	style_box.content_margin_right = horizontal_margin
+	style_box.content_margin_bottom = vertical_margin
+	return style_box
+
+
 static func apply_margin(
 	margin_container: MarginContainer,
 	margin_id: String = "inner_margin"

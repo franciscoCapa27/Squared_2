@@ -56,7 +56,7 @@ const NODE_ICONS := {
 	GameIds.UPGRADE_UNLOCK_TRAIT_PULSE: "spark",
 	GameIds.UPGRADE_UNLOCK_GRID_PULSE: "diamond",
 }
-const NODE_SIZE := Vector2(160, 92)
+const NODE_SIZE := Vector2(160, 82)
 const CANVAS_SIZE := Vector2(820, 620)
 
 @onready var vertex_shop_description: RichTextLabel = %VertexShopDescription

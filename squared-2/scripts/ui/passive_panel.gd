@@ -32,11 +32,17 @@ func refresh() -> void:
 		_rebuild_passive_generator_list()
 		return
 
-	if unlocked_generators.size() != passive_generator_cards.size():
+	PassiveSystem.refresh_visible_generator_discoveries()
+	var visible_generators: Array[PassiveGeneratorInstance] = []
+	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
+		if PassiveSystem.should_show_generator(generator_instance.get_id()):
+			visible_generators.append(generator_instance)
+
+	if visible_generators.size() != passive_generator_cards.size():
 		_rebuild_passive_generator_list()
 		return
 
-	for generator_instance: PassiveGeneratorInstance in unlocked_generators:
+	for generator_instance: PassiveGeneratorInstance in visible_generators:
 		var card: PassiveGeneratorCard = passive_generator_cards.get(generator_instance.get_id()) as PassiveGeneratorCard
 
 		if card == null:
@@ -92,6 +98,8 @@ func _apply_theme() -> void:
 
 	ThemeLayoutHelper.apply_dense_margin(passive_margin, "inner_margin")
 	ThemeLayoutHelper.apply_dense_box_separation(passive_v_box, "card_gap")
+	ThemeLayoutHelper.apply_dense_box_separation(passive_generator_list, "card_gap")
+	ThemeButtonHelper.apply_compact_button_theme(passive_title)
 
 	passive_title.clip_text = true
 

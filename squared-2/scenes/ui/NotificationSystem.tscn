@@ -4,56 +4,75 @@
 
 [node name="NotificationSystem" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -280.0
-offset_top = -112.0
-offset_right = 280.0
-offset_bottom = -24.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 2
-script = ExtResource("1_notification")
-
-[node name="NotificationPanel" type="PanelContainer" parent="."]
-unique_name_in_owner = true
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("1_notification")
 
-[node name="NotificationMargin" type="MarginContainer" parent="NotificationPanel"]
+[node name="NotificationStack" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -190.0
+offset_top = 24.0
+offset_right = 190.0
+offset_bottom = -24.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 2
+
+[node name="NotificationTemplate" type="PanelContainer" parent="NotificationStack"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(380, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 10
+mouse_filter = 2
 
-[node name="NotificationVBox" type="VBoxContainer" parent="NotificationPanel/NotificationMargin"]
+[node name="NotificationMargin" type="MarginContainer" parent="NotificationStack/NotificationTemplate"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+mouse_filter = 2
+
+[node name="NotificationVBox" type="VBoxContainer" parent="NotificationStack/NotificationTemplate/NotificationMargin"]
+layout_mode = 2
+theme_override_constants/separation = 0
+mouse_filter = 2
+
+[node name="TitleRow" type="HBoxContainer" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox"]
 layout_mode = 2
 theme_override_constants/separation = 2
 mouse_filter = 2
 
-[node name="NotificationTitle" type="Label" parent="NotificationPanel/NotificationMargin/NotificationVBox"]
-unique_name_in_owner = true
+[node name="CloseSpacer" type="Control" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
+custom_minimum_size = Vector2(20, 0)
 layout_mode = 2
+mouse_filter = 2
+
+[node name="NotificationTitle" type="Label" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Notification"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="NotificationMessage" type="Label" parent="NotificationPanel/NotificationMargin/NotificationVBox"]
-unique_name_in_owner = true
+[node name="CloseButton" type="Button" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "X"
+flat = true
+tooltip_text = "Dismiss notification"
+
+[node name="NotificationMessage" type="Label" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox"]
 layout_mode = 2
 text = ""
 horizontal_alignment = 1
 autowrap_mode = 2
-
-[node name="DismissTimer" type="Timer" parent="."]
-unique_name_in_owner = true
-wait_time = 3.2
-one_shot = true

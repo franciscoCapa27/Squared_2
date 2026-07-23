@@ -13,32 +13,27 @@ signal upgrade_requested(generator_id: String)
 
 var generator_id: String = ""
 var upgrade_request_pending: bool = false
-var prestige_confirm_remaining: float = 0.0
-
-const PRESTIGE_CONFIRM_SECONDS: float = 2.5
 
 func _ready() -> void:
 	ThemeSystem.theme_changed.connect(_on_theme_changed)
 	upgrade_button.pressed.connect(_on_upgrade_button_pressed)
 
 	_apply_theme()
-
-func _process(delta: float) -> void:
-	if prestige_confirm_remaining <= 0.0:
-		return
-	prestige_confirm_remaining -= delta
-	if prestige_confirm_remaining <= 0.0:
-		prestige_confirm_remaining = 0.0
-		refresh()
-
 func _apply_theme() -> void:
-	add_theme_stylebox_override("panel", ThemeSystem.make_card_style())
+	add_theme_stylebox_override(
+		"panel",
+		ThemeLayoutHelper.compact_stylebox(ThemeSystem.make_card_style())
+	)
 
 	ThemeTextHelper.apply_card_title(title_label)
+	title_label.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("card_title")
+	)
 	ThemeTextHelper.apply_detail_rich_text(status_label)
 	ThemeTextHelper.apply_detail_label(level_label)
 	icon_label.set_icon_color(ThemeSystem.get_color("text_primary"))
-	ThemeButtonHelper.apply_button_theme(upgrade_button)
+	ThemeButtonHelper.apply_compact_button_theme(upgrade_button)
 
 
 func _on_theme_changed() -> void:
@@ -93,16 +88,12 @@ func refresh() -> void:
 	upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_upgrade_generator(generator_id)
 
 	if generator_instance.level >= generator_instance.get_max_level():
-		if prestige_confirm_remaining > 0.0:
-			upgrade_button.text = "Click again to Prestige"
-		else:
-			upgrade_button.text = "Prestige • %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
+		upgrade_button.text = "Prestige - %s" % NumberFormatter.cost(float(generator_instance.get_prestige_cost()))
 		upgrade_button.disabled = upgrade_request_pending or not PassiveSystem.can_prestige_generator(generator_id)
 	else:
-		upgrade_button.text = "Buy %s - %s" % [
-			generator_instance.level + 1,
-			NumberFormatter.cost(float(generator_instance.get_next_level_cost()))
-		]
+		upgrade_button.text = "Buy - %s" % NumberFormatter.cost(
+			float(generator_instance.get_next_level_cost())
+		)
 
 	var action_cost: int = generator_instance.get_next_level_cost()
 	if generator_instance.level >= generator_instance.get_max_level():
@@ -216,12 +207,7 @@ func _on_upgrade_button_pressed() -> void:
 
 	var generator_instance: PassiveGeneratorInstance = PassiveSystem.get_generator_instance(generator_id)
 	if generator_instance != null and generator_instance.level >= generator_instance.get_max_level():
-		if prestige_confirm_remaining <= 0.0:
-			prestige_confirm_remaining = PRESTIGE_CONFIRM_SECONDS
-			upgrade_button.text = "Click again to Prestige"
-			return
 		if PassiveSystem.prestige_generator(generator_id):
-			prestige_confirm_remaining = 0.0
 			refresh()
 		return
 
