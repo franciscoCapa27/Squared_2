@@ -775,6 +775,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="RunUpgradesTitle" type="Button" parent="RootMargin/MainVBox/BodyHBox/RightPanel/RunUpgradesPanel/RunUpgradesMargin/RunUpgradesVBox" unique_id=2033131904 node_paths=PackedStringArray("content")]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 0
 text = "Upgrades"

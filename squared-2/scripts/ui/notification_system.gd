@@ -39,12 +39,23 @@ func _apply_theme() -> void:
 
 func _apply_notification_theme(notification_panel: PanelContainer) -> void:
 	var title_label: Label = notification_panel.get_node(TITLE_PATH) as Label
-	var message_label: Label = notification_panel.get_node(MESSAGE_PATH) as Label
+	var message_label: RichTextLabel = notification_panel.get_node(MESSAGE_PATH) as RichTextLabel
 	var close_button: Button = notification_panel.get_node(CLOSE_BUTTON_PATH) as Button
 
-	notification_panel.add_theme_stylebox_override("panel", ThemeSystem.make_elevated_panel_style())
+	notification_panel.add_theme_stylebox_override(
+		"panel",
+		ThemeLayoutHelper.compact_stylebox(
+			ThemeSystem.make_elevated_panel_style(),
+			2.0,
+			1.0
+		)
+	)
 	ThemeTextHelper.apply_card_title(title_label)
-	ThemeTextHelper.apply_detail_label(message_label)
+	title_label.add_theme_font_size_override(
+		"font_size",
+		ThemeSystem.get_compact_font_size("detail")
+	)
+	ThemeTextHelper.apply_detail_rich_text(message_label)
 	title_label.add_theme_color_override(
 		"font_color",
 		_get_kind_color(str(notification_panel.get_meta("notification_kind", "")))
@@ -72,7 +83,7 @@ func _on_achievement_unlocked(achievement_id: String) -> void:
 	var level: int = AchievementSystem.get_achievement_level(achievement_id)
 	_enqueue_notification(
 		"Achievement unlocked",
-		"%s — Level %s" % [achievement.display_name, NumberFormatter.integer_amount(level)],
+		"[b]%s[/b] - Level %s" % [achievement.display_name, NumberFormatter.integer_amount(level)],
 		"achievement"
 	)
 
@@ -85,9 +96,17 @@ func _on_trait_purchase_reveal(
 	square_title: String,
 	_previous_square_title: String
 ) -> void:
+	var rarity_color: String = ThemeTextHelper.get_rarity_color_hex(trait_rarity_display)
+	var family_color: String = ThemeTextHelper.get_trait_family_color_hex(trait_family_display)
 	_enqueue_notification(
 		"Trait acquired",
-		"%s — %s on %s" % [trait_rarity_display.capitalize(), trait_family_display, square_title],
+		"[color=%s][b]%s[/b][/color] [color=%s]%s[/color] on %s" % [
+			rarity_color,
+			trait_rarity_display.capitalize(),
+			family_color,
+			trait_family_display,
+			square_title,
+		],
 		"trait"
 	)
 
@@ -99,7 +118,7 @@ func _on_passive_generator_unlocked(generator_id: String) -> void:
 
 	_enqueue_notification(
 		"Passive generator unlocked",
-		generator_instance.get_display_name(),
+		"[b]%s[/b]" % generator_instance.get_display_name(),
 		"passive"
 	)
 
@@ -121,7 +140,7 @@ func _show_queued_notifications() -> void:
 func _show_notification(notification: Dictionary) -> void:
 	var notification_panel: PanelContainer = notification_template.duplicate() as PanelContainer
 	var title_label: Label = notification_panel.get_node(TITLE_PATH) as Label
-	var message_label: Label = notification_panel.get_node(MESSAGE_PATH) as Label
+	var message_label: RichTextLabel = notification_panel.get_node(MESSAGE_PATH) as RichTextLabel
 	var close_button: Button = notification_panel.get_node(CLOSE_BUTTON_PATH) as Button
 	var notification_kind: String = str(notification.get("kind", ""))
 

@@ -18,9 +18,9 @@ layout_mode = 1
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -190.0
+offset_left = -150.0
 offset_top = 24.0
-offset_right = 190.0
+offset_right = 150.0
 offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
@@ -31,14 +31,14 @@ alignment = 2
 [node name="NotificationTemplate" type="PanelContainer" parent="NotificationStack"]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(380, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 mouse_filter = 2
 
 [node name="NotificationMargin" type="MarginContainer" parent="NotificationStack/NotificationTemplate"]
 layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_right = 4
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_right = 2
 mouse_filter = 2
 
 [node name="NotificationVBox" type="VBoxContainer" parent="NotificationStack/NotificationTemplate/NotificationMargin"]
@@ -51,28 +51,23 @@ layout_mode = 2
 theme_override_constants/separation = 2
 mouse_filter = 2
 
-[node name="CloseSpacer" type="Control" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
-custom_minimum_size = Vector2(20, 0)
-layout_mode = 2
-mouse_filter = 2
-
 [node name="NotificationTitle" type="Label" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Notification"
-horizontal_alignment = 1
+horizontal_alignment = 0
 vertical_alignment = 1
 
 [node name="CloseButton" type="Button" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox/TitleRow"]
-custom_minimum_size = Vector2(20, 20)
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 mouse_default_cursor_shape = 2
 text = "X"
 flat = true
 tooltip_text = "Dismiss notification"
 
-[node name="NotificationMessage" type="Label" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox"]
+[node name="NotificationMessage" type="RichTextLabel" parent="NotificationStack/NotificationTemplate/NotificationMargin/NotificationVBox"]
 layout_mode = 2
-text = ""
-horizontal_alignment = 1
-autowrap_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
